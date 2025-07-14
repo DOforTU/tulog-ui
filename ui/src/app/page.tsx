@@ -1,103 +1,123 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import Header from "@/components/layout/Header";
+import BlogPostCard from "@/components/blog/BlogPostCard";
+import { useSearch } from "@/contexts/SearchContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { Plus } from "lucide-react";
+
+// 임시 블로그 포스트 데이터 (실제로는 API에서 가져올 예정)
+const samplePosts = [
+    {
+        id: "1",
+        title: "Next.js 15와 React 19로 블로그 만들기",
+        content: "Next.js 15와 React 19의 새로운 기능들을 활용해서 모던 블로그를 만들어보겠습니다...",
+        excerpt:
+            "Next.js 15와 React 19의 새로운 기능들을 활용해서 모던 블로그를 만들어보겠습니다. TypeScript와 Tailwind CSS를 사용하여 개발자 친화적인 환경을 구축했습니다.",
+        createdAt: "2024-01-15T10:30:00Z",
+        updatedAt: "2024-01-15T10:30:00Z",
+        author: {
+            id: "1",
+            username: "개발자 김철수",
+            nickname: "devkim",
+            profilePicture:
+                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+        },
+        tags: ["Next.js", "React", "TypeScript", "TailwindCSS"],
+    },
+    {
+        id: "2",
+        title: "TypeORM과 PostgreSQL로 데이터베이스 설계하기",
+        content:
+            "NestJS 프로젝트에서 TypeORM을 사용해 PostgreSQL 데이터베이스를 효율적으로 설계하는 방법을 알아봅시다...",
+        excerpt:
+            "NestJS 프로젝트에서 TypeORM을 사용해 PostgreSQL 데이터베이스를 효율적으로 설계하는 방법을 알아봅시다. Entity 관계 설정부터 마이그레이션까지 단계별로 진행합니다.",
+        createdAt: "2024-01-14T14:20:00Z",
+        updatedAt: "2024-01-14T14:20:00Z",
+        author: {
+            id: "1",
+            username: "개발자 김철수",
+            nickname: "devkim",
+            profilePicture:
+                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+        },
+        tags: ["TypeORM", "PostgreSQL", "NestJS", "Database"],
+    },
+    {
+        id: "3",
+        title: "Google OAuth 2.0 구현하기",
+        content: "Passport.js를 활용해서 Google OAuth 2.0 인증을 구현하는 방법을 상세히 설명합니다...",
+        excerpt:
+            "Passport.js를 활용해서 Google OAuth 2.0 인증을 구현하는 방법을 상세히 설명합니다. JWT 토큰 발급과 사용자 세션 관리까지 포함합니다.",
+        createdAt: "2024-01-13T09:15:00Z",
+        updatedAt: "2024-01-13T09:15:00Z",
+        author: {
+            id: "2",
+            username: "백엔드 박민수",
+            nickname: "backendpark",
+            profilePicture:
+                "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
+        },
+        tags: ["OAuth", "Google", "Passport", "JWT", "Authentication"],
+    },
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    const [filteredPosts, setFilteredPosts] = useState(samplePosts);
+    const { searchTerm, setSearchTerm } = useSearch();
+    const { user } = useAuth();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    useEffect(() => {
+        // 검색 필터링
+        if (searchTerm.trim() === "") {
+            setFilteredPosts(samplePosts);
+        } else {
+            const filtered = samplePosts.filter(
+                (post) =>
+                    post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    post.tags?.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+            setFilteredPosts(filtered);
+        }
+    }, [searchTerm]);
+
+    return (
+        <div className="min-h-screen bg-white">
+            <Header />
+
+            <main className="max-w-7xl mx-auto px-4 py-8">
+                {/* 헤로 섹션 */}
+                <section className="text-center mb-12">
+                    {/* <h1 className="text-4xl font-bold text-gray-900 mb-4">일상을 TULOG에서 공유해주세요.</h1> */}
+                </section>
+
+                {/* 블로그 포스트 목록 */}
+                <section>
+                    {filteredPosts.length > 0 ? (
+                        <div className="grid gap-6">
+                            {filteredPosts.map((post) => (
+                                <BlogPostCard key={post.id} post={post} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12">
+                            <p className="text-gray-500 text-lg">
+                                {searchTerm ? "검색 결과가 없습니다." : "아직 포스트가 없습니다."}
+                            </p>
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm("")}
+                                    className="mt-4 text-[#499200] hover:text-[#3d7a00]"
+                                >
+                                    전체 포스트 보기
+                                </button>
+                            )}
+                        </div>
+                    )}
+                </section>
+            </main>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    );
 }
