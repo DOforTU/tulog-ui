@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { api } from "@/lib/api-client";
 
 // 사용자 타입 정의
 interface User {
@@ -43,20 +44,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         // 백엔드 로그아웃 API 호출 (쿠키 삭제)
         try {
-            // 타임아웃 설정
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-
-            await fetch("http://localhost:8000/auth/logout", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include", // 쿠키 포함
-                signal: controller.signal,
-            });
-
-            clearTimeout(timeoutId);
+            await api.auth.logout();
         } catch {
             // 백엔드 오류가 있어도 프론트엔드에서는 이미 로그아웃 처리됨
         }
@@ -88,20 +76,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         const refreshInterval = setInterval(async () => {
             try {
-                const response = await fetch("http://localhost:8000/auth/refresh", {
-                    method: "POST",
-                    credentials: "include", // 쿠키 포함
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
+                const response = await api.auth.refresh();
 
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success) {
-                        // 새로운 액세스 토큰은 쿠키로 자동 설정됨
-                        setUser(data.user);
-                    }
+                if (response.success && response.data) {
+                    // 새로운 액세스 토큰은 쿠키로 자동 설정됨
+                    setUser((response.data as any).user);
                 } else {
                     // 토큰 갱신 실패 시 로그아웃
                     logout();
