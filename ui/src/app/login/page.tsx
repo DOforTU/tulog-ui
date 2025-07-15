@@ -75,7 +75,7 @@ export default function LoginPage() {
                             className="h-12 w-auto"
                         />
                     </div>
-                    <h2 className="text-lg font-medium text-gray-900 mb-8">개발자 블로그 로그인</h2>
+                    <h2 className="text-lg font-medium text-gray-900 mb-8">TULOG 로그인</h2>
                 </div>
             </div>
 
@@ -92,7 +92,7 @@ export default function LoginPage() {
                         {/* 로그인 설명 */}
                         <div className="text-center">
                             <p className="text-sm text-gray-600 mb-6">
-                                TULOG는 Google 계정을 통해 간편하게 로그인할 수 있습니다.
+                                Google 계정을 통해 간편하게 로그인할 수 있습니다.
                                 <br />
                                 별도의 회원가입 없이 바로 시작하세요!
                             </p>
