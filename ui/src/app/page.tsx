@@ -4,9 +4,6 @@ import { useState, useEffect } from "react";
 import Header from "@/components/layout/Header";
 import BlogPostCard from "@/components/blog/BlogPostCard";
 import { useSearch } from "@/contexts/SearchContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { Plus } from "lucide-react";
-
 // 임시 블로그 포스트 데이터 (실제로는 API에서 가져올 예정)
 const samplePosts = [
     {
@@ -66,7 +63,6 @@ const samplePosts = [
 export default function Home() {
     const [filteredPosts, setFilteredPosts] = useState(samplePosts);
     const { searchTerm, setSearchTerm } = useSearch();
-    const { user } = useAuth();
 
     useEffect(() => {
         // 검색 필터링
