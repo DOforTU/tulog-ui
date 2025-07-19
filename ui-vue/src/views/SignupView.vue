@@ -136,7 +136,7 @@ const handleEmailSignup = () => {
 
 .container {
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   margin: 0 auto;
   padding: 0 2rem;
 }
