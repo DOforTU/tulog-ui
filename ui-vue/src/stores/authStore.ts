@@ -18,7 +18,6 @@ export const useAuthStore = defineStore('auth', () => {
   let refreshIntervalId: number | null = null
   let isInitialized = false
   let isFetchingUser = false // 중복 요청 방지를 위한 상태
-  let initPromise: Promise<void> | null = null // 초기화 Promise 캐싱
 
   // 사용자 정보 가져오기
   const fetchUserInfo = async (): Promise<User | null> => {
@@ -98,48 +97,24 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  // 인증 상태 초기화 (Promise 캐싱으로 중복 방지)
+  // 인증 상태 초기화
   const initAuth = async () => {
-    // 이미 초기화 중이면 같은 Promise 반환
-    if (initPromise) return initPromise
-
     // 이미 초기화 완료되었으면 즉시 반환
-    if (isInitialized) return Promise.resolve()
+    if (isInitialized) return
 
-    // 새로운 초기화 Promise 생성 및 캐싱
-    initPromise = (async () => {
-      try {
-        isInitialized = true
-        const user = await fetchUserInfo()
-        if (user) setupTokenRefresh()
-      } finally {
-        isLoading.value = false
-        initPromise = null // 완료 후 캐시 초기화
-      }
-    })()
-
-    return initPromise
+    try {
+      isInitialized = true
+      const user = await fetchUserInfo()
+      if (user) setupTokenRefresh()
+    } finally {
+      isLoading.value = false
+    }
   }
 
   // 로그인 성공 후 처리 (구글 OAuth 리디렉션 대응)
   const handleLoginSuccess = async () => {
     await initAuth()
-    // store에서는 상태만 업데이트, 리디렉션은 컴포넌트에서 처리
     return currentUser.value
-  }
-
-  // URL에 success=true 파라미터가 있으면 자동 로그인 처리
-  const checkLoginSuccess = async () => {
-    if (typeof window === 'undefined') return
-
-    const urlParams = new URLSearchParams(window.location.search)
-    if (urlParams.get('success') === 'true') {
-      const newUrl = window.location.pathname
-      window.history.replaceState({}, '', newUrl)
-      await handleLoginSuccess()
-    } else {
-      await initAuth()
-    }
   }
 
   // 개발용 디버깅 함수 (클라이언트에서만)
