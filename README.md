@@ -12,7 +12,11 @@
 
 ```
 tulog-ui/
-├── ui/                # Next.js 애플리케이션
+├── ui-next/           # Next.js 애플리케이션
+│   ├── src/           # 소스 코드
+│   ├── public/        # 정적 파일
+│   └── README.md      # 기술 문서 및 개발 가이드
+├── ui-vue/            # Vue.js 애플리케이션
 │   ├── src/           # 소스 코드
 │   ├── public/        # 정적 파일
 │   └── README.md      # 기술 문서 및 개발 가이드
