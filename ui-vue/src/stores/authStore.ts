@@ -14,8 +14,9 @@ export const useAuthStore = defineStore('auth', () => {
   const currentUser = ref<User | null>(null)
   const isLoading = ref(true)
   const isAuthenticated = computed(() => currentUser.value !== null)
+
+  const isInitialized = ref(false)
   let refreshIntervalId: number | null = null
-  let isInitialized = false
 
   const fetchUserInfo = async (): Promise<User | null> => {
     try {
@@ -33,12 +34,9 @@ export const useAuthStore = defineStore('auth', () => {
         }
         return currentUser.value
       }
-      currentUser.value = null
-      return null
-    } catch {
-      currentUser.value = null
-      return null
-    }
+    } catch {}
+    currentUser.value = null
+    return null
   }
 
   const login = async () => {
@@ -47,6 +45,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   const logout = async () => {
     currentUser.value = null
+    if (refreshIntervalId) {
+      clearInterval(refreshIntervalId)
+      refreshIntervalId = null
+    }
     try {
       await api.auth.logout()
     } catch (e) {
@@ -60,8 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const setupTokenRefresh = () => {
-    if (!currentUser.value) return
-    if (refreshIntervalId) clearInterval(refreshIntervalId)
+    if (!currentUser.value || refreshIntervalId) return
 
     refreshIntervalId = setInterval(
       async () => {
@@ -74,22 +75,17 @@ export const useAuthStore = defineStore('auth', () => {
       },
       10 * 60 * 1000,
     )
-
-    return () => {
-      if (refreshIntervalId) {
-        clearInterval(refreshIntervalId)
-        refreshIntervalId = null
-      }
-    }
   }
 
   const initAuth = async () => {
-    if (isInitialized) return
-    isInitialized = true
+    if (isInitialized.value) return
+    isInitialized.value = true
 
     try {
       const user = await fetchUserInfo()
-      if (user) setupTokenRefresh()
+      if (user) {
+        setupTokenRefresh()
+      }
     } finally {
       isLoading.value = false
     }

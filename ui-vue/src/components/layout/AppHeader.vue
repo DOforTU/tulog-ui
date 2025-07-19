@@ -249,7 +249,9 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 
 const authStore = useAuthStore()
-const { isAuthenticated, currentUser, isLoading, logout } = authStore
+const { isAuthenticated, currentUser, isLoading } = storeToRefs(authStore)
+const { logout } = authStore
+
 const { isDark, toggleTheme } = useTheme()
 const router = useRouter()
 

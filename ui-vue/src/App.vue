@@ -2,11 +2,6 @@
 import { RouterView } from 'vue-router'
 import AppHeader from './components/layout/AppHeader.vue'
 import AppFooter from './components/layout/AppFooter.vue'
-// NextJS AuthProvider처럼 단순하게 useAuth만 호출
-import { useAuth } from './composables/useAuth'
-
-// NextJS처럼 단순하게 초기화
-useAuth()
 </script>
 
 <template>
