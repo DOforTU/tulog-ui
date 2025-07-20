@@ -82,8 +82,11 @@ import { storeToRefs } from 'pinia'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
+// If the user is already authenticated, redirect to home
+// But if not authenticated, show the login page(Do nothing)
 const authStore = useAuthStore()
 const { isAuthenticated, currentUser } = storeToRefs(authStore)
+
 const router = useRouter()
 
 const email = ref('')
