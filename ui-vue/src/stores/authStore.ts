@@ -16,15 +16,9 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => currentUser.value !== null)
 
   let refreshIntervalId: number | null = null
-  let isInitialized = false
-  let isFetchingUser = false // 중복 요청 방지를 위한 상태
 
   // 사용자 정보 가져오기
   const fetchUserInfo = async (): Promise<User | null> => {
-    // 이미 요청 중이면 기다리기만 하고 중복 요청 방지
-    if (isFetchingUser) return currentUser.value
-    isFetchingUser = true
-
     try {
       const raw = await api.auth.meInfo()
       const response = raw.data || raw
@@ -46,14 +40,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch {
       currentUser.value = null
       return null
-    } finally {
-      isFetchingUser = false
     }
-  }
-
-  // 로그인 이후 사용자 정보 초기화
-  const login = async () => {
-    await fetchUserInfo()
   }
 
   // 로그아웃 처리 및 상태 초기화
@@ -99,11 +86,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // 인증 상태 초기화
   const initAuth = async () => {
-    // 이미 초기화 완료되었으면 즉시 반환
-    if (isInitialized) return
-
     try {
-      isInitialized = true
       const user = await fetchUserInfo()
       if (user) setupTokenRefresh()
     } finally {
@@ -132,7 +115,6 @@ export const useAuthStore = defineStore('auth', () => {
     currentUser,
     isAuthenticated,
     isLoading,
-    login,
     logout,
     updateUser,
     fetchUserInfo,
