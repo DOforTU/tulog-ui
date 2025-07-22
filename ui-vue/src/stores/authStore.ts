@@ -15,9 +15,9 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoading = ref(true)
   const isAuthenticated = computed(() => currentUser.value !== null)
 
-  const isInitialized = ref(false)
   let refreshIntervalId: number | null = null
 
+  // 사용자 정보 가져오기
   const fetchUserInfo = async (): Promise<User | null> => {
     try {
       const raw = await api.auth.meInfo()
@@ -34,21 +34,18 @@ export const useAuthStore = defineStore('auth', () => {
         }
         return currentUser.value
       }
-    } catch {}
-    currentUser.value = null
-    return null
+
+      currentUser.value = null
+      return null
+    } catch {
+      currentUser.value = null
+      return null
+    }
   }
 
-  const login = async () => {
-    await fetchUserInfo()
-  }
-
+  // 로그아웃 처리 및 상태 초기화
   const logout = async () => {
     currentUser.value = null
-    if (refreshIntervalId) {
-      clearInterval(refreshIntervalId)
-      refreshIntervalId = null
-    }
     try {
       await api.auth.logout()
     } catch (e) {
@@ -57,12 +54,15 @@ export const useAuthStore = defineStore('auth', () => {
     window.location.href = '/'
   }
 
+  // 사용자 정보 수동 갱신
   const updateUser = (user: User) => {
     currentUser.value = user
   }
 
+  // accessToken 자동 갱신 인터벌 설정
   const setupTokenRefresh = () => {
-    if (!currentUser.value || refreshIntervalId) return
+    if (!currentUser.value) return
+    if (refreshIntervalId) clearInterval(refreshIntervalId)
 
     refreshIntervalId = setInterval(
       async () => {
@@ -74,44 +74,34 @@ export const useAuthStore = defineStore('auth', () => {
         }
       },
       10 * 60 * 1000,
-    )
+    ) // 10분마다 갱신
+
+    return () => {
+      if (refreshIntervalId) {
+        clearInterval(refreshIntervalId)
+        refreshIntervalId = null
+      }
+    }
   }
 
+  // 인증 상태 초기화
   const initAuth = async () => {
-    if (isInitialized.value) return
-    isInitialized.value = true
-
     try {
       const user = await fetchUserInfo()
-      if (user) {
-        setupTokenRefresh()
-      }
+      if (user) setupTokenRefresh()
     } finally {
       isLoading.value = false
     }
   }
 
+  // 로그인 성공 후 처리 (구글 OAuth 리디렉션 대응)
   const handleLoginSuccess = async () => {
     await initAuth()
-    if (currentUser.value && window.location.pathname === '/login') {
-      window.location.href = '/'
-    }
+    return currentUser.value
   }
 
-  const checkLoginSuccess = async () => {
-    if (typeof window === 'undefined') return
-    const urlParams = new URLSearchParams(window.location.search)
-    if (urlParams.get('success') === 'true') {
-      const newUrl = window.location.pathname
-      window.history.replaceState({}, '', newUrl)
-      await handleLoginSuccess()
-    } else {
-      await initAuth()
-    }
-  }
-
+  // 개발용 디버깅 함수 (클라이언트에서만)
   if (typeof window !== 'undefined') {
-    checkLoginSuccess()
     ;(window as any).debugAuth = () => {
       console.log('=== AUTH DEBUG ===')
       console.log('User:', currentUser.value)
@@ -125,7 +115,6 @@ export const useAuthStore = defineStore('auth', () => {
     currentUser,
     isAuthenticated,
     isLoading,
-    login,
     logout,
     updateUser,
     fetchUserInfo,

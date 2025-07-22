@@ -75,13 +75,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-import { useAuth } from '@/composables/useAuth'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
+import { storeToRefs } from 'pinia'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
-const { isAuthenticated, currentUser } = useAuth()
+// If the user is already authenticated, redirect to home
+// But if not authenticated, show the login page(Do nothing)
+const authStore = useAuthStore()
+const { isAuthenticated, currentUser } = storeToRefs(authStore)
+
 const router = useRouter()
 
 const email = ref('')
@@ -112,26 +117,6 @@ watch(
   },
   { immediate: true },
 )
-
-// Handle OAuth callback success (fallback)
-onMounted(() => {
-  // If already authenticated, redirect immediately
-  if (isAuthenticated.value) {
-    router.push('/')
-    return
-  }
-
-  // Check for success parameter and clean URL
-  const urlParams = new URLSearchParams(window.location.search)
-  if (urlParams.get('success') === 'true') {
-    console.log('OAuth success parameter detected in LoginView')
-    // Clean the URL
-    const newUrl = window.location.pathname
-    window.history.replaceState({}, '', newUrl)
-
-    // useAuth will handle the rest
-  }
-})
 </script>
 
 <style scoped>

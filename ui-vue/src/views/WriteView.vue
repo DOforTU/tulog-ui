@@ -13,9 +13,11 @@
 </template>
 
 <script setup lang="ts">
-import { useAuth } from '@/composables/useAuth'
+import { useAuthStore } from '@/stores/authStore'
+import { storeToRefs } from 'pinia'
 
-const { isAuthenticated } = useAuth()
+const authStore = useAuthStore()
+const { isAuthenticated } = storeToRefs(authStore)
 
 // Redirect to login if not authenticated
 if (!isAuthenticated.value) {
