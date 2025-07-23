@@ -3,6 +3,10 @@
     <nav class="nav-container">
       <!-- Logo -->
       <div class="nav-brand">
+        <!-- <router-link to="/" class="brand-link">
+          <span class="brand-text">TULOG</span>
+        </router-link> -->
+
         <router-link to="/" class="brand-link">
           <img
             class="brand-img"
