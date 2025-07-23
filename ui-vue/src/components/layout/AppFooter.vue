@@ -4,7 +4,13 @@
       <div class="footer-content">
         <div class="footer-brand">
           <div class="footer-logo-container">
-            <img :src="logoSrc" alt="TULOG" class="footer-logo" @error="handleImageError" />
+            <img
+              :src="logoSrc"
+              :key="logoKey"
+              alt="TULOG"
+              class="footer-logo"
+              @error="handleImageError"
+            />
             <span class="footer-logo-text" v-if="showTextLogo">TULOG</span>
           </div>
           <p class="footer-description">
@@ -48,16 +54,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useTheme } from '@/composables/useTheme'
+import { ref, computed, watch } from 'vue'
+import { useThemeStore } from '@/stores/themeStore'
 
+const themeStore = useThemeStore()
 const showTextLogo = ref(false)
-const { isDark } = useTheme()
 
 // 테마에 따른 로고 이미지 경로
 const logoSrc = computed(() => {
-  return isDark.value ? '/tulog_text_logo_white.png' : '/tulog_text_logo_black.png'
+  return themeStore.isDark ? '/_p_tulog_text_logo_white.png' : '/_p_tulog_text_logo_black.png'
 })
+
+// key를 활용해 이미지 리렌더링
+const logoKey = ref(0)
+watch(
+  () => themeStore.isDark,
+  () => {
+    logoKey.value++
+  },
+)
 
 const handleImageError = () => {
   showTextLogo.value = true

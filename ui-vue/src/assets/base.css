@@ -8,9 +8,14 @@
   --vt-c-black-soft: #1a1a1a;
   --vt-c-black-mute: #2a2a2a;
 
-  --vt-c-primary: #499200;
+  /* 현재 primary 색상 고민중... */
+  /* --vt-c-primary: #499200;
   --vt-c-primary-dark: #3a7600;
-  --vt-c-primary-light: #5fb800;
+  --vt-c-primary-light: #5fb800; */
+
+  --vt-c-primary: #8f5fe8;
+  --vt-c-primary-dark: #8f5fe8;
+  --vt-c-primary-light: #b39ddb;
 
   /* Light theme colors */
   --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);

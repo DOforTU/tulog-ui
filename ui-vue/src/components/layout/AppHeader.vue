@@ -4,7 +4,11 @@
       <!-- Logo -->
       <div class="nav-brand">
         <router-link to="/" class="brand-link">
-          <span class="brand-text">TULOG</span>
+          <img
+            class="brand-img"
+            :src="isDark ? '/_p_tulog_text_logo_white.png' : '/_p_tulog_text_logo_black.png'"
+            alt="TULOG"
+          />
         </router-link>
       </div>
 
@@ -243,16 +247,20 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useTheme } from '@/composables/useTheme'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useThemeStore } from '@/stores/themeStore'
 
 const authStore = useAuthStore()
 const { isAuthenticated, currentUser, isLoading } = storeToRefs(authStore)
 const { logout } = authStore
 
-const { isDark, toggleTheme } = useTheme()
+const themeStore = useThemeStore()
+const { isDark } = storeToRefs(themeStore)
+
+const toggleTheme = themeStore.toggleTheme
+
 const router = useRouter()
 
 const searchQuery = ref('')
@@ -334,6 +342,11 @@ onUnmounted(() => {
   letter-spacing: -0.02em;
 }
 
+.brand-img {
+  height: 24px;
+  display: block;
+}
+
 /* 검색창 */
 .search-container {
   flex: 1;
@@ -404,7 +417,7 @@ onUnmounted(() => {
 }
 
 .write-link {
-  color: var(--color-primary);
+  /* color: var(--color-primary); */
   font-weight: 600;
 }
 
