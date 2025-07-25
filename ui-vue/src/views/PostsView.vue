@@ -1,8 +1,9 @@
 <template>
   <div class="posts-view">
     <div class="container">
-      <h1 v-if="category === 'featured'" class="category-content">Posts: Featured</h1>
-      <h1 v-if="category === 'recent'" class="category-content">Posts: Recent</h1>
+      <h1 class="category-title">
+        {{ category === 'featured' ? 'Featured Posts' : 'Recent Posts' }}
+      </h1>
 
       <div class="category-buttons">
         <button
