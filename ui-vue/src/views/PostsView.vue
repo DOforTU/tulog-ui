@@ -85,32 +85,41 @@ watch(category, (val) => {
   margin: 2rem 0 1rem 0;
 }
 /* 카테고리 버튼 다크/라이트 테마 대응 */
+.category-buttons {
+  display: flex;
+  gap: 2rem;
+  border-bottom: 1px solid var(--color-border);
+  margin: 2rem 0 1rem 0;
+}
+
 .category-btn {
+  all: unset;
   font-size: 1rem;
-  color: var(--color-primary);
-  background: var(--color-background-soft);
-  border: 1px solid var(--color-border);
+  color: var(--color-text);
   cursor: pointer;
-  padding: 0.5rem 1.2rem;
-  border-radius: 8px;
-  transition:
-    color 0.2s,
-    background 0.2s,
-    border 0.2s;
-  font-weight: 500;
-  box-shadow: 0 1px 4px rgba(var(--color-background-rgb), 0.04);
+  padding: 0.5rem 0;
+  position: relative;
 }
+
 .category-btn.active {
-  color: var(--color-primary-dark);
-  background: var(--color-background-mute);
-  border: 1.5px solid var(--color-primary);
-  font-weight: 700;
+  font-weight: 500;
+  color: var(--color-primary);
 }
+
+.category-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-primary);
+}
+
 .category-btn:hover {
   color: var(--color-primary-light);
-  background: var(--color-background-mute);
-  border: 1.5px solid var(--color-primary-light);
 }
+
 .posts-view {
   padding: 2rem;
 }
