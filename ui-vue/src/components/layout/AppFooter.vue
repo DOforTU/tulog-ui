@@ -84,6 +84,7 @@ const handleImageError = () => {
   background-color: var(--color-background-mute);
   border-top: 1px solid var(--color-border);
   margin-top: auto;
+  height: 300px;
 }
 
 .footer-container {
