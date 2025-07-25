@@ -1,7 +1,8 @@
 <template>
   <div class="posts-view">
     <div class="container">
-      <h1>Posts</h1>
+      <h1 v-if="category === 'featured'" class="category-content">Posts: Featured</h1>
+      <h1 v-if="category === 'recent'" class="category-content">Posts: Recent</h1>
 
       <div class="category-buttons">
         <button
@@ -117,6 +118,13 @@ watch(category, (val) => {
 .container {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.container h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-heading);
+  margin-bottom: 1rem;
 }
 
 .coming-soon {
