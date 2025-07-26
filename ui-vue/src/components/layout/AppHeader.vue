@@ -122,8 +122,8 @@
         <!-- 햄버거 메뉴 드롭다운 -->
         <div v-if="isSmallMobile && showHamburgerMenu" class="hamburger-dropdown" @click.stop>
           <!-- 인증된 사용자 메뉴 -->
-          <div v-if="!isLoading && isAuthenticated" class="hamburger-user-section">
-            <div class="hamburger-user-info">
+          <div v-if="!isLoading" class="hamburger-user-section">
+            <div v-if="isAuthenticated" class="hamburger-user-info">
               <img
                 :src="currentUser?.profilePicture || '/default-avatar.svg'"
                 :alt="currentUser?.nickname"
@@ -138,6 +138,38 @@
 
             <!-- 주요 이동 메뉴 -->
             <div class="hamburger-menu-items">
+              <router-link
+                v-if="!isAuthenticated"
+                to="/login"
+                class="hamburger-menu-item hamburger-signin"
+                @click="closeHamburgerMenu"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M10 17L15 12L10 7"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M15 12H3"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Sign In
+              </router-link>
+              <div class="hamburger-divider"></div>
               <router-link
                 v-if="isAuthenticated"
                 to="/write"
@@ -251,10 +283,10 @@
                 Notifications
               </button>
             </div>
-            <div class="hamburger-divider"></div>
 
             <!-- 계정 관련 -->
-            <div class="hamburger-menu-items">
+            <div v-if="isAuthenticated" class="hamburger-menu-items">
+              <div class="hamburger-divider"></div>
               <a href="#" class="hamburger-menu-item">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path
@@ -330,39 +362,7 @@
                 </svg>
                 Sign Out
               </button>
-              <router-link
-                v-else
-                to="/login"
-                class="hamburger-menu-item"
-                @click="closeHamburgerMenu"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M10 17L15 12L10 7"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M15 12H3"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-                Sign In
-              </router-link>
             </div>
-            <div class="hamburger-divider"></div>
           </div>
         </div>
 
@@ -568,7 +568,7 @@ const showUserMenu = ref(false) // 유저 메뉴 드롭다운 표시 여부
 // --- 모바일 검색창 토글 상태 ---
 const showMobileSearch = ref(false) // 모바일에서 검색 input 표시 여부
 const isMobile = ref(window.innerWidth <= 768) // 현재 뷰포트가 모바일인지 여부
-const isSmallMobile = ref(window.innerWidth <= 480) // 480px 이하 여부
+const isSmallMobile = ref(window.innerWidth <= 620) // 620px 이하 여부
 
 // --- 햄버거 메뉴 상태 ---
 const showHamburgerMenu = ref(false) // 햄버거 메뉴 표시 여부
@@ -984,6 +984,15 @@ onUnmounted(() => {
     z-index: 50;
     margin-top: 0.5rem;
     overflow: hidden;
+  }
+
+  .hamburger-signin {
+    color: var(--color-primary) !important;
+    font-weight: 600;
+  }
+  .hamburger-signin svg {
+    color: var(--color-primary);
+    stroke: var(--color-primary);
   }
 
   .hamburger-user-section {
