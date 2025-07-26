@@ -136,9 +136,127 @@
               </div>
             </div>
 
+            <!-- 주요 이동 메뉴 -->
+            <div class="hamburger-menu-items">
+              <router-link
+                v-if="isAuthenticated"
+                to="/write"
+                class="hamburger-menu-item"
+                @click="closeHamburgerMenu"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M18.5 2.50001C18.8978 2.10219 19.4374 1.87869 20 1.87869C20.5626 1.87869 21.1022 2.10219 21.5 2.50001C21.8978 2.89784 22.1213 3.4374 22.1213 4.00001C22.1213 4.56262 21.8978 5.10219 21.5 5.50001L12 15L8 16L9 12L18.5 2.50001Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Write
+              </router-link>
+              <router-link to="/" class="hamburger-menu-item" @click="closeHamburgerMenu">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M3 12L12 3l9 9"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M9 21V12h6v9"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Home
+              </router-link>
+              <router-link
+                to="/posts/?category=featured"
+                class="hamburger-menu-item"
+                @click="closeHamburgerMenu"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="4"
+                    y="4"
+                    width="16"
+                    height="16"
+                    rx="2"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                  <path
+                    d="M8 8h8M8 12h8M8 16h4"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                Posts
+              </router-link>
+            </div>
+            <div class="hamburger-divider"></div>
+
+            <!-- 환경설정 -->
+            <div class="hamburger-menu-items">
+              <button @click="toggleTheme" class="hamburger-menu-item">
+                <svg v-if="isDark" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 3V4M12 20V21M4 12H3M6.31412 6.31412L5.5 5.5M17.6859 6.31412L18.5 5.5M6.31412 17.69L5.5 18.5M17.6859 17.69L18.5 18.5M21 12H20M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M21 12.79C20.8427 14.4922 20.2039 16.1144 19.1583 17.4668C18.1127 18.8192 16.7035 19.8458 15.0957 20.4265C13.4879 21.0073 11.7473 21.1181 10.0713 20.746C8.39524 20.3739 6.84947 19.5345 5.61705 18.3021C4.38464 17.0697 3.54518 15.5239 3.17311 13.8479C2.80104 12.1718 2.91189 10.4312 3.49267 8.8234C4.07344 7.21565 5.09999 5.8064 6.45239 4.7608C7.80479 3.71519 9.42699 3.07647 11.129 2.919C9.96798 4.05244 9.32504 5.55581 9.32504 7.13C9.32504 8.70418 9.96798 10.2076 11.129 11.341C12.2624 12.502 13.7658 13.145 15.34 13.145C16.9142 13.145 18.4176 12.502 19.551 11.341C19.3934 13.0430 18.7547 14.6652 17.709 16.0176Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                {{ isDark ? 'Light Mode' : 'Dark Mode' }}
+              </button>
+              <button v-if="isAuthenticated" class="hamburger-menu-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Notifications
+              </button>
+            </div>
+            <div class="hamburger-divider"></div>
+
+            <!-- 계정 관련 -->
             <div class="hamburger-menu-items">
               <a href="#" class="hamburger-menu-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21"
                     stroke="currentColor"
@@ -157,7 +275,7 @@
                 Profile
               </a>
               <a href="#" class="hamburger-menu-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M12.22 2H13.78C14.51 2 15.09 2.59 15.09 3.33V4.67C15.09 5.41 14.51 6 13.78 6H12.22C11.49 6 10.91 5.41 10.91 4.67V3.33C10.91 2.59 11.49 2 12.22 2Z"
                     stroke="currentColor"
@@ -182,8 +300,12 @@
                 </svg>
                 Settings
               </a>
-              <button @click="handleLogout" class="hamburger-menu-item logout">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <button
+                v-if="isAuthenticated"
+                @click="handleLogout"
+                class="hamburger-menu-item logout"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9"
                     stroke="currentColor"
@@ -208,82 +330,39 @@
                 </svg>
                 Sign Out
               </button>
+              <router-link
+                v-else
+                to="/login"
+                class="hamburger-menu-item"
+                @click="closeHamburgerMenu"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M10 17L15 12L10 7"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M15 12H3"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Sign In
+              </router-link>
             </div>
-          </div>
-
-          <!-- 게스트 사용자 메뉴 -->
-          <div v-else-if="!isLoading" class="hamburger-guest-section">
-            <router-link to="/login" class="hamburger-menu-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M10 17L15 12L10 7"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M15 12H3"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              Sign In
-            </router-link>
-          </div>
-
-          <!-- 공통 메뉴 아이템 -->
-          <div class="hamburger-common-section">
-            <button @click="toggleTheme" class="hamburger-menu-item">
-              <svg v-if="isDark" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M12 3V4M12 20V21M4 12H3M6.31412 6.31412L5.5 5.5M17.6859 6.31412L18.5 5.5M6.31412 17.69L5.5 18.5M17.6859 17.69L18.5 18.5M21 12H20M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M21 12.79C20.8427 14.4922 20.2039 16.1144 19.1583 17.4668C18.1127 18.8192 16.7035 19.8458 15.0957 20.4265C13.4879 21.0073 11.7473 21.1181 10.0713 20.746C8.39524 20.3739 6.84947 19.5345 5.61705 18.3021C4.38464 17.0697 3.54518 15.5239 3.17311 13.8479C2.80104 12.1718 2.91189 10.4312 3.49267 8.8234C4.07344 7.21565 5.09999 5.8064 6.45239 4.7608C7.80479 3.71519 9.42699 3.07647 11.129 2.919C9.96798 4.05244 9.32504 5.55581 9.32504 7.13C9.32504 8.70418 9.96798 10.2076 11.129 11.341C12.2624 12.502 13.7658 13.145 15.34 13.145C16.9142 13.145 18.4176 12.502 19.551 11.341C19.3934 13.0430 18.7547 14.6652 17.709 16.0176Z"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              {{ isDark ? 'Light Mode' : 'Dark Mode' }}
-            </button>
-
-            <button v-if="isAuthenticated" class="hamburger-menu-item">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              Notifications
-            </button>
+            <div class="hamburger-divider"></div>
           </div>
         </div>
 
@@ -504,7 +583,7 @@ function toggleMobileSearch() {
 function handleResize() {
   isMobile.value = window.innerWidth <= 768
   if (!isMobile.value) showMobileSearch.value = false
-  isSmallMobile.value = window.innerWidth <= 480
+  isSmallMobile.value = window.innerWidth <= 620
   if (!isSmallMobile.value) showHamburgerMenu.value = false
 }
 onMounted(() => {
@@ -527,6 +606,11 @@ const toggleUserMenu = () => {
 // 햄버거 메뉴 토글
 const toggleHamburgerMenu = () => {
   showHamburgerMenu.value = !showHamburgerMenu.value
+}
+
+// 햄버거 메뉴 닫기
+const closeHamburgerMenu = () => {
+  showHamburgerMenu.value = false
 }
 
 // 유저 프로필 이미지 에러 시 기본 이미지로 대체
@@ -828,10 +912,6 @@ onUnmounted(() => {
     border-color: var(--color-primary);
   }
 
-  .nav-menu {
-    display: none;
-  }
-
   .nav-auth {
     gap: 0.5rem;
   }
@@ -857,7 +937,11 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 620px) {
+  .nav-menu {
+    display: none;
+  }
+
   .btn-notification {
     display: none;
   }
@@ -1258,5 +1342,13 @@ onUnmounted(() => {
   100% {
     background-position: -200% 0;
   }
+}
+
+/* 스타일 추가 */
+.hamburger-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+  margin: 0.5rem 0;
 }
 </style>
