@@ -18,10 +18,10 @@
     <!-- Featured와 Recent 사이 광고 배너 -->
     <div class="ad-banner">
       <a href="https://ad.example.com" target="_blank" rel="noopener">
-        <img src="/ad_sample.png" alt="광고" />
+        <img src="/ad_sample.png" alt="AD" />
         <div class="ad-content">
-          <div class="ad-title">광고 제목</div>
-          <div class="ad-desc">광고 설명 또는 슬로건</div>
+          <div class="ad-title">AD TITLE</div>
+          <div class="ad-desc">AD DESCRIPTION OR SLOGAN</div>
         </div>
         <div class="ad-label">AD</div>
       </a>

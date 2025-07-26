@@ -24,20 +24,20 @@
     <!-- 광고 배너 -->
     <div class="ad-banner">
       <a href="https://ad.example.com" target="_blank" rel="noopener" class="ad-link">
-        <img src="/ad_sample.png" alt="광고" />
+        <img src="/ad_sample.png" alt="AD" />
         <div class="ad-content">
-          <div class="ad-title">광고 제목</div>
-          <div class="ad-desc">광고 설명 또는 슬로건</div>
-          <button class="ad-btn">자세히 보기</button>
+          <div class="ad-title">AD TITLE</div>
+          <div class="ad-desc">AD DESCRIPTION OR SLOGAN</div>
+          <button class="ad-btn">Learn More</button>
         </div>
         <div class="ad-label">AD</div>
       </a>
       <a href="https://ad.example.com" target="_blank" rel="noopener">
-        <img src="/ad_sample.png" alt="광고" />
+        <img src="/ad_sample.png" alt="AD" />
         <div class="ad-content">
-          <div class="ad-title">광고 제목</div>
-          <div class="ad-desc">광고 설명 또는 슬로건</div>
-          <button class="ad-btn">자세히 보기</button>
+          <div class="ad-title">AD TITLE</div>
+          <div class="ad-desc">AD DESCRIPTION OR SLOGAN</div>
+          <button class="ad-btn">Learn More</button>
         </div>
         <div class="ad-label">AD</div>
       </a>

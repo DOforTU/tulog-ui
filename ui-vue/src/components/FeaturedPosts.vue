@@ -6,7 +6,9 @@
         style="display: flex; align-items: center; justify-content: space-between"
       >
         <h2>Featured Stories</h2>
-        <a href="/posts?category=featured" class="view-all-link">전체 보기</a>
+        <router-link to="/posts?category=featured" class="view-more-link"
+          >Look more &gt;
+        </router-link>
       </div>
       <div class="featured-grid">
         <article
@@ -58,7 +60,7 @@ const emit = defineEmits(['navigate'])
 
 <style>
 /* 전체 보기 링크 스타일 */
-.view-all-link {
+.view-more-link {
   font-size: 1rem;
   color: var(--color-primary);
   text-decoration: underline;
@@ -66,7 +68,7 @@ const emit = defineEmits(['navigate'])
   margin-left: 1rem;
   transition: color 0.2s;
 }
-.view-all-link:hover {
+.view-more-link:hover {
   color: var(--color-primary-dark);
 }
 /* Section Headers */

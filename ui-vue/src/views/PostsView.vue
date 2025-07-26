@@ -1,29 +1,31 @@
 <template>
   <div class="posts-view">
     <div class="container">
-      <h1 class="category-title">
+      <!-- <h1 class="category-title">
         {{ category === 'featured' ? 'Featured Posts' : 'Recent Posts' }}
-      </h1>
+      </h1> -->
 
       <div class="category-buttons">
-        <button
+        <router-link
           class="category-btn"
           :class="{ active: category === 'recent' }"
-          @click="category = 'recent'"
+          :to="'/posts?category=recent'"
+          replace
         >
-          최신글
-        </button>
-        <button
+          Recent
+        </router-link>
+        <router-link
           class="category-btn"
           :class="{ active: category === 'featured' }"
-          @click="category = 'featured'"
+          :to="'/posts?category=featured'"
+          replace
         >
-          인기글
-        </button>
+          Featured
+        </router-link>
       </div>
 
       <div v-if="category === 'featured'" class="category-content">
-        <h2>Trend Posts</h2>
+        <h2>Featured Posts</h2>
         <ul class="post-list">
           <li v-for="post in featuredPosts" :key="post.id" class="post-item">
             <strong>{{ post.title }}</strong>
@@ -46,26 +48,20 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
 const category = ref('featured')
 const featuredPosts = ref<any[]>([])
 const recentPosts = ref<any[]>([])
 
-function getCategoryFromUrl() {
-  const params = new URLSearchParams(window.location.search)
-  const value = params.get('category')
+function getCategoryFromRoute() {
+  const value = route.query.category
   if (value === 'recent') return 'recent'
   return 'featured'
 }
 
-function setCategoryUrl(value: string) {
-  const params = new URLSearchParams(window.location.search)
-  params.set('category', value)
-  const newUrl = `${window.location.pathname}?${params.toString()}`
-  window.history.replaceState({}, '', newUrl)
-}
-
 onMounted(async () => {
-  category.value = getCategoryFromUrl()
+  category.value = getCategoryFromRoute()
   const response = await fetch('/samplePosts.json')
   const data = await response.json()
   // 절반 featured, 절반 recent로 나누기
@@ -74,9 +70,12 @@ onMounted(async () => {
   recentPosts.value = data.slice(half)
 })
 
-watch(category, (val) => {
-  setCategoryUrl(val)
-})
+watch(
+  () => route.query.category,
+  (val) => {
+    category.value = getCategoryFromRoute()
+  },
+)
 </script>
 
 <style scoped>
