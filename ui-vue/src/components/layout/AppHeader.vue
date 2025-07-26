@@ -120,6 +120,12 @@
         </button>
 
         <!-- 햄버거 메뉴 드롭다운 -->
+        <!-- "Profile Info", ~Sign In~, 
+          "Write", Home, Posts, 
+          Theme, "Notification", 
+          "Profile", "Settings", "Sign Out" 순서로 있음.
+          "" 에 감싸져 있는 버튼은 로그인 해야만 보임.
+          ~~ 에 감싸져 있는 버튼은 로그인을 안해야만 보임. -->
         <div v-if="isSmallMobile && showHamburgerMenu" class="hamburger-dropdown" @click.stop>
           <!-- 인증된 사용자 메뉴 -->
           <div v-if="!isLoading" class="hamburger-user-section">
