@@ -18,8 +18,16 @@
 
       <!-- Search Bar -->
       <div class="search-container">
-        <div class="search-box">
-          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <div class="search-box" style="position: relative">
+          <svg
+            class="search-icon"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            :style="isMobile ? 'cursor:pointer;pointer-events:auto;' : ''"
+            @click="isMobile ? toggleMobileSearch() : null"
+          >
             <path
               d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
               stroke="currentColor"
@@ -29,11 +37,18 @@
             />
           </svg>
           <input
+            v-if="(isMobile && showMobileSearch) || !isMobile"
             type="text"
             placeholder="Search..."
             class="search-input"
             v-model="searchQuery"
             @input="handleSearch"
+            :style="
+              isMobile && showMobileSearch
+                ? 'position:absolute;left:0;top:40px;width:180px;z-index:10;display:block;background:var(--color-background);box-shadow:0 2px 8px rgba(0,0,0,0.08);'
+                : ''
+            "
+            @click.stop
           />
         </div>
       </div>
@@ -41,7 +56,8 @@
       <!-- Navigation Menu -->
       <div class="nav-menu">
         <router-link to="/" class="nav-link">Home</router-link>
-        <router-link to="/explore" class="nav-link">Explore</router-link>
+        <router-link to="/posts/?category=featured" class="nav-link">Posts</router-link>
+        <!-- <router-link to="/explore" class="nav-link">Explore</router-link> -->
         <router-link v-if="isAuthenticated" to="/write" class="nav-link write-link">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path
@@ -256,33 +272,62 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useThemeStore } from '@/stores/themeStore'
 
+// --- 인증 및 테마 상태 관리 ---
 const authStore = useAuthStore()
-const { isAuthenticated, currentUser, isLoading } = storeToRefs(authStore)
+const { isAuthenticated, currentUser, isLoading } = storeToRefs(authStore) // 인증 상태, 유저 정보, 로딩
 const { logout } = authStore
 
 const themeStore = useThemeStore()
-const { isDark } = storeToRefs(themeStore)
+const { isDark } = storeToRefs(themeStore) // 다크모드 여부
+const toggleTheme = themeStore.toggleTheme // 테마 토글 함수
 
-const toggleTheme = themeStore.toggleTheme
+const router = useRouter() // 라우터 인스턴스
 
-const router = useRouter()
+// --- 검색창 상태 ---
+const searchQuery = ref('') // 검색어
 
-const searchQuery = ref('')
-const showUserMenu = ref(false)
+// --- 사용자 메뉴 드롭다운 상태 ---
+const showUserMenu = ref(false) // 유저 메뉴 드롭다운 표시 여부
 
+// --- 모바일 검색창 토글 상태 ---
+const showMobileSearch = ref(false) // 모바일에서 검색 input 표시 여부
+const isMobile = ref(window.innerWidth <= 768) // 현재 뷰포트가 모바일인지 여부
+
+// 모바일에서 아이콘 클릭 시 검색 input 토글
+function toggleMobileSearch() {
+  if (!isMobile.value) return
+  showMobileSearch.value = !showMobileSearch.value
+}
+
+// 뷰포트 크기 변경 시 모바일 여부 갱신 및 검색 input 숨김
+function handleResize() {
+  isMobile.value = window.innerWidth <= 768
+  if (!isMobile.value) showMobileSearch.value = false
+}
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+// 검색 input에서 엔터/입력 이벤트 처리
 const handleSearch = (event: Event) => {
   event.preventDefault()
 }
 
+// 유저 메뉴 토글
 const toggleUserMenu = () => {
   showUserMenu.value = !showUserMenu.value
 }
 
+// 유저 프로필 이미지 에러 시 기본 이미지로 대체
 const handleImageError = (event: Event) => {
   const img = event.target as HTMLImageElement
   img.src = '/default-avatar.svg'
 }
 
+// 로그아웃 처리
 const handleLogout = async () => {
   try {
     await logout()
@@ -293,6 +338,7 @@ const handleLogout = async () => {
   }
 }
 
+// 유저 메뉴 외부 클릭 시 드롭다운 닫기
 const handleClickOutside = (event: Event) => {
   const target = event.target as HTMLElement
   if (!target.closest('.user-menu')) {
@@ -300,16 +346,38 @@ const handleClickOutside = (event: Event) => {
   }
 }
 
+// 외부 클릭 이벤트 등록/해제
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
 })
-
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
 <style scoped>
+@media (max-width: 768px) {
+  .search-container {
+    max-width: 48px;
+    margin: 0;
+    flex: none;
+  }
+  .search-box {
+    justify-content: center;
+  }
+  .search-input {
+    display: none;
+  }
+  .search-icon {
+    position: static;
+    left: auto;
+    pointer-events: auto;
+    color: var(--color-text);
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+  }
+}
 .app-header {
   background-color: rgba(var(--color-background-rgb), 0.9);
   border-bottom: 1px solid var(--color-border);
@@ -478,7 +546,18 @@ onUnmounted(() => {
   }
 
   .search-container {
-    display: none;
+    margin: 0;
+  }
+
+  .search-icon {
+    left: 0px;
+    pointer-events: auto;
+    cursor: pointer;
+    padding: 8px;
+    width: 34px;
+    height: 34px;
+    border-radius: 20%;
+    border: 1px solid var(--color-text-light);
   }
 
   .nav-menu {
@@ -491,6 +570,22 @@ onUnmounted(() => {
 
   .brand-text {
     font-size: 1.25rem;
+  }
+
+  .user-name {
+    display: block;
+  }
+
+  .user-dropdown {
+    width: 240px;
+  }
+
+  .dropdown-header {
+    padding: 0.75rem;
+  }
+
+  .dropdown-item {
+    padding: 0.625rem 0.75rem;
   }
 }
 
@@ -643,27 +738,6 @@ onUnmounted(() => {
   width: 16px;
   height: 16px;
   opacity: 0.7;
-}
-
-/* Responsive design for user menu */
-@media (min-width: 768px) {
-  .user-name {
-    display: block;
-  }
-}
-
-@media (max-width: 767px) {
-  .user-dropdown {
-    width: 240px;
-  }
-
-  .dropdown-header {
-    padding: 0.75rem;
-  }
-
-  .dropdown-item {
-    padding: 0.625rem 0.75rem;
-  }
 }
 
 /* Loading skeleton */
