@@ -18,16 +18,26 @@
 
       <!-- Search Bar -->
       <div class="search-container">
-        <div class="search-box" style="position: relative">
-          <svg
-            class="search-icon"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            :style="isMobile ? 'cursor:pointer;pointer-events:auto;' : ''"
-            @click="isMobile ? toggleMobileSearch() : null"
-          >
+        <!-- 모바일: 검색 버튼은 항상 보임 -->
+        <button
+          v-if="isMobile"
+          class="search-button"
+          @click="toggleMobileSearch"
+          aria-label="Open Search"
+        >
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <!-- 모바일: 버튼 클릭 시 드롭다운 -->
+        <div v-if="isMobile && showMobileSearch" class="search-box show">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path
               d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
               stroke="currentColor"
@@ -37,11 +47,29 @@
             />
           </svg>
           <input
-            v-if="(isMobile && showMobileSearch) || !isMobile"
             type="text"
             placeholder="Search..."
             class="search-input"
-            :class="{ show: isMobile && showMobileSearch }"
+            v-model="searchQuery"
+            @input="handleSearch"
+            @click.stop
+          />
+        </div>
+        <!-- 데스크탑: 항상 보임 -->
+        <div v-if="!isMobile" class="search-box">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search..."
+            class="search-input"
             v-model="searchQuery"
             @input="handleSearch"
             @click.stop
@@ -519,8 +547,17 @@ onUnmounted(() => {
     gap: 1rem;
   }
 
-  .search-container {
-    margin: 0;
+  .search-button {
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 20%;
+    border: 1px solid var(--color-text-light);
+    color: var(--color-text);
   }
 
   .search-icon {
@@ -531,21 +568,43 @@ onUnmounted(() => {
     width: 34px;
     height: 34px;
     border-radius: 20%;
-    border: 1px solid var(--color-text-light);
+    border: none;
+    background: none;
+    color: var(--color-text);
+    position: static;
+  }
+
+  .search-box.show {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    top: 64.8px;
+    width: 100%;
+    z-index: 10;
+    background: var(--color-background-mute);
+    border-bottom: 1px solid var(--color-border);
+    padding: 10px 12px;
+    gap: 0.5rem;
   }
 
   .search-input {
-    display: none;
-  }
-  .search-input.show {
     display: block;
-    position: absolute;
-    left: 0;
-    top: 40px;
     width: 100%;
-    z-index: 10;
+    min-width: 0;
+    padding: 8px 12px 8px 24px;
+    /* border: 1px solid var(--color-border); */
     border: 1px solid var(--color-primary);
-    padding: 8px 12px;
+    border-radius: 24px;
+    background-color: var(--color-background-soft);
+    color: var(--color-text);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+
+  .search-input:hover {
+    border-color: var(--color-primary);
   }
 
   .nav-menu {
