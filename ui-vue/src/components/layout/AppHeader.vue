@@ -25,7 +25,7 @@
           @click="toggleMobileSearch"
           aria-label="Open Search"
         >
-          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <svg class="search-button-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path
               d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
               stroke="currentColor"
@@ -560,8 +560,8 @@ onUnmounted(() => {
     color: var(--color-text);
   }
 
-  .search-icon {
-    left: 0px;
+  .search-button-icon {
+    position: static;
     pointer-events: auto;
     cursor: pointer;
     padding: 8px;
@@ -571,7 +571,20 @@ onUnmounted(() => {
     border: none;
     background: none;
     color: var(--color-text);
-    position: static;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 18px;
+    pointer-events: auto;
+    cursor: pointer;
+    padding: 8px;
+    width: 34px;
+    height: 34px;
+    border-radius: 20%;
+    border: none;
+    background: none;
+    color: var(--color-text);
   }
 
   .search-box.show {
@@ -593,7 +606,7 @@ onUnmounted(() => {
     display: block;
     width: 100%;
     min-width: 0;
-    padding: 8px 12px 8px 24px;
+    padding: 8px 12px 8px 40px;
     /* border: 1px solid var(--color-border); */
     border: 1px solid var(--color-primary);
     border-radius: 24px;
