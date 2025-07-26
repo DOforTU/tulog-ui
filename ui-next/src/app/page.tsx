@@ -2,7 +2,6 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
-import Header from "@/components/header/header";
 import styles from "./page.module.css";
 
 export default function HomePage() {
@@ -10,8 +9,6 @@ export default function HomePage() {
 
     return (
         <div className={styles.container}>
-            <Header />
-
             <main className={styles.main}>
                 <h1 className={styles.title}>TULOG 블로그에 오신 걸 환영합니다</h1>
 

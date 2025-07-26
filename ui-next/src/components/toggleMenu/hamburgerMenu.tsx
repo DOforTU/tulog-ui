@@ -4,37 +4,42 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import styles from "./hamburgerMenu.module.css";
+import ProfileMenuContents from "./profileMenuContents";
 
 export default function HamburgerMenu() {
-    const { currentUser, isLoading, clearUser } = useAuth();
+    const { currentUser, isLoading } = useAuth();
     const { isDark, toggleTheme } = useTheme();
     const router = useRouter();
-
-    const handleLogout = () => {
-        clearUser();
-        router.push("/");
-    };
 
     return (
         <div className={styles.hamburgerDropdown}>
             {!isLoading && currentUser && (
-                <div className={styles.hamburgerUserSection}>
-                    <div className={styles.hamburgerUserInfo}>
-                        <Image
-                            src={currentUser.profilePicture || "/default-avatar.svg"}
-                            alt={currentUser.nickname}
-                            width={48}
-                            height={48}
-                            className={styles.hamburgerAvatar}
-                        />
-                        <div className={styles.hamburgerUserDetails}>
-                            <span className={styles.hamburgerUserName}>{currentUser.nickname}</span>
-                            <span className={styles.hamburgerUserEmail}>{currentUser.email}</span>
-                        </div>
-                    </div>
-                </div>
+                <>
+                    <ProfileMenuContents />
+                    <div className={styles.hamburgerDivider}></div>
+                    <button onClick={() => router.push("/write")} className={styles.hamburgerMenuItem}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                                <path
+                                    d="M18.5 2.50001C18.8978 2.10219 19.4374 1.87869 20 1.87869C20.5626 1.87869 21.1022 2.10219 21.5 2.50001C21.8978 2.89784 22.1213 3.4374 22.1213 4.00001C22.1213 4.56262 21.8978 5.10219 21.5 5.50001L12 15L8 16L9 12L18.5 2.50001Z"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+                            Write
+                        </span>
+                    </button>
+                </>
             )}
 
             <div className={styles.hamburgerMenuItems}>
@@ -73,19 +78,6 @@ export default function HamburgerMenu() {
                         </button>
                         <div className={styles.hamburgerDivider}></div>
                     </div>
-                )}
-
-                {currentUser && (
-                    <>
-                        <button onClick={() => router.push("/write")} className={styles.hamburgerMenuItem}>
-                            Write
-                        </button>
-                        <button className={styles.hamburgerMenuItem}>Profile</button>
-                        <button className={styles.hamburgerMenuItem}>Settings</button>
-                        <button onClick={handleLogout} className={`${styles.hamburgerMenuItem} ${styles.logout}`}>
-                            Sign Out
-                        </button>
-                    </>
                 )}
 
                 <button onClick={() => router.push("/")} className={styles.hamburgerMenuItem}>
@@ -179,7 +171,25 @@ export default function HamburgerMenu() {
 
                 {currentUser && (
                     <>
-                        <button className={styles.hamburgerMenuItem}>Notifications</button>
+                        <button className={styles.hamburgerMenuItem}>
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M18 16V11C18 7.68629 15.3137 5 12 5C8.68629 5 6 7.68629 6 11V16L4 18V19H20V18L18 16Z"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                                <path
+                                    d="M9 21C9.55228 21.5978 10.3261 22 11.1667 22C12.0072 22 12.781 21.5978 13.3333 21"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                            Notifications
+                        </button>
                     </>
                 )}
             </div>

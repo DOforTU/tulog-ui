@@ -1,7 +1,7 @@
 "use client";
 
 import { fetchCurrentUser } from "@/lib/api/users";
-import { loginWithGoogle } from "@/lib/api/auth";
+import { loginWithGoogle, logout as logoutApi, refreshToken } from "@/lib/api/auth";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
 interface User {
@@ -16,6 +16,7 @@ interface AuthContextType {
     isLoading: boolean;
     setUser: (user: User | null) => void;
     clearUser: () => void;
+    logout: () => Promise<void>;
     loginWithGoogle: () => void;
 }
 
@@ -28,8 +29,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const data = await fetchCurrentUser();
-                setCurrentUser(data);
+                const res = await fetchCurrentUser();
+                setCurrentUser(res.data);
             } catch {
                 setCurrentUser(null);
             } finally {
@@ -38,13 +39,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         };
 
         fetchUser();
+
+        // 10분마다 토큰 재발급
+        const interval = setInterval(async () => {
+            try {
+                await refreshToken();
+            } catch {
+                await logoutApi();
+                setCurrentUser(null);
+            }
+        }, 10 * 60 * 1000);
+
+        return () => clearInterval(interval);
     }, []);
 
     const setUser = (user: User | null) => setCurrentUser(user);
     const clearUser = () => setCurrentUser(null);
+    const logout = async () => {
+        await logoutApi();
+        setCurrentUser(null);
+    };
 
     return (
-        <AuthContext.Provider value={{ currentUser, isLoading, setUser, clearUser, loginWithGoogle }}>
+        <AuthContext.Provider value={{ currentUser, isLoading, setUser, clearUser, logout, loginWithGoogle }}>
             {children}
         </AuthContext.Provider>
     );

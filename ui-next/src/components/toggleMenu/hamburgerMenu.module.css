@@ -1,6 +1,6 @@
 .hamburgerDropdown {
     display: block;
-    position: absolute;
+    position: fixed;
     top: 64px;
     right: 0;
     width: 280px;
@@ -15,7 +15,7 @@
 .hamburgerDivider {
     height: 1px;
     background-color: var(--color-border);
-    width: 80%;
+    width: 100%;
     margin: 6px auto;
 }
 

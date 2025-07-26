@@ -17,24 +17,20 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         const initial = saved === "dark" || (!saved && prefersDark);
         setIsDark(initial);
-        updateHtmlClass(initial);
-    }, []);
-
-    const updateHtmlClass = (dark: boolean) => {
-        const root = document.documentElement;
-        if (dark) {
-            root.classList.add("dark");
-            localStorage.setItem("theme", "dark");
-        } else {
-            root.classList.remove("dark");
-            localStorage.setItem("theme", "light");
+        if (typeof document !== "undefined") {
+            document.body.classList.remove("dark", "light");
+            document.body.classList.add(initial ? "dark" : "light");
         }
-    };
+    }, []);
 
     const toggleTheme = () => {
         setIsDark((prev) => {
             const next = !prev;
-            updateHtmlClass(next);
+            localStorage.setItem("theme", next ? "dark" : "light");
+            if (typeof document !== "undefined") {
+                document.body.classList.remove("dark", "light");
+                document.body.classList.add(next ? "dark" : "light");
+            }
             return next;
         });
     };
