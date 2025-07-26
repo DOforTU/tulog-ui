@@ -251,6 +251,11 @@
         transition: all 0.3s ease;
     }
 
+    .hamburger:hover {
+        background-color: var(--color-background-soft);
+        color: var(--color-primary);
+    }
+
     .iconBtn {
         display: none;
     }

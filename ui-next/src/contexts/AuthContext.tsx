@@ -1,6 +1,7 @@
 "use client";
 
 import { fetchCurrentUser } from "@/lib/api/users";
+import { loginWithGoogle } from "@/lib/api/auth";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
 interface User {
@@ -8,7 +9,6 @@ interface User {
     email: string;
     nickname: string;
     profilePicture: string;
-    // 필요시 role, provider 등 추가
 }
 
 interface AuthContextType {
@@ -16,6 +16,7 @@ interface AuthContextType {
     isLoading: boolean;
     setUser: (user: User | null) => void;
     clearUser: () => void;
+    loginWithGoogle: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,11 +41,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const setUser = (user: User | null) => setCurrentUser(user);
-
     const clearUser = () => setCurrentUser(null);
 
     return (
-        <AuthContext.Provider value={{ currentUser, isLoading, setUser, clearUser }}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{ currentUser, isLoading, setUser, clearUser, loginWithGoogle }}>
+            {children}
+        </AuthContext.Provider>
     );
 };
 

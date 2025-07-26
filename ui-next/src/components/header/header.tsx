@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import styles from "./header.module.css";
 import Image from "next/image";
+import HamburgerMenu from "../toggleMenu/hamburgerMenu";
 
 export default function Header() {
     const { currentUser, isLoading, clearUser } = useAuth();
@@ -122,6 +123,23 @@ export default function Header() {
                         )}
                     </button>
 
+                    {isSmallMobile && (
+                        <button className={styles.hamburger} onClick={() => setIsMenuOpen((prev) => !prev)}>
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <line x1="3" y1="12" x2="21" y2="12" />
+                                <line x1="3" y1="6" x2="21" y2="6" />
+                                <line x1="3" y1="18" x2="21" y2="18" />
+                            </svg>
+                        </button>
+                    )}
+
                     <div className={styles.auth}>
                         {!isLoading && currentUser ? (
                             <div className={styles.profile}>
@@ -143,57 +161,24 @@ export default function Header() {
                             </button>
                         )}
                     </div>
-
-                    {isSmallMobile && (
-                        <button className={styles.hamburger} onClick={() => setIsMenuOpen((prev) => !prev)}>
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <line x1="3" y1="12" x2="21" y2="12" />
-                                <line x1="3" y1="6" x2="21" y2="6" />
-                                <line x1="3" y1="18" x2="21" y2="18" />
-                            </svg>
-                        </button>
-                    )}
                 </nav>
             </header>
 
             {/* Search input rendered under header when open in mobile view */}
             {isMobile && isSearchOpen && (
                 <div className={styles.searchDropdown}>
-                    <svg className={styles.searchIcon} width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path
-                            d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
-                    <input type="text" placeholder="Search..." className={styles.searchInput} />
+                    <input
+                        ref={searchRef}
+                        type="text"
+                        placeholder="Search..."
+                        className={styles.searchInputMobile}
+                        onBlur={() => setIsSearchOpen(false)}
+                    />
                 </div>
             )}
 
-            {/* Mobile hamburger menu dropdown */}
-            {isSmallMobile && isMenuOpen && (
-                <div className={styles.mobileMenu}>
-                    {!isLoading && !currentUser && <button onClick={() => router.push("/login")}>Sign In</button>}
-                    {!isLoading && currentUser && <button onClick={() => router.push("/write")}>Write</button>}
-                    <button onClick={() => router.push("/")}>Home</button>
-                    <button onClick={() => router.push("/posts?category=featured")}>Posts</button>
-                    <button onClick={toggleTheme}>Toggle Theme</button>
-                    {!isLoading && currentUser && (
-                        <button onClick={handleLogout} className={styles.logout}>
-                            Sign Out
-                        </button>
-                    )}
-                </div>
-            )}
+            {/* Hamburger menu component */}
+            {isSmallMobile && isMenuOpen && <HamburgerMenu />}
         </>
     );
 }
