@@ -41,13 +41,9 @@
             type="text"
             placeholder="Search..."
             class="search-input"
+            :class="{ show: isMobile && showMobileSearch }"
             v-model="searchQuery"
             @input="handleSearch"
-            :style="
-              isMobile && showMobileSearch
-                ? 'position:absolute;left:0;top:40px;width:180px;z-index:10;display:block;background:var(--color-background);box-shadow:0 2px 8px rgba(0,0,0,0.08);'
-                : ''
-            "
             @click.stop
           />
         </div>
@@ -356,28 +352,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-@media (max-width: 768px) {
-  .search-container {
-    max-width: 48px;
-    margin: 0;
-    flex: none;
-  }
-  .search-box {
-    justify-content: center;
-  }
-  .search-input {
-    display: none;
-  }
-  .search-icon {
-    position: static;
-    left: auto;
-    pointer-events: auto;
-    color: var(--color-text);
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
-  }
-}
 .app-header {
   background-color: rgba(var(--color-background-rgb), 0.9);
   border-bottom: 1px solid var(--color-border);
@@ -558,6 +532,20 @@ onUnmounted(() => {
     height: 34px;
     border-radius: 20%;
     border: 1px solid var(--color-text-light);
+  }
+
+  .search-input {
+    display: none;
+  }
+  .search-input.show {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 40px;
+    width: 100%;
+    z-index: 10;
+    border: 1px solid var(--color-primary);
+    padding: 8px 12px;
   }
 
   .nav-menu {
