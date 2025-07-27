@@ -1,25 +1,54 @@
 // app/page.tsx
 "use client";
 
-import { useAuth } from "@/contexts/AuthContext";
+import { FeaturedPosts } from "@/components/home/featuredPosts";
 import styles from "./page.module.css";
+import { RecentPosts } from "@/components/home/recentPosts";
+import { Sidebar } from "@/components/home/sidebar";
+import Image from "next/image";
 
 export default function HomePage() {
-    const { currentUser, isLoading } = useAuth();
-
     return (
-        <div className={styles.container}>
-            <main className={styles.main}>
-                <h1 className={styles.title}>TULOG 블로그에 오신 걸 환영합니다</h1>
+        <div className={styles.homePage}>
+            {/* Hero Section */}
+            <section className={styles.hero}>
+                <div className={styles.container}>
+                    <div className={styles.heroContent}>
+                        <h1 className={styles.heroTitle}>Turn thoughts into words, experiences into stories</h1>
+                        <p className={styles.heroSubtitle}>
+                            A platform where individuals and teams share their stories across all topics
+                        </p>
+                    </div>
+                </div>
+            </section>
 
-                {isLoading ? (
-                    <p className={styles.text}>사용자 정보를 불러오는 중...</p>
-                ) : currentUser ? (
-                    <p className={styles.text}>안녕하세요, {currentUser.nickname}님!</p>
-                ) : (
-                    <p className={styles.text}>로그인하여 블로그를 시작해보세요.</p>
-                )}
-            </main>
+            {/* Featured Posts */}
+            <FeaturedPosts />
+            <div className={styles.sectionDivider}></div>
+
+            {/* 광고 배너 */}
+            <div className={styles.adBanner}>
+                <a href="https://ad.example.com" target="_blank" rel="noopener">
+                    <Image src="/ad_sample.png" width={400} height={200} alt="AD" className={styles.adImage} />
+                    <div className={styles.adContent}>
+                        <div className={styles.adTitle}>AD TITLE</div>
+                        <div className={styles.adDesc}>AD DESCRIPTION OR SLOGAN</div>
+                    </div>
+                    <div className={styles.adLabel}>AD</div>
+                </a>
+            </div>
+
+            {/* Recent Posts & Sidebar */}
+            <section className={styles.recentSidebarSection}>
+                <div className={styles.container}>
+                    <div className={styles.contentLayout}>
+                        <main className={styles.mainContent}>
+                            <RecentPosts />
+                        </main>
+                        <Sidebar />
+                    </div>
+                </div>
+            </section>
         </div>
     );
 }

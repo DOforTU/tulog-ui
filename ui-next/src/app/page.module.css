@@ -1,6 +1,6 @@
 /* app/page.css */
 
-.container {
+.homePage {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -9,21 +9,29 @@
     color: var(--color-text);
 }
 
-.main {
-    max-width: 800px;
+.sectionDivider {
     width: 100%;
-    padding: 2rem;
+    height: 1px;
+    background-color: var(--color-border);
+}
+
+.heroContent {
+    max-width: 800px;
+    padding: 6rem 2rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
 }
 
-.title {
-    font-size: 2rem;
-    font-weight: 700;
+.heroContent h1 {
+    font-size: 3rem;
+    font-weight: 600;
     margin-bottom: 1rem;
     color: var(--color-heading);
 }
-
-.text {
-    font-size: 1rem;
-    color: var(--color-text-light);
+.heroContent p {
+    font-size: 1.4rem;
 }
