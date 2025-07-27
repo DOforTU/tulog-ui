@@ -37,10 +37,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setIsLoading(false);
             }
         };
-
         fetchUser();
+    }, []);
 
-        // 10분마다 토큰 재발급
+    useEffect(() => {
+        if (!currentUser) return;
+
         const interval = setInterval(async () => {
             try {
                 await refreshToken();
@@ -48,10 +50,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 await logoutApi();
                 setCurrentUser(null);
             }
-        }, 10 * 60 * 1000);
+        }, 10 * 60 * 1000); // 10분(기본), 6초(테스트)
 
         return () => clearInterval(interval);
-    }, []);
+    }, [currentUser]);
 
     const setUser = (user: User | null) => setCurrentUser(user);
     const clearUser = () => setCurrentUser(null);

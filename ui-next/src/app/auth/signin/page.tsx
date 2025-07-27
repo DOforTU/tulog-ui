@@ -4,7 +4,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import styles from "./login.module.css";
+import styles from "./signin.module.css";
 
 export default function LoginPage() {
     const { currentUser, isLoading, loginWithGoogle } = useAuth();
@@ -85,7 +85,7 @@ export default function LoginPage() {
                         <div className={styles.formFooter}>
                             <p>
                                 Don&apos;t have an account?{" "}
-                                <a href="/signup" className={styles.signupLink}>
+                                <a onClick={() => router.push("/auth/signup")} className={styles.signupLink}>
                                     Sign up
                                 </a>
                             </p>

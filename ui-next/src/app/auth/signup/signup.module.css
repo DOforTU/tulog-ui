@@ -1,0 +1,238 @@
+.signupPage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.signupContainer {
+    width: 100%;
+}
+
+.signupForm {
+    background: var(--color-background-soft);
+    padding: 3rem;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.formHeader {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.formHeader h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--color-heading);
+    line-height: 1.3;
+}
+
+.formHeader p {
+    color: var(--color-text-light);
+    font-size: 1rem;
+}
+
+.btnGoogle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.5rem;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 1.5rem;
+}
+
+.btnGoogle:hover {
+    background-color: var(--color-background-soft);
+    border-color: var(--color-border-hover);
+}
+
+.divider {
+    text-align: center;
+    margin: 1.5rem 0;
+    position: relative;
+}
+
+.divider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--color-border);
+}
+
+.divider span {
+    background: var(--color-background-soft);
+    padding: 0 1rem;
+    color: var(--color-text-light);
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 1;
+}
+
+.emailForm {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.formGroup {
+    margin-bottom: 1rem;
+}
+
+.formInput {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease;
+}
+
+.formInput:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(73, 146, 0, 0.1);
+}
+
+.formInput::placeholder {
+    color: var(--color-text-light);
+}
+
+.checkboxGroup {
+    margin: 1.5rem 0;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.checkboxLabel input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--color-border);
+    border-radius: 4px;
+    background-color: var(--color-background);
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    position: relative;
+    margin-top: 1px;
+}
+
+.checkboxLabel input[type="checkbox"]:checked + .checkmark {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.checkboxLabel input[type="checkbox"]:checked + .checkmark::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkboxText {
+    color: var(--color-text-light);
+}
+
+.termsLink {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.termsLink:hover {
+    text-decoration: underline;
+}
+
+.btnPrimary {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 0.5rem;
+}
+
+.btnPrimary:hover:not(:disabled) {
+    background-color: var(--color-primary-dark);
+}
+
+.btnPrimary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.formFooter {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.formFooter p {
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+}
+
+.signinLink {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.signinLink:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 1rem;
+    }
+    .signupForm {
+        padding: 2rem;
+    }
+    .formHeader h1 {
+        font-size: 1.5rem;
+    }
+}
