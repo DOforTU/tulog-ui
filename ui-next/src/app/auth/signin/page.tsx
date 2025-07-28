@@ -6,11 +6,12 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import styles from "./signin.module.css";
 
-export default function LoginPage() {
+export default function SigninPage() {
     const { currentUser, isLoading, loginWithGoogle } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
+        // 로그인 한 사용자라면 홈으로 리다이렉트
         if (!isLoading && currentUser) {
             router.replace("/");
         }

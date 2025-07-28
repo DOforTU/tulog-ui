@@ -10,6 +10,7 @@ export default function SignupPage() {
     const router = useRouter();
 
     useEffect(() => {
+        // 로그인 한 사용자라면 홈으로 리다이렉트
         if (!isLoading && currentUser) {
             router.replace("/");
         }
