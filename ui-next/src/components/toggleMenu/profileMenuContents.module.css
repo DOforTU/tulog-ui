@@ -55,12 +55,11 @@
     font-size: 0.97rem;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.18s, color 0.18s;
+    transition: background 0.2s ease;
 }
 
 .dropdownItem:hover {
-    background: var(--color-background-soft);
-    color: var(--color-primary);
+    background: var(--color-background-mute);
 }
 
 .logout {
