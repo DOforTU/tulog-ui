@@ -15,9 +15,15 @@
     background-color: var(--color-border);
 }
 
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
 .heroContent {
     max-width: 800px;
-    padding: 6rem 2rem;
+    padding: 6rem 0;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -34,4 +40,94 @@
 }
 .heroContent p {
     font-size: 1.4rem;
+}
+
+.adBanner {
+    position: relative;
+    width: 100%;
+    background-color: var(--color-background-soft);
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 0;
+    margin: 2rem 0;
+}
+
+.adBanner a {
+    text-decoration: none;
+}
+
+.adImage {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.adLabel {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: var(--color-primary);
+    color: var(--color-heading);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.05em;
+    z-index: 2;
+}
+
+.adContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.adTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-primary-dark, #2d3a4a);
+    margin-bottom: 0.25rem;
+}
+.adDesc {
+    font-size: 0.875rem;
+    color: var(--color-text-light);
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.adBtn {
+    padding: 0.5rem 1.25rem;
+    background-color: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    transition: background 0.2s;
+}
+
+.recentSidebarSection {
+    width: 100%;
+}
+
+.contentLayout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.mainContent {
+    /* RecentPosts 영역 스타일 */
+}
+
+@media (max-width: 768px) {
+    .contentLayout {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 2rem;
+    }
 }

@@ -29,11 +29,12 @@ export default function HomePage() {
             {/* 광고 배너 */}
             <div className={styles.adBanner}>
                 <a href="https://ad.example.com" target="_blank" rel="noopener">
-                    <Image src="/ad_sample.png" width={400} height={200} alt="AD" className={styles.adImage} />
+                    <Image src="/ad_sample.png" width={450} height={150} alt="AD" className={styles.adImage} />
                     <div className={styles.adContent}>
                         <div className={styles.adTitle}>AD TITLE</div>
                         <div className={styles.adDesc}>AD DESCRIPTION OR SLOGAN</div>
                     </div>
+                    <button className={styles.adBtn}>Learn More</button>
                     <div className={styles.adLabel}>AD</div>
                 </a>
             </div>
@@ -43,8 +44,10 @@ export default function HomePage() {
                 <div className={styles.container}>
                     <div className={styles.contentLayout}>
                         <main className={styles.mainContent}>
+                            {/* 최근 게시글 6개를 보여줌, props로 전달 */}
                             <RecentPosts />
                         </main>
+                        {/* 인기 태그, 추천 작가, 광고 배너를 props로 전달 */}
                         <Sidebar />
                     </div>
                 </div>
