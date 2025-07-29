@@ -3,9 +3,11 @@
 import style from "./footer.module.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export function Footer() {
     const router = useRouter();
+    const { isDark } = useTheme();
     return (
         <footer className={style.appFooter}>
             <div className={style.footerContainer}>
@@ -13,13 +15,12 @@ export function Footer() {
                     <div className={style.footerBrand}>
                         <div className={style.footerLogoContainer}>
                             <Image
-                                src="/_p_tulog_text_logo_white.png"
+                                src={isDark ? "/_p_tulog_text_logo_white.png" : "/_p_tulog_text_logo_black.png"}
                                 alt="TULOG"
                                 width={120}
                                 height={32}
                                 className={style.footerLogo}
                             />
-                            <span className={style.footerLogoText}>TULOG</span>
                         </div>
                         <p className={style.footerDescription}>
                             A platform for sharing personal and team stories across all topics
