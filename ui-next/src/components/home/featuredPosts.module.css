@@ -8,11 +8,26 @@
     padding: 2rem;
 }
 
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .sectionTitle {
     font-size: 2rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
     color: var(--color-heading);
+}
+
+.viewAllButton {
+    color: var(--color-primary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.9rem;
 }
 
 .featuredGrid {

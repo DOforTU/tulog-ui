@@ -1,6 +1,7 @@
 import styles from "./featuredPosts.module.css";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface Author {
     name: string;
@@ -23,6 +24,7 @@ interface Post {
 
 export function FeaturedPosts() {
     const [posts, setPosts] = useState<Post[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
         fetch("/samplePosts.json")
@@ -36,7 +38,12 @@ export function FeaturedPosts() {
     return (
         <section className={styles.featuredSection}>
             <div className={styles.container}>
-                <h2 className={styles.sectionTitle}>Featured Posts</h2>
+                <div className={styles.sectionHeader}>
+                    <h2 className={styles.sectionTitle}>Featured Posts</h2>
+                    <button onClick={() => router.push("/posts?category=featured")} className={styles.viewAllButton}>
+                        View All {">"}
+                    </button>
+                </div>
                 <div className={styles.featuredGrid}>
                     {posts.map((post) => (
                         <div key={post.id} className={styles.featuredCard}>

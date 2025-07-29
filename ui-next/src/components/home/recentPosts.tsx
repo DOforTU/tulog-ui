@@ -1,6 +1,7 @@
 import { PostCard } from "../post/postCard";
 import styles from "./recentPosts.module.css";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Author {
     name: string;
@@ -23,6 +24,7 @@ interface Post {
 
 export function RecentPosts() {
     const [posts, setPosts] = useState<Post[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
         fetch("/samplePosts.json")
@@ -34,7 +36,12 @@ export function RecentPosts() {
 
     return (
         <div>
-            <h2 className={styles.sectionTitle}>Recent Posts</h2>
+            <div className={styles.sectionHeader}>
+                <h2 className={styles.sectionTitle}>Recent Posts</h2>
+                <button className={styles.viewAllButton} onClick={() => router.push("/posts?category=recent")}>
+                    View All {">"}
+                </button>
+            </div>
             <div>
                 {posts.map((post) => (
                     <PostCard key={post.id} post={post} />
