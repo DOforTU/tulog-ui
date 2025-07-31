@@ -22,7 +22,7 @@ export default function HamburgerMenu({ onClose }: { onClose: () => void }) {
         <div className={styles.hamburgerDropdown}>
             {!isLoading && currentUser && (
                 <>
-                    <ProfileMenuContents />
+                    <ProfileMenuContents onClose={onClose} />
                     <div className={styles.hamburgerDivider}></div>
                     <button onClick={() => handleMove("/write")} className={styles.hamburgerMenuItem}>
                         <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>

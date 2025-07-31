@@ -1,15 +1,26 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import styles from "./profileMenuContents.module.css";
 
-export default function ProfileMenuContents() {
+interface ProfileMenuContentsProps {
+    onClose?: () => void;
+}
+
+export default function ProfileMenuContents({ onClose }: ProfileMenuContentsProps) {
     const { currentUser, logout } = useAuth();
+    const router = useRouter();
     if (!currentUser) return null;
 
     const handleLogout = async () => {
         await logout();
+    };
+
+    const handleProfileClick = () => {
+        if (onClose) onClose();
+        router.push(`/users/@${currentUser.nickname}`);
     };
 
     return (
@@ -29,7 +40,7 @@ export default function ProfileMenuContents() {
             </div>
             <div className={styles.dropdownDivider}></div>
             <div className={styles.dropdownMenu}>
-                <button className={styles.dropdownItem}>
+                <button className={styles.dropdownItem} onClick={handleProfileClick}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                         <path
                             d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21"
