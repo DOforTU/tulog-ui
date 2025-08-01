@@ -30,6 +30,8 @@ export default function UserProfilePage() {
 
     useEffect(() => {
         // currentUser가 null(로딩 중)이거나, 닉네임이 없거나, 본인 프로필이면 요청하지 않음
+        // TODO: 로그인 하지 않았을 때 다른 사용자 프로필을 못 보는 오류가 발생함.
+        // 로그인을 한 경우만 다른 사용자를 볼 수 있는 문제가 발생.
         if (currentUser === null) return;
         if (!nickname) return;
         if (currentUser && currentUser.nickname === nickname) return;

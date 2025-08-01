@@ -3,12 +3,16 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styles from "./signin.module.css";
 
 export default function SigninPage() {
-    const { currentUser, isLoading, loginWithGoogle } = useAuth();
+    const { currentUser, isLoading, loginWithGoogle, loginWithLocal } = useAuth();
     const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [localLoading, setLocalLoading] = useState(false);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         // 로그인 한 사용자라면 홈으로 리다이렉트
@@ -19,6 +23,31 @@ export default function SigninPage() {
 
     const handleGoogleLogin = () => {
         loginWithGoogle();
+    };
+
+    const handleLocalLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+
+        if (!email || !password) {
+            setError("이메일과 비밀번호를 입력해주세요.");
+            return;
+        }
+
+        setLocalLoading(true);
+        try {
+            const success = await loginWithLocal(email, password);
+            if (success) {
+                router.replace("/");
+            } else {
+                setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+            }
+        } catch (err) {
+            console.error("Local login error:", err);
+            setError("로그인 중 오류가 발생했습니다.");
+        } finally {
+            setLocalLoading(false);
+        }
     };
 
     return (
@@ -57,14 +86,29 @@ export default function SigninPage() {
                             <span>or</span>
                         </div>
 
-                        <form className={styles.emailForm}>
+                        <form onSubmit={handleLocalLogin}>
+                            {error && (
+                                <div
+                                    style={{
+                                        color: "red",
+                                        marginBottom: "1rem",
+                                        fontSize: "0.875rem",
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    {error}
+                                </div>
+                            )}
+
                             <div className={styles.formGroup}>
                                 <input
                                     id="email"
                                     type="email"
                                     placeholder="Email"
-                                    disabled
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     className={styles.formInput}
+                                    required
                                 />
                             </div>
 
@@ -73,13 +117,15 @@ export default function SigninPage() {
                                     id="password"
                                     type="password"
                                     placeholder="Password"
-                                    disabled
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     className={styles.formInput}
+                                    required
                                 />
                             </div>
 
-                            <button type="submit" className={styles.btnPrimary} disabled>
-                                Sign In (Coming Soon)
+                            <button type="submit" className={styles.btnPrimary} disabled={localLoading}>
+                                {localLoading ? "Signing In..." : "Sign In"}
                             </button>
                         </form>
 

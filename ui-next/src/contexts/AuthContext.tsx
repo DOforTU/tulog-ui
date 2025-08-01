@@ -1,7 +1,7 @@
 "use client";
 
 import { fetchCurrentUser } from "@/lib/api/users";
-import { loginWithGoogle, logout as logoutApi, refreshToken } from "@/lib/api/auth";
+import { loginWithGoogle, loginWithLocal, logout as logoutApi, refreshToken } from "@/lib/api/auth";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
 interface User {
@@ -9,6 +9,8 @@ interface User {
     email: string;
     nickname: string;
     profilePicture: string;
+    isActive: boolean;
+    createdAt: string;
 }
 
 interface AuthContextType {
@@ -18,6 +20,7 @@ interface AuthContextType {
     clearUser: () => void;
     logout: () => Promise<void>;
     loginWithGoogle: () => void;
+    loginWithLocal: (email: string, password: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,8 +32,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetchCurrentUser();
-                setCurrentUser(res.data);
+                const userData = await fetchCurrentUser();
+                setCurrentUser(userData.data);
             } catch {
                 setCurrentUser(null);
             } finally {
@@ -62,8 +65,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setCurrentUser(null);
     };
 
+    const handleLocalLogin = async (email: string, password: string): Promise<boolean> => {
+        try {
+            await loginWithLocal(email, password);
+            // 로그인 성공 후 사용자 정보 다시 가져오기
+            const userData = await fetchCurrentUser();
+            console.log("User data after local login:", userData.data);
+            if (userData) {
+                setCurrentUser(userData.data);
+                console.log(currentUser);
+            }
+
+            return true;
+        } catch (error) {
+            console.error("Local login failed:", error);
+            return false;
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ currentUser, isLoading, setUser, clearUser, logout, loginWithGoogle }}>
+        <AuthContext.Provider
+            value={{
+                currentUser,
+                isLoading,
+                setUser,
+                clearUser,
+                logout,
+                loginWithGoogle,
+                loginWithLocal: handleLocalLogin,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

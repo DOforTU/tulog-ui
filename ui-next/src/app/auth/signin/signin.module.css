@@ -91,11 +91,6 @@
     z-index: 0;
 }
 
-.emailForm {
-    opacity: 0.5;
-    pointer-events: none;
-}
-
 .formGroup {
     margin-bottom: 1rem;
 }

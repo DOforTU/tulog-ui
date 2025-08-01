@@ -28,7 +28,7 @@ export default function ProfileMenuContents({ onClose }: ProfileMenuContentsProp
             <div className={styles.dropdownHeader}>
                 <Image
                     src={currentUser.profilePicture || "/default-avatar.svg"}
-                    alt={currentUser.nickname}
+                    alt={currentUser.nickname || "User Avatar"}
                     className={styles.dropdownAvatar}
                     width={40}
                     height={40}

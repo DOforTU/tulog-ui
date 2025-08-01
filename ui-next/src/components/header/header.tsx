@@ -219,7 +219,7 @@ export default function Header() {
                                 >
                                     <Image
                                         src={currentUser.profilePicture || "/default-avatar.svg"}
-                                        alt={currentUser.nickname}
+                                        alt={currentUser.nickname || "User Avatar"}
                                         className={styles.avatar}
                                         width={32}
                                         height={32}
