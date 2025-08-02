@@ -226,6 +226,7 @@ export default function UserProfilePage() {
                 {/* 프로필 섹션 */}
                 <Profile
                     user={displayUser}
+                    isOwnProfile={isOwnProfile}
                     followersCount={followersCount}
                     followingCount={followingCount}
                     followLoading={followLoading}

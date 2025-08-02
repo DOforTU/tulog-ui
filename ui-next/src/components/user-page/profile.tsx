@@ -1,15 +1,23 @@
+"use client";
+
 import Image from "next/image";
 import styles from "./profile.module.css";
 import { User } from "@/lib/types/user.interface";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface ProfileProps {
     user: User;
+    isOwnProfile: boolean | null;
     followersCount: number;
     followingCount: number;
     followLoading: boolean;
 }
 
-export default function Profile({ user, followersCount, followingCount, followLoading }: ProfileProps) {
+export default function Profile({ user, isOwnProfile, followersCount, followingCount, followLoading }: ProfileProps) {
+    const { currentUser } = useAuth();
+    const router = useRouter();
+
     return (
         <div className={styles.profileCard}>
             <Image
@@ -25,13 +33,28 @@ export default function Profile({ user, followersCount, followingCount, followLo
             <div className={styles.followStats}>
                 <div className={styles.followStat}>
                     <div className={styles.followNumber}>{followLoading ? "..." : followersCount}</div>
-                    <div className={styles.followLabel}>팔로워</div>
+                    <div className={styles.followLabel}>follwer</div>
                 </div>
                 <div className={styles.followStat}>
                     <div className={styles.followNumber}>{followLoading ? "..." : followingCount}</div>
-                    <div className={styles.followLabel}>팔로잉</div>
+                    <div className={styles.followLabel}>following</div>
                 </div>
             </div>
+            {currentUser && (
+                <>
+                    {isOwnProfile ? (
+                        <div className={styles.editProfile}>
+                            <button className={styles.editButton} onClick={() => router.push("me")}>
+                                Edit Profile
+                            </button>
+                        </div>
+                    ) : (
+                        <div className={styles.followProfile}>
+                            <button className={styles.followButton}>Follow</button>
+                        </div>
+                    )}
+                </>
+            )}
         </div>
     );
 }
