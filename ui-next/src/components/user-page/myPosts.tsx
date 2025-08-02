@@ -10,21 +10,21 @@ export default function MyPosts({ activeFilter, selectedTag }: MyPostsProps) {
     const getFilterLabel = (filter: PostFilter) => {
         switch (filter) {
             case "public":
-                return "공개 글";
+                return "Public Posts";
             case "private":
-                return "비공개 글";
+                return "Private Posts";
             case "draft":
-                return "임시 저장 글";
+                return "Draft Posts";
             case "team-public":
-                return "팀 공개 글";
+                return "Team Public Posts";
             case "team-private":
-                return "팀 비공개 글";
+                return "Team Private Posts";
             case "liked":
-                return "좋아요 누른 글";
+                return "Liked Posts";
             case "bookmarked":
-                return "북마크 한 글";
+                return "Bookmarked Posts";
             default:
-                return "포스트";
+                return "Posts";
         }
     };
 

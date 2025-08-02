@@ -1,8 +1,7 @@
 .postsSection {
-    background: var(--color-background-soft);
-    border: 1px solid var(--color-border);
+    /* background: var(--color-background-soft);
+    border: 1px solid var(--color-border); */
     border-radius: 16px;
-    box-shadow: 0 2px 16px rgba(var(--color-background-rgb), 0.1);
     padding: 1.5rem;
     min-height: 400px;
     transition: border-color 0.2s ease;
