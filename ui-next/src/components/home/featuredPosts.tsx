@@ -2,25 +2,7 @@ import styles from "./featuredPosts.module.css";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-interface Author {
-    name: string;
-    avatar: string;
-    bio: string;
-}
-interface Post {
-    id: number;
-    title: string;
-    subtitle: string;
-    excerpt: string;
-    author: Author;
-    publishedAt: string;
-    readTime: number;
-    tags: string[];
-    featured: boolean;
-    claps: number;
-    image: string;
-}
+import { Post } from "@/lib/types/post.interface";
 
 export function FeaturedPosts() {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -81,8 +63,8 @@ export function FeaturedPosts() {
                                 <div className={styles.cardFooter}>
                                     <div className={styles.tags}>
                                         {post.tags.slice(0, 2).map((tag) => (
-                                            <span key={tag} className={styles.tag}>
-                                                {tag}
+                                            <span key={tag.id} className={styles.tag}>
+                                                {tag.name}
                                             </span>
                                         ))}
                                     </div>

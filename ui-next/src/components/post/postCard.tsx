@@ -19,10 +19,14 @@ export function PostCard({ post }: { post: Post }) {
                         <div className={styles.authorJob}>{post.author.bio}</div>
                     </div>
                     <div className={styles.dateRow}>
-                        {new Date(post.publishedAt).toLocaleString(undefined, {
-                            month: "long",
-                        })}
-                        <span className={styles.dateDay}> {new Date(post.publishedAt).getDate()}</span>
+                        {new Date(post.publishedAt)
+                            .toLocaleDateString("ko-KR", {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                            })
+                            .replace(/\. /g, ".")
+                            .replace(/\.$/, "")}
                     </div>
                 </div>
                 <div className={styles.titleRow}>
