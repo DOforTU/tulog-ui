@@ -4,13 +4,17 @@ import { fetchCurrentUser } from "@/lib/api/users";
 import { loginWithGoogle, loginWithLocal, logout as logoutApi, refreshToken } from "@/lib/api/auth";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-interface User {
-    id: string;
+export interface User {
+    id: number;
     email: string;
+    name: string;
     nickname: string;
     profilePicture: string;
+    role: "user" | "admin";
     isActive: boolean;
     createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
 }
 
 interface AuthContextType {
@@ -71,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // 로그인 성공 후 사용자 정보 다시 가져오기
             const userData = await fetchCurrentUser();
             setCurrentUser(userData.data);
-            console.log(currentUser);
+            console.log(userData.data);
 
             return true;
         } catch (error) {
