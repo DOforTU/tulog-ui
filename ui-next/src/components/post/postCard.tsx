@@ -1,24 +1,6 @@
+import { Post } from "@/lib/types/post.interface";
 import styles from "./postCard.module.css";
 import Image from "next/image";
-
-interface Author {
-    name: string;
-    avatar: string;
-    bio: string;
-}
-interface Post {
-    id: number;
-    title: string;
-    subtitle: string;
-    excerpt: string;
-    author: Author;
-    publishedAt: string;
-    readTime: number;
-    tags: string[];
-    featured: boolean;
-    claps: number;
-    image: string;
-}
 
 export function PostCard({ post }: { post: Post }) {
     return (
@@ -49,8 +31,8 @@ export function PostCard({ post }: { post: Post }) {
                 <div className={styles.postExcerpt}>{post.excerpt}</div>
                 <div className={styles.tagsRow}>
                     {post.tags.map((tag) => (
-                        <span key={tag} className={styles.tag}>
-                            {tag}
+                        <span key={tag.id} className={styles.tag}>
+                            {tag.name}
                         </span>
                     ))}
                 </div>

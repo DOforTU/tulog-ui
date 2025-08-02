@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth, User } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import styles from "./user-page.module.css";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,6 +11,7 @@ import Profile from "@/components/user-page/profile";
 import PostFilter, { PostFilter as PostFilterType } from "@/components/user-page/postFilter";
 import MyTags from "@/components/user-page/myTags";
 import MyPosts from "@/components/user-page/myPosts";
+import { User } from "@/lib/types/user.interface";
 
 export default function UserProfilePage() {
     const { currentUser } = useAuth();
@@ -32,6 +33,8 @@ export default function UserProfilePage() {
     const [error, setError] = useState("");
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
+    // const [followers, setFollowers] = useState<User[]>([]);
+    // const [following, setFollowing] = useState<User[]>([]);
     const [activeFilter, setActiveFilter] = useState<PostFilterType>("public");
     const [selectedTag, setSelectedTag] = useState<string>("전체");
     const [followLoading, setFollowLoading] = useState(false);

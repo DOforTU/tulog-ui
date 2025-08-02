@@ -1,6 +1,6 @@
-import { User } from "@/contexts/AuthContext";
 import Image from "next/image";
 import styles from "./profile.module.css";
+import { User } from "@/lib/types/user.interface";
 
 interface ProfileProps {
     user: User;

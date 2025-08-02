@@ -3,29 +3,7 @@
 import { fetchCurrentUser } from "@/lib/api/users";
 import { loginWithGoogle, loginWithLocal, logout as logoutApi, refreshToken } from "@/lib/api/auth";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-
-export interface User {
-    id: number;
-    email: string;
-    name: string;
-    nickname: string;
-    profilePicture: string;
-    role: "user" | "admin";
-    isActive: boolean;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string | null;
-}
-
-interface AuthContextType {
-    currentUser: User | null;
-    isLoading: boolean;
-    setUser: (user: User | null) => void;
-    clearUser: () => void;
-    logout: () => Promise<void>;
-    loginWithGoogle: () => void;
-    loginWithLocal: (email: string, password: string) => Promise<boolean>;
-}
+import { AuthContextType, User } from "@/lib/types/user.interface";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
