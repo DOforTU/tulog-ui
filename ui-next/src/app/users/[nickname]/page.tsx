@@ -231,18 +231,18 @@ export default function UserProfilePage() {
                     followLoading={followLoading}
                 />
 
-                {/* 포스트 필터링 섹션 */}
+                {/* 태그 섹션 - 위치 변경 */}
+                <MyTags selectedTag={selectedTag} onTagChange={setSelectedTag} />
+            </div>
+
+            {/* 오른쪽 컨텐츠 */}
+            <div className={styles.rightContent}>
+                {/* 포스트 필터링 섹션 - 위치 변경 */}
                 <PostFilter
                     activeFilter={activeFilter}
                     onFilterChange={setActiveFilter}
                     isOwnProfile={!!isOwnProfile}
                 />
-            </div>
-
-            {/* 오른쪽 컨텐츠 */}
-            <div className={styles.rightContent}>
-                {/* 태그 섹션 */}
-                <MyTags selectedTag={selectedTag} onTagChange={setSelectedTag} />
 
                 {/* 포스트 섹션 */}
                 <MyPosts activeFilter={activeFilter} selectedTag={selectedTag} />

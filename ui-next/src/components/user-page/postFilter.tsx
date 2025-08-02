@@ -12,13 +12,13 @@ interface PostFilterProps {
 export default function PostFilter({ activeFilter, onFilterChange, isOwnProfile }: PostFilterProps) {
     // 필터 버튼 목록
     const filterButtons = [
-        { key: "public" as PostFilter, label: "Public Posts" },
-        { key: "private" as PostFilter, label: "Private Posts" },
-        { key: "draft" as PostFilter, label: "Draft Posts" },
-        { key: "team-public" as PostFilter, label: "Team Public Posts" },
-        { key: "team-private" as PostFilter, label: "Team Private Posts" },
-        { key: "liked" as PostFilter, label: "Liked Posts" },
-        { key: "bookmarked" as PostFilter, label: "Bookmarked Posts" },
+        { key: "public" as PostFilter, label: "Public" },
+        { key: "private" as PostFilter, label: "Private" },
+        { key: "draft" as PostFilter, label: "Draft" },
+        { key: "team-public" as PostFilter, label: "Team Public" },
+        { key: "team-private" as PostFilter, label: "Team Private" },
+        { key: "liked" as PostFilter, label: "Liked" },
+        { key: "bookmarked" as PostFilter, label: "Bookmarked" },
     ];
 
     // 본인 프로필이 아닌 경우 일부 필터 숨기기
@@ -28,7 +28,6 @@ export default function PostFilter({ activeFilter, onFilterChange, isOwnProfile 
 
     return (
         <div className={styles.filterSection}>
-            {/* <h3 className={styles.filterTitle}>Post Filter</h3> */}
             <div className={styles.filterButtons}>
                 {visibleFilters.map((filter) => (
                     <button
