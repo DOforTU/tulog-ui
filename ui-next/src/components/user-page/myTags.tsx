@@ -13,7 +13,7 @@ export default function MyTags({ selectedTag, onTagChange, tags }: MyTagsProps) 
 
     return (
         <div className={styles.tagsSection}>
-            <h3 className={styles.tagsTitle}>태그</h3>
+            <h3 className={styles.tagsTitle}>Tags</h3>
             <div className={styles.tags}>
                 {displayTags.map((tag) => (
                     <button

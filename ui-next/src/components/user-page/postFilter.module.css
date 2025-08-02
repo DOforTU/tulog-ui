@@ -6,10 +6,6 @@
     transition: border-color 0.2s ease;
 }
 
-.filterSection:hover {
-    border-color: var(--color-border-hover);
-}
-
 .filterTitle {
     font-size: 1.1rem;
     font-weight: 600;

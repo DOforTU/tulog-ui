@@ -7,10 +7,6 @@
     transition: border-color 0.2s ease;
 }
 
-.postsSection:hover {
-    border-color: var(--color-border-hover);
-}
-
 .postsTitle {
     font-size: 1.1rem;
     font-weight: 600;
