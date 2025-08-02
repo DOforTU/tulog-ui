@@ -94,3 +94,14 @@
     background: var(--color-background-hover);
     border-color: var(--color-border-strong);
 }
+
+.unfollowButton {
+    background: var(--color-danger-background);
+    color: var(--color-danger-text);
+    border: 1px solid var(--color-danger-border);
+}
+
+.unfollowButton:hover {
+    background: var(--color-danger-background-hover);
+    border-color: var(--color-danger-border-strong);
+}

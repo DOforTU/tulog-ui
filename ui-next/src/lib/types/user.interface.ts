@@ -20,3 +20,9 @@ export interface AuthContextType {
     loginWithGoogle: () => void;
     loginWithLocal: (email: string, password: string) => Promise<boolean>;
 }
+
+export interface FollowUser {
+    id: number;
+    profilePicture: string;
+    nickname: string;
+}

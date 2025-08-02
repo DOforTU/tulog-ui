@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import styles from "./profile.module.css";
-import { User } from "@/lib/types/user.interface";
+import { FollowUser, User } from "@/lib/types/user.interface";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 
@@ -10,11 +10,25 @@ interface ProfileProps {
     user: User;
     isOwnProfile: boolean | null;
     followersCount: number;
+    followers: FollowUser[] | [];
     followingCount: number;
+    following: FollowUser[] | [];
     followLoading: boolean;
+    alreadyFollowing?: boolean;
+    onShowFollowers: () => void;
+    onShowFollowing: () => void;
 }
 
-export default function Profile({ user, isOwnProfile, followersCount, followingCount, followLoading }: ProfileProps) {
+export default function Profile({
+    user,
+    isOwnProfile,
+    followersCount,
+    followingCount,
+    followLoading,
+    alreadyFollowing,
+    onShowFollowers,
+    onShowFollowing,
+}: ProfileProps) {
     const { currentUser } = useAuth();
     const router = useRouter();
 
@@ -31,11 +45,11 @@ export default function Profile({ user, isOwnProfile, followersCount, followingC
 
             {/* 팔로우 통계 */}
             <div className={styles.followStats}>
-                <div className={styles.followStat}>
+                <div className={styles.followStat} onClick={onShowFollowers} style={{ cursor: "pointer" }}>
                     <div className={styles.followNumber}>{followLoading ? "..." : followersCount}</div>
                     <div className={styles.followLabel}>follwer</div>
                 </div>
-                <div className={styles.followStat}>
+                <div className={styles.followStat} onClick={onShowFollowing} style={{ cursor: "pointer" }}>
                     <div className={styles.followNumber}>{followLoading ? "..." : followingCount}</div>
                     <div className={styles.followLabel}>following</div>
                 </div>
@@ -50,7 +64,11 @@ export default function Profile({ user, isOwnProfile, followersCount, followingC
                         </div>
                     ) : (
                         <div className={styles.followProfile}>
-                            <button className={styles.followButton}>Follow</button>
+                            <button
+                                className={`${styles.followButton} ${alreadyFollowing ? styles.unfollowButton : ""}`}
+                            >
+                                {alreadyFollowing ? "Unfollow" : "Follow"}
+                            </button>
                         </div>
                     )}
                 </>

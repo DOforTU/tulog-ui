@@ -4,14 +4,21 @@ import { useAuth } from "@/contexts/AuthContext";
 import styles from "./user-page.module.css";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { fetchUserByNickname, fetchUserFollowers, fetchUserFollowing } from "@/lib/api/users";
+import {
+    fetchMyFollowers,
+    fetchMyFollowing,
+    fetchUserByNickname,
+    fetchUserFollowers,
+    fetchUserFollowing,
+} from "@/lib/api/users";
 
 // 컴포넌트 imports
 import Profile from "@/components/user-page/profile";
 import PostFilter, { PostFilter as PostFilterType } from "@/components/user-page/postFilter";
 import MyTags from "@/components/user-page/myTags";
 import MyPosts from "@/components/user-page/myPosts";
-import { User } from "@/lib/types/user.interface";
+import FollowModal from "@/components/user-page/followModal";
+import { FollowUser, User } from "@/lib/types/user.interface";
 
 export default function UserProfilePage() {
     const { currentUser } = useAuth();
@@ -33,8 +40,16 @@ export default function UserProfilePage() {
     const [error, setError] = useState("");
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
-    // const [followers, setFollowers] = useState<User[]>([]);
-    // const [following, setFollowing] = useState<User[]>([]);
+
+    const [myFollowings, setMyFollowings] = useState<FollowUser[]>([]);
+    const [alreadyFollowing, setAlreadyFollowing] = useState<boolean>(false);
+    const [followers, setFollowers] = useState<FollowUser[]>([]);
+    const [following, setFollowing] = useState<FollowUser[]>([]);
+
+    // 모달 상태
+    const [showFollowersModal, setShowFollowersModal] = useState(false);
+    const [showFollowingModal, setShowFollowingModal] = useState(false);
+
     const [activeFilter, setActiveFilter] = useState<PostFilterType>("public");
     const [selectedTag, setSelectedTag] = useState<string>("전체");
     const [followLoading, setFollowLoading] = useState(false);
@@ -56,16 +71,15 @@ export default function UserProfilePage() {
             // isActive가 false면 인증 화면 표시, true면 팔로우 정보 가져오기
             if (currentUser.isActive) {
                 setFollowLoading(true);
-                Promise.all([
-                    fetchUserFollowers(currentUser.id.toString()),
-                    fetchUserFollowing(currentUser.id.toString()),
-                ])
+                Promise.all([fetchMyFollowers(), fetchMyFollowing()])
                     .then(([followersRes, followingRes]) => {
                         if (followersRes?.success) {
                             setFollowersCount(followersRes.data?.length || 0);
+                            setFollowers(followersRes.data || []);
                         }
                         if (followingRes?.success) {
                             setFollowingCount(followingRes.data?.length || 0);
+                            setFollowing(followingRes.data || []);
                         }
                     })
                     .catch((err) => {
@@ -79,10 +93,22 @@ export default function UserProfilePage() {
             setLoading(true);
             setError("");
 
+            // 내 팔로잉은 가져옴: 팔로우 버튼 활성화를 위해서
+            Promise.all([fetchMyFollowing()])
+                .then(([followingRes]) => {
+                    if (followingRes?.success) {
+                        setMyFollowings(followingRes.data || []);
+                    }
+                })
+                .catch((err) => {
+                    console.error("내 팔로우 정보 가져오기 실패:", err);
+                });
+
             fetchUserByNickname(nickname)
                 .then((res) => {
                     if (res && res.success && res.data) {
                         setUser(res.data);
+
                         // 해당 유저의 팔로우 정보도 가져오기
                         setFollowLoading(true);
                         return Promise.all([
@@ -98,9 +124,11 @@ export default function UserProfilePage() {
                         const [followersRes, followingRes] = followResults;
                         if (followersRes?.success) {
                             setFollowersCount(followersRes.data?.length || 0);
+                            setFollowers(followersRes.data || []);
                         }
                         if (followingRes?.success) {
                             setFollowingCount(followingRes.data?.length || 0);
+                            setFollowing(followingRes.data || []);
                         }
                     }
                 })
@@ -111,8 +139,18 @@ export default function UserProfilePage() {
                     setLoading(false);
                     setFollowLoading(false);
                 });
+
+            // TODO: 팔로우 했는지 여부
         }
     }, [nickname, currentUser]);
+
+    // 팔로우 여부 확인
+    useEffect(() => {
+        if (user && myFollowings.length > 0) {
+            const isFollowing = myFollowings.some((followUser) => followUser.id === user.id);
+            setAlreadyFollowing(isFollowing);
+        }
+    }, [user, myFollowings]);
 
     // 타이머 관련 useEffect
     useEffect(() => {
@@ -219,6 +257,10 @@ export default function UserProfilePage() {
     const displayUser = isOwnProfile ? currentUser : user;
     if (!displayUser) return null;
 
+    // 모달 핸들러
+    const handleShowFollowers = () => setShowFollowersModal(true);
+    const handleShowFollowing = () => setShowFollowingModal(true);
+
     return (
         <div className={styles.container}>
             {/* 왼쪽 사이드바 */}
@@ -228,8 +270,13 @@ export default function UserProfilePage() {
                     user={displayUser}
                     isOwnProfile={isOwnProfile}
                     followersCount={followersCount}
+                    followers={followers}
                     followingCount={followingCount}
+                    following={following}
                     followLoading={followLoading}
+                    alreadyFollowing={alreadyFollowing}
+                    onShowFollowers={handleShowFollowers}
+                    onShowFollowing={handleShowFollowing}
                 />
 
                 {/* 태그 섹션 - 위치 변경 */}
@@ -248,6 +295,24 @@ export default function UserProfilePage() {
                 {/* 포스트 섹션 */}
                 <MyPosts activeFilter={activeFilter} selectedTag={selectedTag} />
             </div>
+
+            {/* 모달들 */}
+            {showFollowersModal && (
+                <FollowModal
+                    isOpen={showFollowersModal}
+                    title="Follower"
+                    users={followers}
+                    onClose={() => setShowFollowersModal(false)}
+                />
+            )}
+            {showFollowingModal && (
+                <FollowModal
+                    isOpen={showFollowingModal}
+                    title="Following"
+                    users={following}
+                    onClose={() => setShowFollowingModal(false)}
+                />
+            )}
         </div>
     );
 }
