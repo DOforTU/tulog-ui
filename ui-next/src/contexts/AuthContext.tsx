@@ -70,11 +70,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await loginWithLocal(email, password);
             // 로그인 성공 후 사용자 정보 다시 가져오기
             const userData = await fetchCurrentUser();
-            console.log("User data after local login:", userData.data);
-            if (userData) {
-                setCurrentUser(userData.data);
-                console.log(currentUser);
-            }
+            setCurrentUser(userData.data);
+            console.log(currentUser);
 
             return true;
         } catch (error) {
