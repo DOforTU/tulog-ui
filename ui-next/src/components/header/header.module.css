@@ -1,0 +1,302 @@
+/* header.module.css */
+
+.header {
+    background-color: var(--color-background);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    width: 100%;
+}
+
+.nav {
+    max-width: 1200px;
+    padding: 0 2rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 2rem;
+}
+
+.brand {
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.logo {
+    height: 24px;
+    width: auto;
+    display: block;
+}
+
+.searchContainer {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 2rem;
+}
+
+.searchBox {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 12px;
+    color: var(--color-text-light);
+    pointer-events: none;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 8px 12px 8px 40px;
+    border: 1px solid var(--color-border);
+    border-radius: 24px;
+    background-color: var(--color-background-soft);
+    color: var(--color-text);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background-color: var(--color-background);
+    box-shadow: 0 0 0 3px rgba(73, 146, 0, 0.1);
+}
+
+.menu {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.menu2 {
+    display: flex;
+    gap: 1rem;
+}
+
+.link {
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+}
+
+.link:hover,
+.link.active {
+    color: var(--color-primary);
+}
+
+.auth {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.notificationBtn {
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+    padding: 0.5rem;
+    border-radius: 10px;
+}
+
+.notificationBtn:hover {
+    color: var(--color-primary);
+    background-color: var(--color-background-soft);
+}
+
+.themeIconBtn {
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+    padding: 0.5rem;
+    border-radius: 10px;
+}
+
+.themeIconBtn:hover {
+    color: var(--color-primary);
+    background-color: var(--color-background-soft);
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-border);
+}
+
+.username {
+    font-size: 0.875rem;
+    color: var(--color-text);
+}
+
+.logout {
+    background: none;
+    border: none;
+    font-size: 0.8rem;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.logout:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.hamburger {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .nav {
+        padding: 0 1rem;
+        gap: 1rem;
+    }
+
+    .searchContainer {
+        margin: 0;
+    }
+
+    .searchToggleBtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        background-color: var(--color-background-soft);
+    }
+
+    .searchDropdown {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        left: 0;
+        top: 64px;
+        width: 100%;
+        z-index: 10;
+        background: var(--color-background-mute);
+        border-bottom: 1px solid var(--color-border);
+        padding: 10px 12px;
+        gap: 0.5rem;
+    }
+
+    .searchToggleBtn {
+        background: none;
+        padding: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 20%;
+        border: 1px solid var(--color-text-light);
+        color: var(--color-text);
+    }
+
+    .searchIconMobile {
+        position: absolute;
+        margin-left: 14px;
+        color: var(--color-text-light);
+        cursor: pointer;
+    }
+
+    .searchInputMobile {
+        display: block;
+        width: 100%;
+        padding: 8px 12px 8px 40px;
+        border: 2px solid var(--color-primary);
+        border-radius: 24px;
+        background-color: var(--color-background-soft);
+        color: var(--color-text);
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+    .searchInputMobile:hover {
+        background-color: var(--color-background-mute);
+    }
+}
+
+@media (max-width: 620px) {
+    .menu {
+        display: none;
+    }
+
+    .auth {
+        display: none;
+    }
+
+    .hamburger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .hamburger:hover {
+        background-color: var(--color-background-soft);
+        color: var(--color-primary);
+    }
+
+    .themeIconBtn {
+        display: none;
+    }
+
+    .mobileMenu {
+        position: absolute;
+        top: 64px;
+        right: 0;
+        width: 280px;
+        background: var(--color-background);
+        border: 1px solid var(--color-border);
+        border-radius: 12px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        z-index: 50;
+        margin-top: 0.5rem;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+}

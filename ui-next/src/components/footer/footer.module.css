@@ -1,0 +1,125 @@
+.appFooter {
+    background-color: var(--color-background-mute);
+    border-top: 1px solid var(--color-border);
+    margin-top: auto;
+    min-height: 300px;
+}
+
+.footerContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem 1rem;
+}
+
+.footerContent {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+    margin-bottom: 2rem;
+}
+
+.footerBrand {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.footerLogoContainer {
+    display: flex;
+    align-items: center;
+}
+
+.footerLogo {
+    height: 32px;
+    width: auto;
+    max-width: 150px;
+}
+
+.footerLogoText {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-heading);
+    letter-spacing: 0.1em;
+    margin-left: 0.5rem;
+}
+
+.footerDescription {
+    color: var(--color-text-light);
+    line-height: 1.6;
+}
+
+.footerLinks {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.footerSection h4 {
+    color: var(--color-heading);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.footerSection ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footerSection li {
+    margin-bottom: 0.5rem;
+}
+
+.footerSection button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: var(--color-text-light);
+    font: inherit;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    text-decoration: none;
+    outline: none;
+}
+.footerSection button:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+.footerSection a {
+    color: var(--color-text-light);
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+
+.footerSection a:hover {
+    color: var(--color-primary);
+}
+
+.footerBottom {
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+}
+
+.footerBottom p {
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .footerContent {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .footerLinks {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .footerContainer {
+        padding: 2rem 1rem 1rem;
+    }
+}
