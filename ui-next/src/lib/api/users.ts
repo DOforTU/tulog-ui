@@ -40,3 +40,31 @@ export const fetchUserFollowing = async (userId: string) => {
     const response = await apiClient.get(`/api/users/${userId}/followings`);
     return response.data;
 };
+
+export const fetchUserAllTeams = async (userId: string) => {
+    const response = await apiClient.get(`/api/users/${userId}/teams`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+export const fetchUserJoinedTeams = async (userId: string) => {
+    const response = await apiClient.get(`/api/users/${userId}/teams?status=joined`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+export const fetchUserInvitedTeams = async (userId: string) => {
+    const response = await apiClient.get(`/api/users/${userId}/teams?status=invited`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+export const fetchUserPendingTeams = async (userId: string) => {
+    const response = await apiClient.get(`/api/users/${userId}/teams?status=pending`, {
+        withCredentials: true,
+    });
+    return response.data;
+};

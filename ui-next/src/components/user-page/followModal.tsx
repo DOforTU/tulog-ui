@@ -16,7 +16,7 @@ export default function FollowModal({ isOpen, onClose, title, users }: FollowMod
     if (!isOpen) return null;
 
     const handleUserClick = (nickname: string) => {
-        router.push(`/users/${nickname}`);
+        router.push(`/users/@${nickname}`);
         onClose();
     };
 
@@ -49,7 +49,7 @@ export default function FollowModal({ isOpen, onClose, title, users }: FollowMod
                                         height={40}
                                         className={styles.userAvatar}
                                     />
-                                    <span className={styles.userNickname}>@{user.nickname}</span>
+                                    <span className={styles.userNickname}>{user.nickname}</span>
                                 </div>
                             ))}
                         </div>

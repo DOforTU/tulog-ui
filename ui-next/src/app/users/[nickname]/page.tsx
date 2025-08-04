@@ -10,6 +10,7 @@ import {
     fetchUserByNickname,
     fetchUserFollowers,
     fetchUserFollowing,
+    fetchUserJoinedTeams,
 } from "@/lib/api/users";
 
 // 컴포넌트 imports
@@ -19,6 +20,7 @@ import MyTags from "@/components/user-page/myTags";
 import MyPosts from "@/components/user-page/myPosts";
 import FollowModal from "@/components/user-page/followModal";
 import { FollowUser, User } from "@/lib/types/user.interface";
+import { TeamWithStatus } from "@/lib/types/team.interface";
 
 export default function UserProfilePage() {
     const { currentUser } = useAuth();
@@ -35,16 +37,21 @@ export default function UserProfilePage() {
         nickname = nickname.slice(1);
     }
 
+    // 유저 정보
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+    // 본인 및 유저 팔로우 상태 관련 상태
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
-
     const [myFollowings, setMyFollowings] = useState<FollowUser[]>([]);
     const [alreadyFollowing, setAlreadyFollowing] = useState<boolean>(false);
     const [followers, setFollowers] = useState<FollowUser[]>([]);
     const [following, setFollowing] = useState<FollowUser[]>([]);
+
+    // 유저 팀 관련 상태
+    const [userTeams, setUserTeams] = useState<TeamWithStatus[]>([]);
 
     // 모달 상태
     const [showFollowersModal, setShowFollowersModal] = useState(false);
@@ -71,8 +78,12 @@ export default function UserProfilePage() {
             // isActive가 false면 인증 화면 표시, true면 팔로우 정보 가져오기
             if (currentUser.isActive) {
                 setFollowLoading(true);
-                Promise.all([fetchMyFollowers(), fetchMyFollowing()])
-                    .then(([followersRes, followingRes]) => {
+                Promise.all([
+                    fetchMyFollowers(),
+                    fetchMyFollowing(),
+                    fetchUserJoinedTeams(currentUser.id.toString()).catch(() => ({ success: false, data: [] })),
+                ])
+                    .then(([followersRes, followingRes, teamsRes]) => {
                         if (followersRes?.success) {
                             setFollowersCount(followersRes.data?.length || 0);
                             setFollowers(followersRes.data || []);
@@ -81,9 +92,14 @@ export default function UserProfilePage() {
                             setFollowingCount(followingRes.data?.length || 0);
                             setFollowing(followingRes.data || []);
                         }
+                        if (teamsRes?.success) {
+                            setUserTeams(teamsRes.data || []);
+                        } else {
+                            setUserTeams([]); // 팀이 없거나 에러 시 빈 배열
+                        }
                     })
                     .catch((err) => {
-                        console.error("팔로우 정보 가져오기 실패:", err);
+                        console.error("팔로우 및 팀 정보 가져오기 실패:", err);
                     })
                     .finally(() => setFollowLoading(false));
             }
@@ -114,6 +130,7 @@ export default function UserProfilePage() {
                         return Promise.all([
                             fetchUserFollowers(res.data.id.toString()),
                             fetchUserFollowing(res.data.id.toString()),
+                            fetchUserJoinedTeams(res.data.id.toString()).catch(() => ({ success: false, data: [] })),
                         ]);
                     } else {
                         setError("유저를 찾을 수 없습니다.");
@@ -121,7 +138,7 @@ export default function UserProfilePage() {
                 })
                 .then((followResults) => {
                     if (followResults) {
-                        const [followersRes, followingRes] = followResults;
+                        const [followersRes, followingRes, teamsRes] = followResults;
                         if (followersRes?.success) {
                             setFollowersCount(followersRes.data?.length || 0);
                             setFollowers(followersRes.data || []);
@@ -129,6 +146,11 @@ export default function UserProfilePage() {
                         if (followingRes?.success) {
                             setFollowingCount(followingRes.data?.length || 0);
                             setFollowing(followingRes.data || []);
+                        }
+                        if (teamsRes?.success) {
+                            setUserTeams(teamsRes.data || []);
+                        } else {
+                            setUserTeams([]); // 팀이 없거나 에러 시 빈 배열
                         }
                     }
                 })
@@ -277,6 +299,7 @@ export default function UserProfilePage() {
                     alreadyFollowing={alreadyFollowing}
                     onShowFollowers={handleShowFollowers}
                     onShowFollowing={handleShowFollowing}
+                    userTeams={userTeams}
                 />
 
                 {/* 태그 섹션 - 위치 변경 */}
