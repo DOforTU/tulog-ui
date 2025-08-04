@@ -26,3 +26,9 @@ export interface FollowUser {
     profilePicture: string;
     nickname: string;
 }
+
+export interface updateUserDto {
+    name?: string;
+    nickname?: string;
+    profilePicture?: string;
+}

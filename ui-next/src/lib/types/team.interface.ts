@@ -1,5 +1,6 @@
 export interface TeamWithStatus {
     status: TeamMemberStatus;
+    isLeader: boolean;
     team: Team;
 }
 

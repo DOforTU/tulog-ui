@@ -1,8 +1,16 @@
+import { updateUserDto } from "./../types/user.interface";
 import apiClient from "./api-client";
 
 export const fetchCurrentUser = async () => {
     const response = await apiClient.get("/api/users/me", {
         withCredentials: true,
+    });
+    return response.data;
+};
+
+export const updateCurrentUser = async (data: updateUserDto) => {
+    const response = await apiClient.patch("/api/users/me", {
+        ...data,
     });
     return response.data;
 };

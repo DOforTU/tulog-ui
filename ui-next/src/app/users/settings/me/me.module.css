@@ -22,17 +22,20 @@
 .formGroup {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px; /* 기존 16px -> 줄임 */
 }
 
 .label {
     font-size: 14px;
     color: var(--color-text-light);
-    margin-bottom: 6px;
+    font-weight: 500;
+    margin-top: 10px;
 }
 
 .input {
-    padding: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.5;
     border: 1px solid var(--color-border);
     border-radius: 6px;
     background-color: var(--color-background-soft);
@@ -62,6 +65,14 @@
     transition: border-color 0.3s;
 }
 
+.submitButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: var(--color-border);
+    color: var(--color-text-light);
+    background-color: var(--color-background-soft);
+}
+
 .submitButton:hover {
     border-color: var(--color-border-strong);
 }
@@ -71,14 +82,43 @@
     align-items: center;
     gap: 16px;
 }
-
 .profileImageWrapper {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     overflow: hidden;
-    flex-shrink: 0;
     position: relative;
+    cursor: pointer;
+    border: 2px solid var(--color-border-hover);
+    transition: border-color 0.3s;
+}
+
+.profileImageWrapper:hover {
+    border-color: var(--color-accent);
+}
+
+.imageOverlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.profileImageWrapper:hover .imageOverlay {
+    opacity: 1;
+}
+
+.cameraIcon {
+    font-size: 20px;
+}
+
+.hiddenFileInput {
+    display: none;
 }
 
 .profileImage {
