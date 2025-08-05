@@ -76,9 +76,15 @@ export default function MyPage() {
             await updateCurrentUser(payload);
             window.location.reload();
             setIsDirty(false);
-        } catch (err) {
-            console.error("프로필 저장 실패:", err);
-            alert("Error saving profile. Please try again.");
+        } catch (err: any) {
+            const message = err?.response?.data?.message;
+            if (Array.isArray(message)) {
+                alert(message.join("\n"));
+            } else if (typeof message === "string") {
+                alert(message);
+            } else {
+                alert("Failed to save profile.");
+            }
         }
     };
 

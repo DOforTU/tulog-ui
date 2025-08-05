@@ -23,3 +23,33 @@ export interface Team {
     visibility: TeamVisibility;
     mainImage: string;
 }
+
+export interface createTeamDto {
+    name: string;
+    introduction?: string;
+    maxMember?: number;
+    visibility?: TeamVisibility;
+}
+
+export interface TeamMemberUser {
+    id: number;
+    nickname: string;
+    profilePicture: string;
+    isActive: boolean;
+}
+
+export interface TeamMember {
+    memberId: number;
+    teamId: number;
+    isLeader: boolean;
+    createdAt: string;
+    status: TeamMemberStatus;
+    user: TeamMemberUser;
+}
+
+export interface TeamDetail extends Team {
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+    teamMembers: TeamMember[];
+}
