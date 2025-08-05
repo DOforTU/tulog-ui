@@ -10,7 +10,6 @@ import {
     fetchUserByNickname,
     fetchUserFollowers,
     fetchUserFollowing,
-    fetchUserJoinedTeams,
 } from "@/lib/api/users";
 
 // 컴포넌트 imports
@@ -21,6 +20,7 @@ import MyPosts from "@/components/user-page/myPosts";
 import FollowModal from "@/components/user-page/followModal";
 import { FollowUser, User } from "@/lib/types/user.interface";
 import { TeamWithStatus } from "@/lib/types/team.interface";
+import { fetchUserJoinedTeams } from "@/lib/api/teams";
 
 export default function UserProfilePage() {
     const { currentUser } = useAuth();
