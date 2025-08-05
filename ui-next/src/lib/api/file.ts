@@ -9,7 +9,6 @@ export const uploadUserProfilePicture = async (file: File) => {
             "Content-Type": "multipart/form-data",
         },
     });
-    console.log("🧾 upload response:", response.data);
 
     return response.data.data.url;
 };

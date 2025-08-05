@@ -49,10 +49,9 @@ export default function MyPage() {
         if (file) {
             try {
                 profilePicture = await uploadUserProfilePicture(file);
-                console.log("업로드된 이미지 URL:", profilePicture);
             } catch (err) {
-                console.error("이미지 업로드 실패:", err);
-                alert("이미지 업로드에 실패했습니다.");
+                console.error("Failed:", err);
+                alert("Failed to upload image.");
                 return;
             }
         }
@@ -75,11 +74,11 @@ export default function MyPage() {
 
         try {
             await updateCurrentUser(payload);
-            alert("프로필이 성공적으로 저장되었습니다.");
+            window.location.reload();
             setIsDirty(false);
         } catch (err) {
             console.error("프로필 저장 실패:", err);
-            alert("프로필 저장 중 오류가 발생했습니다.");
+            alert("Error saving profile. Please try again.");
         }
     };
 
