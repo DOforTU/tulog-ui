@@ -1,22 +1,125 @@
 <template>
   <div class="posts-view">
     <div class="container">
-      <h1>Posts</h1>
-      <p>Browse all blog posts.</p>
+      <!-- <h1 class="category-title">
+        {{ category === 'featured' ? 'Featured Posts' : 'Recent Posts' }}
+      </h1> -->
 
-      <div class="coming-soon">
-        <h2>📝 Coming Soon</h2>
-        <p>Post listing feature is under development.</p>
+      <div class="category-buttons">
+        <router-link
+          class="category-btn"
+          :class="{ active: category === 'recent' }"
+          :to="'/posts?category=recent'"
+          replace
+        >
+          Recent
+        </router-link>
+        <router-link
+          class="category-btn"
+          :class="{ active: category === 'featured' }"
+          :to="'/posts?category=featured'"
+          replace
+        >
+          Featured
+        </router-link>
+      </div>
+
+      <div v-if="category === 'featured'" class="category-content">
+        <h2>Featured Posts</h2>
+        <ul class="post-list">
+          <li v-for="post in featuredPosts" :key="post.id" class="post-item">
+            <strong>{{ post.title }}</strong>
+            <span class="author">by {{ post.author.name }}</span>
+          </li>
+        </ul>
+      </div>
+      <div v-else-if="category === 'recent'" class="category-content">
+        <h2>Recent Posts</h2>
+        <ul class="post-list">
+          <li v-for="post in recentPosts" :key="post.id" class="post-item">
+            <strong>{{ post.title }}</strong>
+            <span class="author">by {{ post.author.name }}</span>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// Posts page logic will be implemented here
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
+const category = ref('featured')
+const featuredPosts = ref<any[]>([])
+const recentPosts = ref<any[]>([])
+
+function getCategoryFromRoute() {
+  const value = route.query.category
+  if (value === 'recent') return 'recent'
+  return 'featured'
+}
+
+onMounted(async () => {
+  category.value = getCategoryFromRoute()
+  const response = await fetch('/samplePosts.json')
+  const data = await response.json()
+  // 절반 featured, 절반 recent로 나누기
+  const half = Math.ceil(data.length / 2)
+  featuredPosts.value = data.slice(0, half)
+  recentPosts.value = data.slice(half)
+})
+
+watch(
+  () => route.query.category,
+  (val) => {
+    category.value = getCategoryFromRoute()
+  },
+)
 </script>
 
 <style scoped>
+.category-buttons {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0 1rem 0;
+}
+/* 카테고리 버튼 다크/라이트 테마 대응 */
+.category-buttons {
+  display: flex;
+  gap: 2rem;
+  border-bottom: 1px solid var(--color-border);
+  margin: 2rem 0 1rem 0;
+}
+
+.category-btn {
+  all: unset;
+  font-size: 1rem;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.category-btn.active {
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.category-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-primary);
+}
+
+.category-btn:hover {
+  color: var(--color-primary-light);
+}
+
 .posts-view {
   padding: 2rem;
 }
@@ -24,6 +127,13 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.container h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-heading);
+  margin-bottom: 1rem;
 }
 
 .coming-soon {

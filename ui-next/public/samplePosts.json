@@ -1,0 +1,134 @@
+[
+    {
+        "id": 1,
+        "title": "Finding Balance: Life Between Code and Coffee",
+        "subtitle": "Small joys discovered in the daily routine of a developer's life",
+        "content": "Another day begins with a cup of coffee as my faithful companion. Writing code, hunting bugs, and solving problems - the routine repeats, but the sense of accomplishment feels fresh every time...",
+        "excerpt": "A story about finding small joys in the repetitive routine of a developer's daily life",
+        "author": {
+            "name": "Alex Chen",
+            "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
+            "bio": "Full-stack Developer"
+        },
+        "publishedAt": "2025-01-15T10:30:00Z",
+        "readTime": 5,
+        "tags": [
+            { "id": 1, "name": "Development" },
+            { "id": 2, "name": "Lifestyle" },
+            { "id": 3, "name": "Coffee" }
+        ],
+        "featured": true,
+        "claps": 42,
+        "image": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 2,
+        "title": "Building a Design System That Works",
+        "subtitle": "Creating systematic design systems that boost team productivity",
+        "content": "As projects grow, the importance of consistent UI/UX becomes increasingly apparent. I want to share how our team built a design system and the process we went through...",
+        "excerpt": "Experience building a systematic design system that enhances team productivity",
+        "author": {
+            "name": "Sarah Park",
+            "avatar": "https://github.com/DOforTU/tulog/blob/main/img/user-profile/default-avatar.png?raw=true",
+            "bio": "UX/UI Designer"
+        },
+        "publishedAt": "2025-01-14T14:20:00Z",
+        "readTime": 8,
+        "tags": [
+            { "id": 4, "name": "Design" },
+            { "id": 5, "name": "Systems" },
+            { "id": 6, "name": "Teamwork" }
+        ],
+        "featured": false,
+        "claps": 67,
+        "image": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 3,
+        "title": "Remote Work: One Year Later",
+        "subtitle": "Lessons learned and practical tips for effective remote work",
+        "content": "Remote work that started with COVID-19 has now been going on for over a year. What was initially unfamiliar and challenging has become a routine with my own methods and practices...",
+        "excerpt": "Insights and practical tips gained from one year of remote work experience",
+        "author": {
+            "name": "Mike Johnson",
+            "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
+            "bio": "Product Manager"
+        },
+        "publishedAt": "2025-01-13T09:15:00Z",
+        "readTime": 6,
+        "tags": [
+            { "id": 7, "name": "Remote Work" },
+            { "id": 8, "name": "Productivity" },
+            { "id": 2, "name": "Lifestyle" }
+        ],
+        "featured": true,
+        "claps": 89,
+        "image": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 4,
+        "title": "The Art of Side Projects",
+        "subtitle": "How personal projects became stepping stones to career growth",
+        "content": "Side projects often start as weekend experiments but can evolve into career-defining moments. Here's how I turned curiosity into opportunity...",
+        "excerpt": "Transforming weekend experiments into career opportunities through side projects",
+        "author": {
+            "name": "Emma Rodriguez",
+            "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face",
+            "bio": "Creative Developer"
+        },
+        "publishedAt": "2025-01-12T16:45:00Z",
+        "readTime": 7,
+        "tags": [
+            { "id": 9, "name": "Projects" },
+            { "id": 10, "name": "Career" },
+            { "id": 11, "name": "Growth" }
+        ],
+        "featured": false,
+        "claps": 34,
+        "image": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 5,
+        "title": "Startup Life: The Good, Bad, and Unexpected",
+        "subtitle": "Real experiences from the trenches of startup culture",
+        "content": "Working at a startup is like riding a rollercoaster - thrilling, unpredictable, and sometimes terrifying. After two years in startup land, here are the lessons I've learned...",
+        "excerpt": "Honest reflections on the realities of startup life and valuable lessons learned",
+        "author": {
+            "name": "David Kim",
+            "avatar": "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=32&h=32&fit=crop&crop=face",
+            "bio": "Startup Founder"
+        },
+        "publishedAt": "2025-01-11T11:30:00Z",
+        "readTime": 9,
+        "tags": [
+            { "id": 12, "name": "Startup" },
+            { "id": 13, "name": "Entrepreneurship" },
+            { "id": 14, "name": "Leadership" }
+        ],
+        "featured": true,
+        "claps": 156,
+        "image": "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 6,
+        "title": "Mindful Technology: Finding Digital Wellness",
+        "subtitle": "Balancing our relationship with technology in a hyperconnected world",
+        "content": "As technology becomes increasingly integrated into our lives, finding balance becomes crucial. This is my journey toward mindful technology use...",
+        "excerpt": "A personal journey toward developing a healthier relationship with technology",
+        "author": {
+            "name": "Lisa Wong",
+            "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=32&h=32&fit=crop&crop=face",
+            "bio": "Digital Wellness Coach"
+        },
+        "publishedAt": "2025-01-10T08:20:00Z",
+        "readTime": 4,
+        "tags": [
+            { "id": 15, "name": "Wellness" },
+            { "id": 16, "name": "Technology" },
+            { "id": 17, "name": "Mindfulness" }
+        ],
+        "featured": false,
+        "claps": 78,
+        "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop"
+    }
+]

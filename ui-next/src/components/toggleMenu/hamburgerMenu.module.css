@@ -1,0 +1,114 @@
+.hamburgerDropdown {
+    display: block;
+    position: fixed;
+    top: 64px;
+    right: 0;
+    width: 280px;
+    background: var(--color-background-soft);
+    border: 1px solid var(--color-border);
+    border-radius: 12px 0px 0px 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    z-index: 50;
+    overflow: hidden;
+}
+
+.hamburgerDivider {
+    height: 1px;
+    background-color: var(--color-border);
+    width: 100%;
+    margin: 6px auto;
+}
+
+.hamburger-signin {
+    color: var(--color-primary) !important;
+    font-weight: 600;
+}
+.hamburger-signin svg {
+    color: var(--color-primary);
+    stroke: var(--color-primary);
+}
+
+.hamburger-user-section {
+    padding: 1rem;
+}
+
+.hamburger-user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.hamburger-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-border);
+}
+
+.hamburger-user-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.hamburger-user-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.hamburger-user-email {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+}
+
+.hamburgerMenuItems {
+    display: flex;
+    flex-direction: column;
+}
+
+.hamburgerMenuItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-text);
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-radius: 8px;
+}
+
+.hamburgerMenuItem:hover {
+    background-color: var(--color-background-mute);
+}
+
+.hamburgerMenuItem.logout {
+    color: #ef4444;
+}
+
+.hamburgerMenuItem.logout:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.hamburgerMenuItem svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+}
+
+.hamburger-guest-section {
+    padding: 1rem;
+}
+
+.hamburger-common-section {
+    padding: 1rem;
+    border-top: 1px solid var(--color-border);
+}

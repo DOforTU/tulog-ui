@@ -13,138 +13,29 @@
     </section>
 
     <!-- Featured Posts -->
-    <section class="featured-section">
-      <div class="container">
-        <div class="section-header">
-          <h2>Featured Stories</h2>
-        </div>
-        <div class="featured-grid">
-          <article
-            v-for="post in featuredPosts"
-            :key="post.id"
-            class="featured-card"
-            @click="navigateToPost(post.id)"
-          >
-            <div class="card-image">
-              <img :src="post.image" :alt="post.title" />
-            </div>
-            <div class="card-content">
-              <div class="card-meta">
-                <div class="author-info">
-                  <img :src="post.author.avatar" :alt="post.author.name" class="author-avatar" />
-                  <span class="author-name">{{ post.author.name }}</span>
-                </div>
-                <span class="publish-date">{{ formatDate(post.publishedAt) }}</span>
-              </div>
-              <h3 class="card-title">{{ post.title }}</h3>
-              <p class="card-excerpt">{{ post.excerpt }}</p>
-              <div class="card-footer">
-                <div class="tags">
-                  <span v-for="tag in post.tags.slice(0, 2)" :key="tag" class="tag">
-                    {{ tag }}
-                  </span>
-                </div>
-                <div class="engagement">
-                  <span class="read-time">{{ post.readTime }} min read</span>
-                  <span class="claps">{{ post.claps }}</span>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
+    <FeaturedPosts :posts="featuredPosts" :formatDate="formatDate" @navigate="navigateToPost" />
 
-    <!-- Recent Posts -->
-    <section class="recent-section">
+    <!-- Featured와 Recent 사이 광고 배너 -->
+    <div class="ad-banner">
+      <a href="https://ad.example.com" target="_blank" rel="noopener">
+        <img src="/ad_sample.png" alt="AD" />
+        <div class="ad-content">
+          <div class="ad-title">AD TITLE</div>
+          <div class="ad-desc">AD DESCRIPTION OR SLOGAN</div>
+        </div>
+        <div class="ad-label">AD</div>
+      </a>
+    </div>
+
+    <!-- Recent Posts and Sidebar -->
+    <section class="recent-sidebar-section">
       <div class="container">
         <div class="content-layout">
           <main class="main-content">
-            <div class="section-header">
-              <h2>Recent Stories</h2>
-            </div>
-            <div class="posts-list">
-              <article
-                v-for="post in recentPosts"
-                :key="post.id"
-                class="post-card"
-                @click="navigateToPost(post.id)"
-              >
-                <div class="post-content">
-                  <div class="post-meta">
-                    <div class="author-info">
-                      <img
-                        :src="post.author.avatar"
-                        :alt="post.author.name"
-                        class="author-avatar"
-                      />
-                      <div class="author-details">
-                        <span class="author-name">{{ post.author.name }}</span>
-                        <span class="author-bio">{{ post.author.bio }}</span>
-                      </div>
-                    </div>
-                    <span class="publish-date">{{ formatDate(post.publishedAt) }}</span>
-                  </div>
-                  <h3 class="post-title">{{ post.title }}</h3>
-                  <p class="post-subtitle">{{ post.subtitle }}</p>
-                  <div class="post-footer">
-                    <div class="tags">
-                      <span v-for="tag in post.tags.slice(0, 3)" :key="tag" class="tag">
-                        {{ tag }}
-                      </span>
-                    </div>
-                    <div class="engagement">
-                      <span class="read-time">{{ post.readTime }} min</span>
-                      <button class="clap-btn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                          <path
-                            d="M19 14C19 18.4183 15.4183 22 11 22C6.58172 22 3 18.4183 3 14C3 9.58172 6.58172 6 11 6C15.4183 6 19 9.58172 19 14Z"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                          />
-                          <path
-                            d="M9 9L15 15M15 9L9 15"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                          />
-                        </svg>
-                        {{ post.claps }}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div class="post-image" v-if="post.image">
-                  <img :src="post.image" :alt="post.title" />
-                </div>
-              </article>
-            </div>
+            <RecentPosts :posts="recentPosts" :formatDate="formatDate" @navigate="navigateToPost" />
           </main>
 
-          <aside class="sidebar">
-            <div class="sidebar-card">
-              <h3>Popular Topics</h3>
-              <div class="popular-tags">
-                <span v-for="tag in popularTags" :key="tag" class="popular-tag">
-                  {{ tag }}
-                </span>
-              </div>
-            </div>
-
-            <div class="sidebar-card">
-              <h3>Recommended Writers</h3>
-              <div class="recommended-authors">
-                <div v-for="author in recommendedAuthors" :key="author.name" class="author-item">
-                  <img :src="author.avatar" :alt="author.name" class="author-avatar" />
-                  <div class="author-info">
-                    <span class="author-name">{{ author.name }}</span>
-                    <span class="author-bio">{{ author.bio }}</span>
-                  </div>
-                  <button class="follow-btn">Follow</button>
-                </div>
-              </div>
-            </div>
-          </aside>
+          <Sidebar :popularTags="popularTags" :recommendedAuthors="recommendedAuthors" />
         </div>
       </div>
     </section>
@@ -152,7 +43,10 @@
 </template>
 
 <script setup lang="ts">
+import Sidebar from '../components/Sidebar.vue'
 import { ref, onMounted } from 'vue'
+import FeaturedPosts from '../components/FeaturedPosts.vue'
+import RecentPosts from '../components/RecentPosts.vue'
 
 interface Author {
   name: string
@@ -250,7 +144,7 @@ const navigateToPost = (postId: number) => {
 
 .hero-content {
   text-align: center;
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
 }
 
@@ -267,197 +161,6 @@ const navigateToPost = (postId: number) => {
   font-size: 1.25rem;
   color: var(--color-text-light);
   line-height: 1.6;
-}
-
-/* Section Headers */
-.section-header {
-  margin-bottom: 2rem;
-}
-
-.section-header h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--color-heading);
-  margin: 0;
-}
-
-/* Featured Section */
-.featured-section {
-  padding: 4rem 0;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.featured-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-}
-
-.featured-card {
-  cursor: pointer;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.2s ease;
-}
-
-.featured-card:hover {
-  transform: translateY(-2px);
-}
-
-.card-image {
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-}
-
-.card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.card-content {
-  padding: 1.5rem 0;
-}
-
-.card-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-
-.author-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.author-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.author-name {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-.publish-date {
-  font-size: 0.875rem;
-  color: var(--color-text-light);
-}
-
-.card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  line-height: 1.4;
-  margin-bottom: 0.5rem;
-  color: var(--color-heading);
-}
-
-.card-excerpt {
-  color: var(--color-text-light);
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-
-.card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* Recent Section */
-.recent-section {
-  padding: 4rem 0;
-}
-
-.content-layout {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 4rem;
-}
-
-.posts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.post-card {
-  display: flex;
-  gap: 2rem;
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--color-border);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.post-card:hover {
-  background-color: var(--color-background-soft);
-  margin: 0 -1rem;
-  padding: 1.5rem 1rem;
-  border-radius: 8px;
-  border-bottom: 1px solid transparent;
-}
-
-.post-content {
-  flex: 1;
-}
-
-.post-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-
-.author-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.author-bio {
-  font-size: 0.75rem;
-  color: var(--color-text-light);
-}
-
-.post-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.3;
-  margin-bottom: 0.5rem;
-  color: var(--color-heading);
-}
-
-.post-subtitle {
-  color: var(--color-text-light);
-  line-height: 1.5;
-  margin-bottom: 1rem;
-}
-
-.post-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.post-image {
-  width: 160px;
-  height: 120px;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 4px;
-}
-
-.post-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 /* Tags */
@@ -514,6 +217,13 @@ const navigateToPost = (postId: number) => {
 .sidebar {
   display: flex;
   flex-direction: column;
+  gap: 2rem;
+}
+
+/* RecentPosts와 Sidebar를 나란히 배치 */
+.content-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
   gap: 2rem;
 }
 
@@ -592,6 +302,81 @@ const navigateToPost = (postId: number) => {
   background-color: var(--color-primary-dark);
 }
 
+/* 광고 배너 */
+.ad-banner {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--color-background-soft);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.ad-banner img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+}
+
+.ad-label {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.05em;
+  z-index: 2;
+}
+
+.ad-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ad-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary-dark, #2d3a4a);
+  margin-bottom: 0.25rem;
+}
+
+.ad-desc {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.ad-btn {
+  padding: 0.5rem 1.25rem;
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  transition: background 0.2s;
+}
+.ad-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+
 /* 반응형 */
 @media (max-width: 768px) {
   .hero-title {
@@ -607,7 +392,8 @@ const navigateToPost = (postId: number) => {
   }
 
   .content-layout {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column-reverse;
     gap: 2rem;
   }
 

@@ -4,8 +4,11 @@ import { onMounted } from 'vue'
 import AppHeader from './components/layout/AppHeader.vue'
 import AppFooter from './components/layout/AppFooter.vue'
 import { useAuthStore } from '@/stores/authStore'
+import { useThemeStore } from './stores/themeStore'
 
 const authStore = useAuthStore()
+const themeStore = useThemeStore()
+themeStore.applyTheme(themeStore.currentTheme)
 
 // 앱 시작 시 한 번만 인증 초기화
 onMounted(async () => {

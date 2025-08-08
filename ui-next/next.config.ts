@@ -4,6 +4,12 @@ const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
+                protocol: "http",
+                hostname: "localhost",
+                port: "8000",
+                pathname: "/**",
+            },
+            {
                 protocol: "https",
                 hostname: "images.unsplash.com",
                 port: "",
@@ -32,6 +38,12 @@ const nextConfig: NextConfig = {
                 hostname: "lh6.googleusercontent.com",
                 port: "",
                 pathname: "/**",
+            },
+            {
+                protocol: "https",
+                hostname: "github.com",
+                port: "",
+                pathname: "/DOforTU/tulog/blob/main/img/**",
             },
         ],
     },
