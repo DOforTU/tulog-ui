@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
                 protocol: "https",
                 hostname: "github.com",
                 port: "",
-                pathname: "/DOforTU/tulog/blob/main/img/user-profile/**",
+                pathname: "/DOforTU/tulog/blob/main/img/**",
             },
         ],
     },

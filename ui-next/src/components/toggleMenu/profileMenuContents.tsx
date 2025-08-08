@@ -23,6 +23,16 @@ export default function ProfileMenuContents({ onClose }: ProfileMenuContentsProp
         router.push(`/users/@${currentUser.nickname}`);
     };
 
+    const handleSettingsClick = () => {
+        if (onClose) onClose();
+        router.push(`/users/settings`);
+    };
+
+    const handleCreateTeamClick = () => {
+        if (onClose) onClose();
+        router.push(`/teams/create`);
+    };
+
     return (
         <div>
             <div className={styles.dropdownHeader}>
@@ -59,31 +69,45 @@ export default function ProfileMenuContents({ onClose }: ProfileMenuContentsProp
                     </svg>
                     Profile
                 </button>
-                <button className={styles.dropdownItem}>
+                <button className={styles.dropdownItem} onClick={handleSettingsClick}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                         <path
-                            d="M12.22 2H13.78C14.51 2 15.09 2.59 15.09 3.33V4.67C15.09 5.41 14.51 6 13.78 6H12.22C11.49 6 10.91 5.41 10.91 4.67V3.33C10.91 2.59 11.49 2 12.22 2Z"
+                            d="M10.325 4.317c.423-1.756 2.927-1.756 3.35 0a1.724 1.724 0 0 0 2.591 1.03c1.51-.87 3.177.797 2.308 2.308a1.724 1.724 0 0 0 1.03 2.59c1.756.424 1.756 2.928 0 3.352a1.724 1.724 0 0 0-1.03 2.59c.87 1.51-.798 3.177-2.308 2.308a1.724 1.724 0 0 0-2.591 1.03c-.423 1.756-2.927 1.756-3.35 0a1.724 1.724 0 0 0-2.59-1.03c-1.51.87-3.177-.797-2.308-2.308a1.724 1.724 0 0 0-1.03-2.59c-1.756-.424-1.756-2.928 0-3.352a1.724 1.724 0 0 0 1.03-2.59c-.87-1.51.797-3.177 2.308-2.308a1.724 1.724 0 0 0 2.59-1.03z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
+                    </svg>
+                    Settings
+                </button>
+                <button className={styles.dropdownItem} onClick={handleCreateTeamClick}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path
+                            d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                        <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2" />
+                        <path
+                            d="M20 8V14"
                             stroke="currentColor"
                             strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                         />
                         <path
-                            d="M19.78 8H21.22C21.95 8 22.53 8.59 22.53 9.33V10.67C22.53 11.41 21.95 12 21.22 12H19.78C19.05 12 18.47 11.41 18.47 10.67V9.33C18.47 8.59 19.05 8 19.78 8Z"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                        <path
-                            d="M2.78 8H4.22C4.95 8 5.53 8.59 5.53 9.33V10.67C5.53 11.41 4.95 12 4.22 12H2.78C2.05 12 1.47 11.41 1.47 10.67V9.33C1.47 8.59 2.05 8 2.78 8Z"
+                            d="M23 11H17"
                             stroke="currentColor"
                             strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                         />
                     </svg>
-                    Settings
+                    Create Team
                 </button>
                 <div className={styles.dropdownDivider}></div>
                 <button className={`${styles.dropdownItem} ${styles.logout}`} onClick={handleLogout}>

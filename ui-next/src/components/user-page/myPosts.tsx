@@ -30,10 +30,10 @@ export default function MyPosts({ activeFilter, selectedTag }: MyPostsProps) {
 
     return (
         <div className={styles.postsSection}>
-            <h3 className={styles.postsTitle}>
+            {/* <h3 className={styles.postsTitle}>
                 {getFilterLabel(activeFilter)}
                 {selectedTag !== "전체" && ` - ${selectedTag}`}
-            </h3>
+            </h3> */}
             <div className={styles.postsPlaceholder}>
                 포스트 API 구현 후 여기에 포스트 목록이 표시됩니다.
                 <br />

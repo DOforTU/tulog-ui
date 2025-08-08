@@ -1,8 +1,16 @@
+import { updateUserDto, UserDetails } from "./../types/user.interface";
 import apiClient from "./api-client";
 
 export const fetchCurrentUser = async () => {
     const response = await apiClient.get("/api/users/me", {
         withCredentials: true,
+    });
+    return response.data;
+};
+
+export const updateCurrentUser = async (data: updateUserDto) => {
+    const response = await apiClient.patch("/api/users/me", {
+        ...data,
     });
     return response.data;
 };
@@ -39,4 +47,10 @@ export const fetchUserFollowers = async (userId: string) => {
 export const fetchUserFollowing = async (userId: string) => {
     const response = await apiClient.get(`/api/users/${userId}/followings`);
     return response.data;
+};
+
+// 유저 세부 정보 가져오기 (팀, 팔로워, 팔로잉 포함)
+export const fetchUserDetails = async (userId: string): Promise<UserDetails> => {
+    const response = await apiClient.get(`/api/users/${userId}/details`);
+    return response.data.data;
 };

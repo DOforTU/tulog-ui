@@ -4,14 +4,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import styles from "./user-page.module.css";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { fetchUserByNickname, fetchUserFollowers, fetchUserFollowing } from "@/lib/api/users";
+import { fetchMyFollowing, fetchUserByNickname, fetchUserDetails } from "@/lib/api/users";
 
 // 컴포넌트 imports
 import Profile from "@/components/user-page/profile";
 import PostFilter, { PostFilter as PostFilterType } from "@/components/user-page/postFilter";
 import MyTags from "@/components/user-page/myTags";
 import MyPosts from "@/components/user-page/myPosts";
-import { User } from "@/lib/types/user.interface";
+import FollowModal from "@/components/user-page/followModal";
+import { FollowUser, User, UserDetails } from "@/lib/types/user.interface";
 
 export default function UserProfilePage() {
     const { currentUser } = useAuth();
@@ -28,13 +29,20 @@ export default function UserProfilePage() {
         nickname = nickname.slice(1);
     }
 
+    // 유저 정보
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [followersCount, setFollowersCount] = useState(0);
-    const [followingCount, setFollowingCount] = useState(0);
-    // const [followers, setFollowers] = useState<User[]>([]);
-    // const [following, setFollowing] = useState<User[]>([]);
+
+    // 유저 상세 정보 (팀, 팔로워, 팔로잉 포함)
+    const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+    const [myFollowings, setMyFollowings] = useState<FollowUser[]>([]);
+    const [alreadyFollowing, setAlreadyFollowing] = useState<boolean>(false);
+
+    // 모달 상태
+    const [showFollowersModal, setShowFollowersModal] = useState(false);
+    const [showFollowingModal, setShowFollowingModal] = useState(false);
+
     const [activeFilter, setActiveFilter] = useState<PostFilterType>("public");
     const [selectedTag, setSelectedTag] = useState<string>("전체");
     const [followLoading, setFollowLoading] = useState(false);
@@ -53,23 +61,23 @@ export default function UserProfilePage() {
 
         if (currentUser && currentUser.nickname === nickname) {
             // 본인 프로필인 경우
-            // isActive가 false면 인증 화면 표시, true면 팔로우 정보 가져오기
+            // isActive가 false면 인증 화면 표시, true면 세부 정보 가져오기
             if (currentUser.isActive) {
                 setFollowLoading(true);
                 Promise.all([
-                    fetchUserFollowers(currentUser.id.toString()),
-                    fetchUserFollowing(currentUser.id.toString()),
+                    fetchUserDetails(currentUser.id.toString()),
+                    fetchMyFollowing(), // 팔로우 버튼 상태를 위해 내 팔로잉 목록도 필요
                 ])
-                    .then(([followersRes, followingRes]) => {
-                        if (followersRes?.success) {
-                            setFollowersCount(followersRes.data?.length || 0);
+                    .then(([detailsRes, followingRes]: [UserDetails, any]) => {
+                        if (detailsRes) {
+                            setUserDetails(detailsRes);
                         }
                         if (followingRes?.success) {
-                            setFollowingCount(followingRes.data?.length || 0);
+                            setMyFollowings(followingRes.data || []);
                         }
                     })
                     .catch((err) => {
-                        console.error("팔로우 정보 가져오기 실패:", err);
+                        console.error("사용자 세부 정보 가져오기 실패:", err);
                     })
                     .finally(() => setFollowLoading(false));
             }
@@ -83,24 +91,26 @@ export default function UserProfilePage() {
                 .then((res) => {
                     if (res && res.success && res.data) {
                         setUser(res.data);
-                        // 해당 유저의 팔로우 정보도 가져오기
+
+                        // 해당 유저의 세부 정보 가져오기
                         setFollowLoading(true);
                         return Promise.all([
-                            fetchUserFollowers(res.data.id.toString()),
-                            fetchUserFollowing(res.data.id.toString()),
+                            fetchUserDetails(res.data.id.toString()),
+                            fetchMyFollowing(), // 팔로우 버튼 상태를 위해 내 팔로잉 목록 필요
                         ]);
                     } else {
                         setError("유저를 찾을 수 없습니다.");
+                        return null;
                     }
                 })
-                .then((followResults) => {
-                    if (followResults) {
-                        const [followersRes, followingRes] = followResults;
-                        if (followersRes?.success) {
-                            setFollowersCount(followersRes.data?.length || 0);
+                .then((results) => {
+                    if (results) {
+                        const [detailsRes, followingRes]: [UserDetails, any] = results;
+                        if (detailsRes) {
+                            setUserDetails(detailsRes);
                         }
                         if (followingRes?.success) {
-                            setFollowingCount(followingRes.data?.length || 0);
+                            setMyFollowings(followingRes.data || []);
                         }
                     }
                 })
@@ -113,6 +123,14 @@ export default function UserProfilePage() {
                 });
         }
     }, [nickname, currentUser]);
+
+    // 팔로우 여부 확인
+    useEffect(() => {
+        if (user && myFollowings.length > 0) {
+            const isFollowing = myFollowings.some((followUser) => followUser.id === user.id);
+            setAlreadyFollowing(isFollowing);
+        }
+    }, [user, myFollowings]);
 
     // 타이머 관련 useEffect
     useEffect(() => {
@@ -219,6 +237,10 @@ export default function UserProfilePage() {
     const displayUser = isOwnProfile ? currentUser : user;
     if (!displayUser) return null;
 
+    // 모달 핸들러
+    const handleShowFollowers = () => setShowFollowersModal(true);
+    const handleShowFollowing = () => setShowFollowingModal(true);
+
     return (
         <div className={styles.container}>
             {/* 왼쪽 사이드바 */}
@@ -226,27 +248,52 @@ export default function UserProfilePage() {
                 {/* 프로필 섹션 */}
                 <Profile
                     user={displayUser}
-                    followersCount={followersCount}
-                    followingCount={followingCount}
+                    isOwnProfile={isOwnProfile}
+                    followersCount={userDetails?.followers?.length || 0}
+                    followers={userDetails?.followers || []}
+                    followingCount={userDetails?.following?.length || 0}
+                    following={userDetails?.following || []}
                     followLoading={followLoading}
+                    alreadyFollowing={alreadyFollowing}
+                    onShowFollowers={handleShowFollowers}
+                    onShowFollowing={handleShowFollowing}
+                    userTeams={userDetails?.teams || []}
                 />
 
-                {/* 포스트 필터링 섹션 */}
+                {/* 태그 섹션 - 위치 변경 */}
+                <MyTags selectedTag={selectedTag} onTagChange={setSelectedTag} />
+            </div>
+
+            {/* 오른쪽 컨텐츠 */}
+            <div className={styles.rightContent}>
+                {/* 포스트 필터링 섹션 - 위치 변경 */}
                 <PostFilter
                     activeFilter={activeFilter}
                     onFilterChange={setActiveFilter}
                     isOwnProfile={!!isOwnProfile}
                 />
-            </div>
-
-            {/* 오른쪽 컨텐츠 */}
-            <div className={styles.rightContent}>
-                {/* 태그 섹션 */}
-                <MyTags selectedTag={selectedTag} onTagChange={setSelectedTag} />
 
                 {/* 포스트 섹션 */}
                 <MyPosts activeFilter={activeFilter} selectedTag={selectedTag} />
             </div>
+
+            {/* 모달들 */}
+            {showFollowersModal && (
+                <FollowModal
+                    isOpen={showFollowersModal}
+                    title="Follower"
+                    users={userDetails?.followers || []}
+                    onClose={() => setShowFollowersModal(false)}
+                />
+            )}
+            {showFollowingModal && (
+                <FollowModal
+                    isOpen={showFollowingModal}
+                    title="Following"
+                    users={userDetails?.following || []}
+                    onClose={() => setShowFollowingModal(false)}
+                />
+            )}
         </div>
     );
 }
