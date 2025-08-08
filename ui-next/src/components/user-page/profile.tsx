@@ -57,7 +57,25 @@ export default function Profile({
                     <div className={styles.followLabel}>following</div>
                 </div>
             </div>
-
+            {currentUser && (
+                <>
+                    {isOwnProfile ? (
+                        <div className={styles.editProfile}>
+                            <button className={styles.editButton} onClick={() => router.push("settings/me")}>
+                                Edit Profile
+                            </button>
+                        </div>
+                    ) : (
+                        <div className={styles.followProfile}>
+                            <button
+                                className={`${styles.followButton} ${alreadyFollowing ? styles.unfollowButton : ""}`}
+                            >
+                                {alreadyFollowing ? "Unfollow" : "Follow"}
+                            </button>
+                        </div>
+                    )}
+                </>
+            )}
             {/* 가입된 팀 목록 */}
             {userTeams.length > 0 && (
                 <div className={styles.teamsSection}>
@@ -81,25 +99,6 @@ export default function Profile({
                         ))}
                     </div>
                 </div>
-            )}
-            {currentUser && (
-                <>
-                    {isOwnProfile ? (
-                        <div className={styles.editProfile}>
-                            <button className={styles.editButton} onClick={() => router.push("settings/me")}>
-                                Edit Profile
-                            </button>
-                        </div>
-                    ) : (
-                        <div className={styles.followProfile}>
-                            <button
-                                className={`${styles.followButton} ${alreadyFollowing ? styles.unfollowButton : ""}`}
-                            >
-                                {alreadyFollowing ? "Unfollow" : "Follow"}
-                            </button>
-                        </div>
-                    )}
-                </>
             )}
         </div>
     );
