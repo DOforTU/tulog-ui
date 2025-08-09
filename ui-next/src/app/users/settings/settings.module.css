@@ -1,0 +1,61 @@
+.settingsContainer {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    color: var(--color-heading);
+}
+
+.menuList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.menuItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    background: var(--color-background-soft);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    width: 100%;
+}
+
+.menuItem:hover {
+    background: var(--color-background-mute);
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(143, 95, 232, 0.15);
+}
+
+.menuContent {
+    flex: 1;
+}
+
+.menuContent h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-heading);
+}
+
+.menuContent p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.arrow {
+    font-size: 1.2rem;
+    color: var(--color-primary);
+    font-weight: bold;
+}

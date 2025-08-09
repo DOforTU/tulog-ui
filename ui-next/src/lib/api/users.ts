@@ -1,6 +1,11 @@
 import { updateUserDto, UserDetails } from "./../types/user.interface";
 import apiClient from "./api-client";
 
+export interface UpdatePasswordDto {
+    oldPassword: string;
+    newPassword: string;
+}
+
 export const fetchCurrentUser = async () => {
     const response = await apiClient.get("/api/users/me", {
         withCredentials: true,
@@ -10,6 +15,13 @@ export const fetchCurrentUser = async () => {
 
 export const updateCurrentUser = async (data: updateUserDto) => {
     const response = await apiClient.patch("/api/users/me", {
+        ...data,
+    });
+    return response.data;
+};
+
+export const updatePassword = async (data: UpdatePasswordDto) => {
+    const response = await apiClient.patch("/api/auth/password", {
         ...data,
     });
     return response.data;
