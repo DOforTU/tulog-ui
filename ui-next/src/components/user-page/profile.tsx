@@ -6,6 +6,8 @@ import { FollowUser, User } from "@/lib/types/user.interface";
 import { TeamWithStatus } from "@/lib/types/team.interface";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { followUser, unfollowUser } from "@/lib/api/follow";
 
 interface ProfileProps {
     user: User;
@@ -18,6 +20,7 @@ interface ProfileProps {
     alreadyFollowing?: boolean;
     onShowFollowers: () => void;
     onShowFollowing: () => void;
+    onFollowToggle?: (isFollowing: boolean) => void;
     userTeams: TeamWithStatus[];
 }
 
@@ -30,10 +33,32 @@ export default function Profile({
     alreadyFollowing,
     onShowFollowers,
     onShowFollowing,
+    onFollowToggle,
     userTeams,
 }: ProfileProps) {
     const { currentUser } = useAuth();
     const router = useRouter();
+    const [isFollowLoading, setIsFollowLoading] = useState(false);
+
+    const handleFollowToggle = async () => {
+        if (!currentUser || isFollowLoading) return;
+
+        setIsFollowLoading(true);
+        try {
+            if (alreadyFollowing) {
+                await unfollowUser(user.id);
+                onFollowToggle?.(false);
+            } else {
+                await followUser(user.id);
+                onFollowToggle?.(true);
+            }
+        } catch (error) {
+            console.error("Follow/unfollow error:", error);
+            // TODO: Show error message to user
+        } finally {
+            setIsFollowLoading(false);
+        }
+    };
 
     return (
         <div className={styles.profileCard}>
@@ -69,8 +94,10 @@ export default function Profile({
                         <div className={styles.followProfile}>
                             <button
                                 className={`${styles.followButton} ${alreadyFollowing ? styles.unfollowButton : ""}`}
+                                onClick={handleFollowToggle}
+                                disabled={isFollowLoading}
                             >
-                                {alreadyFollowing ? "Unfollow" : "Follow"}
+                                {isFollowLoading ? "..." : alreadyFollowing ? "Unfollow" : "Follow"}
                             </button>
                         </div>
                     )}
