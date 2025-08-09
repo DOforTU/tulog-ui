@@ -94,10 +94,14 @@ export default function UserProfilePage() {
 
                         // 해당 유저의 세부 정보 가져오기
                         setFollowLoading(true);
-                        return Promise.all([
-                            fetchUserDetails(res.data.id.toString()),
-                            fetchMyFollowing(), // 팔로우 버튼 상태를 위해 내 팔로잉 목록 필요
-                        ]);
+
+                        // 로그인된 사용자인 경우에만 팔로잉 목록도 함께 가져오기
+                        const promises = [fetchUserDetails(res.data.id.toString())];
+                        if (currentUser) {
+                            promises.push(fetchMyFollowing());
+                        }
+
+                        return Promise.all(promises);
                     } else {
                         setError("유저를 찾을 수 없습니다.");
                         return null;
@@ -105,11 +109,14 @@ export default function UserProfilePage() {
                 })
                 .then((results) => {
                     if (results) {
-                        const [detailsRes, followingRes]: [UserDetails, any] = results;
+                        const detailsRes = results[0] as UserDetails;
+                        const followingRes = results[1] as any; // 두 번째 요소는 로그인된 경우에만 존재
+
                         if (detailsRes) {
                             setUserDetails(detailsRes);
                         }
-                        if (followingRes?.success) {
+                        // 로그인된 사용자인 경우에만 팔로잉 정보 처리
+                        if (currentUser && followingRes?.success) {
                             setMyFollowings(followingRes.data || []);
                         }
                     }
@@ -124,13 +131,16 @@ export default function UserProfilePage() {
         }
     }, [nickname, currentUser]);
 
-    // 팔로우 여부 확인
+    // 팔로우 여부 확인 (로그인된 사용자일 때만)
     useEffect(() => {
-        if (user && myFollowings.length > 0) {
+        if (currentUser && user && myFollowings.length > 0) {
             const isFollowing = myFollowings.some((followUser) => followUser.id === user.id);
             setAlreadyFollowing(isFollowing);
+        } else {
+            // 비로그인 상태거나 팔로잉 정보가 없으면 false로 설정
+            setAlreadyFollowing(false);
         }
-    }, [user, myFollowings]);
+    }, [currentUser, user, myFollowings]);
 
     // 타이머 관련 useEffect
     useEffect(() => {
