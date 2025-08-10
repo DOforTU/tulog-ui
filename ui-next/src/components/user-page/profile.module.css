@@ -96,14 +96,20 @@
 }
 
 .unfollowButton {
-    background: var(--color-danger-background);
-    color: var(--color-danger-text);
-    border: 1px solid var(--color-danger-border);
+    background: var(--color-background);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .unfollowButton:hover {
-    background: var(--color-danger-background-hover);
-    border-color: var(--color-danger-border-strong);
+    background: var(--color-background-hover);
+    border-color: var(--color-border-strong);
 }
 
 /* 팀 섹션 스타일 */
@@ -155,4 +161,49 @@
     overflow: hidden;
     text-overflow: ellipsis;
     word-break: break-word;
+}
+
+/* 팀 초대 섹션 스타일 */
+.inviteTeamSection {
+    margin-top: 1rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.inviteTeamButton {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    color: var(--vt-c-white);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 180px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(143, 95, 232, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.inviteTeamButton::before {
+    content: "👥";
+    font-size: 0.9rem;
+}
+
+.inviteTeamButton:hover {
+    background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(143, 95, 232, 0.35);
+}
+
+.inviteTeamButton:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(143, 95, 232, 0.25);
 }

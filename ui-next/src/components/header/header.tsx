@@ -24,6 +24,19 @@ export default function Header() {
     const searchRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
+        // currentUser가 변경되거나 로딩 상태가 변경될 때 메뉴를 닫음
+        setIsProfileMenuOpen(false);
+        setIsMenuOpen(false);
+    }, [currentUser, isLoading]);
+
+    useEffect(() => {
+        // 페이지가 변경될 때마다 모든 메뉴를 닫음
+        setIsProfileMenuOpen(false);
+        setIsMenuOpen(false);
+        setIsSearchOpen(false);
+    }, [pathname]);
+
+    useEffect(() => {
         const update = () => {
             setIsMobile(window.innerWidth <= 768);
             setIsSmallMobile(window.innerWidth <= 620);
