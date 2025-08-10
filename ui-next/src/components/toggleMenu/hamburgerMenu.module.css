@@ -90,6 +90,24 @@
     background-color: var(--color-background-mute);
 }
 
+.notificationBadge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff4757;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--color-background);
+}
+
 .hamburgerMenuItem.logout {
     color: #ef4444;
 }

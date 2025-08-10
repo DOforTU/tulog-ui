@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import styles from "./user-page.module.css";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { fetchMyFollowing, fetchUserByNickname, fetchUserDetails } from "@/lib/api/users";
+import { fetchMyFollowing, fetchUserDetails, fetchUserDetailsByNickname } from "@/lib/api/users";
 
 // 컴포넌트 imports
 import Profile from "@/components/user-page/profile";
@@ -12,7 +12,7 @@ import PostFilter, { PostFilter as PostFilterType } from "@/components/user-page
 import MyTags from "@/components/user-page/myTags";
 import MyPosts from "@/components/user-page/myPosts";
 import FollowModal from "@/components/user-page/followModal";
-import { FollowUser, User, UserDetails } from "@/lib/types/user.interface";
+import { FollowUser, User, UserDetails, UserRole } from "@/lib/types/user.interface";
 
 export default function UserProfilePage() {
     const { currentUser } = useAuth();
@@ -60,7 +60,7 @@ export default function UserProfilePage() {
         if (!nickname) return;
 
         if (currentUser && currentUser.nickname === nickname) {
-            // 본인 프로필인 경우
+            // 로그인한 사용자가 본인 프로필을 보는 경우
             // isActive가 false면 인증 화면 표시, true면 세부 정보 가져오기
             if (currentUser.isActive) {
                 setFollowLoading(true);
@@ -83,46 +83,48 @@ export default function UserProfilePage() {
             }
             // isActive가 false면 별도 처리 없음 (인증 화면이 렌더링됨)
         } else {
-            // 다른 사용자 프로필인 경우
+            // 다른 사용자 프로필이거나 비로그인 상태인 경우
             setLoading(true);
+            setFollowLoading(true);
             setError("");
 
-            fetchUserByNickname(nickname)
-                .then((res) => {
-                    if (res && res.success && res.data) {
-                        setUser(res.data);
+            // 닉네임으로 직접 사용자 세부정보 가져오기 (한 번의 요청으로)
+            const promises = [fetchUserDetailsByNickname(nickname)];
+            if (currentUser) {
+                promises.push(fetchMyFollowing());
+            }
 
-                        // 해당 유저의 세부 정보 가져오기
-                        setFollowLoading(true);
-
-                        // 로그인된 사용자인 경우에만 팔로잉 목록도 함께 가져오기
-                        const promises = [fetchUserDetails(res.data.id.toString())];
-                        if (currentUser) {
-                            promises.push(fetchMyFollowing());
-                        }
-
-                        return Promise.all(promises);
-                    } else {
-                        setError("유저를 찾을 수 없습니다.");
-                        return null;
-                    }
-                })
+            Promise.all(promises)
                 .then((results) => {
-                    if (results) {
-                        const detailsRes = results[0] as UserDetails;
-                        const followingRes = results[1] as any; // 두 번째 요소는 로그인된 경우에만 존재
+                    const userDetails = results[0] as UserDetails;
+                    const followingRes = results[1] as any; // 두 번째 요소는 로그인된 경우에만 존재
 
-                        if (detailsRes) {
-                            setUserDetails(detailsRes);
-                        }
-                        // 로그인된 사용자인 경우에만 팔로잉 정보 처리
-                        if (currentUser && followingRes?.success) {
-                            setMyFollowings(followingRes.data || []);
-                        }
+                    if (userDetails) {
+                        // UserDetails에서 User 정보 추출
+                        setUser({
+                            id: userDetails.id,
+                            nickname: userDetails.nickname,
+                            profilePicture: userDetails.profilePicture,
+                            isActive: userDetails.isActive,
+                            // 다른 필드들은 실제로 필요하지 않으므로 기본값 설정
+                            email: "",
+                            name: "",
+                            role: UserRole.USER,
+                            createdAt: "",
+                            updatedAt: "",
+                            deletedAt: null,
+                        });
+                        setUserDetails(userDetails);
+                    }
+
+                    // 로그인된 사용자인 경우에만 팔로잉 정보 처리
+                    if (currentUser && followingRes?.success) {
+                        setMyFollowings(followingRes.data || []);
                     }
                 })
-                .catch(() => {
-                    setError("유저를 찾을 수 없습니다.");
+                .catch((error) => {
+                    console.error("User fetch error:", error);
+                    setError(`유저를 찾을 수 없습니다. (${error.message || error})`);
                 })
                 .finally(() => {
                     setLoading(false);
@@ -187,7 +189,6 @@ export default function UserProfilePage() {
     if (loading) return <div className={styles.center}>로딩 중...</div>;
     if (error) return <div className={styles.center}>{error}</div>;
     if (!isOwnProfile && !user) return null;
-    if (!currentUser && isOwnProfile) return null;
 
     // 본인 프로필이면서 비활성화된 경우 인증 화면 표시
     if (isOwnProfile && currentUser && !currentUser.isActive) {

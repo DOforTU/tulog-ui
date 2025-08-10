@@ -13,30 +13,13 @@ export const fetchTeamWithMembers = async (name: string) => {
     return response.data;
 };
 
-export const fetchUserAllTeams = async (userId: string) => {
-    const response = await apiClient.get(`/api/teams/get/from?userId=${userId}`, {
-        withCredentials: true,
-    });
-    return response.data;
-};
-
-export const fetchUserJoinedTeams = async (userId: string) => {
-    const response = await apiClient.get(`/api/teams/get/from?userId=${userId}&status=joined`, {
-        withCredentials: true,
-    });
-    return response.data;
-};
-
-export const fetchUserInvitedTeams = async (userId: string) => {
-    const response = await apiClient.get(`/api/teams/get/from?userId=${userId}&status=invited`, {
-        withCredentials: true,
-    });
-    return response.data;
-};
-
-export const fetchUserPendingTeams = async (userId: string) => {
-    const response = await apiClient.get(`/api/teams/get/from?userId=${userId}&status=pending`, {
-        withCredentials: true,
-    });
+export const inviteUserToTeam = async (teamId: number, memberId: number) => {
+    const response = await apiClient.post(
+        `/api/teams/${teamId}/members/${memberId}/invite`,
+        {},
+        {
+            withCredentials: true,
+        }
+    );
     return response.data;
 };

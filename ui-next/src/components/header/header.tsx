@@ -9,6 +9,8 @@ import styles from "./header.module.css";
 import Image from "next/image";
 import HamburgerMenu from "../toggleMenu/hamburgerMenu";
 import ProfileMenu from "../toggleMenu/profileMenu";
+import NotificationModal from "../notification/notificationModal";
+import { fetchUnreadNoticeCount } from "@/lib/api/notices";
 
 export default function Header() {
     const { currentUser, isLoading } = useAuth();
@@ -21,12 +23,15 @@ export default function Header() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
     const searchRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
         // currentUser가 변경되거나 로딩 상태가 변경될 때 메뉴를 닫음
         setIsProfileMenuOpen(false);
         setIsMenuOpen(false);
+        setIsNotificationOpen(false);
     }, [currentUser, isLoading]);
 
     useEffect(() => {
@@ -34,6 +39,7 @@ export default function Header() {
         setIsProfileMenuOpen(false);
         setIsMenuOpen(false);
         setIsSearchOpen(false);
+        setIsNotificationOpen(false);
     }, [pathname]);
 
     useEffect(() => {
@@ -51,6 +57,30 @@ export default function Header() {
             searchRef.current.focus();
         }
     }, [isSearchOpen]);
+
+    // 로그인된 사용자의 읽지 않은 알림 개수 가져오기
+    useEffect(() => {
+        if (currentUser) {
+            loadUnreadCount();
+        }
+    }, [currentUser]);
+
+    const loadUnreadCount = async () => {
+        try {
+            const response = await fetchUnreadNoticeCount();
+            setUnreadCount(response.count);
+        } catch (error) {
+            console.error("Failed to load unread count:", error);
+        }
+    };
+
+    const handleNotificationClick = () => {
+        setIsNotificationOpen(prev => !prev);
+    };
+
+    const handleUnreadCountChange = (count: number) => {
+        setUnreadCount(count);
+    };
 
     const handleSearchToggle = () => {
         setIsSearchOpen((prev) => !prev);
@@ -155,24 +185,35 @@ export default function Header() {
                     <div className={styles.menu2}>
                         {currentUser && (
                             <>
-                                <button className={styles.notificationBtn} aria-label="Notifications">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                                        <path
-                                            d="M18 16V11C18 7.68629 15.3137 5 12 5C8.68629 5 6 7.68629 6 11V16L4 18V19H20V18L18 16Z"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                        <path
-                                            d="M9 21C9.55228 21.5978 10.3261 22 11.1667 22C12.0072 22 12.781 21.5978 13.3333 21"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
-                                </button>
+                                <div className={styles.notificationContainer}>
+                                    <button 
+                                        className={styles.notificationBtn} 
+                                        aria-label="Notifications"
+                                        onClick={handleNotificationClick}
+                                    >
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                                            <path
+                                                d="M18 16V11C18 7.68629 15.3137 5 12 5C8.68629 5 6 7.68629 6 11V16L4 18V19H20V18L18 16Z"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                            <path
+                                                d="M9 21C9.55228 21.5978 10.3261 22 11.1667 22C12.0072 22 12.781 21.5978 13.3333 21"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                        {unreadCount > 0 && (
+                                            <span className={styles.notificationBadge}>
+                                                {unreadCount > 99 ? '99+' : unreadCount}
+                                            </span>
+                                        )}
+                                    </button>
+                                </div>
                             </>
                         )}
                         <button onClick={toggleTheme} className={styles.themeIconBtn}>
@@ -282,6 +323,13 @@ export default function Header() {
 
             {/* Hamburger menu component */}
             {isSmallMobile && isMenuOpen && <HamburgerMenu onClose={() => setIsMenuOpen(false)} />}
+            
+            {/* Notification modal */}
+            <NotificationModal 
+                isOpen={isNotificationOpen} 
+                onClose={() => setIsNotificationOpen(false)}
+                onUnreadCountChange={handleUnreadCountChange}
+            />
         </>
     );
 }

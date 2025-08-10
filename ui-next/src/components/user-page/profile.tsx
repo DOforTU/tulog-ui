@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { followUser, unfollowUser } from "@/lib/api/follow";
+import InviteTeamModal from "./inviteTeamModal";
 
 interface ProfileProps {
     user: User;
@@ -39,6 +40,7 @@ export default function Profile({
     const { currentUser } = useAuth();
     const router = useRouter();
     const [isFollowLoading, setIsFollowLoading] = useState(false);
+    const [showInviteModal, setShowInviteModal] = useState(false);
 
     const handleFollowToggle = async () => {
         if (!currentUser || isFollowLoading) return;
@@ -105,35 +107,49 @@ export default function Profile({
             )}
             {/* 가입된 팀 목록 */}
             {userTeams.length > 0 && (
-                <>
-                    <div className={styles.teamsSection}>
-                        <h3 className={styles.teamsTitle}>Joined Teams</h3>
-                        <div className={styles.teamsList}>
-                            {userTeams.map((teamWithStatus) => (
-                                <div
-                                    key={teamWithStatus.team.id}
-                                    className={styles.teamItem}
-                                    onClick={() => router.push(`/teams/@${teamWithStatus.team.name}`)}
-                                >
-                                    <Image
-                                        src={teamWithStatus.team.mainImage || "/default-avatar.png"}
-                                        alt={teamWithStatus.team.name}
-                                        width={40}
-                                        height={40}
-                                        className={styles.teamImage}
-                                    />
-                                    <span className={styles.teamName}>{teamWithStatus.team.name}</span>
-                                </div>
-                            ))}
-                        </div>
+                <div className={styles.teamsSection}>
+                    <h3 className={styles.teamsTitle}>Joined Teams</h3>
+                    <div className={styles.teamsList}>
+                        {userTeams.map((teamWithStatus) => (
+                            <div
+                                key={teamWithStatus.team.id}
+                                className={styles.teamItem}
+                                onClick={() => router.push(`/teams/@${teamWithStatus.team.name}`)}
+                            >
+                                <Image
+                                    src={teamWithStatus.team.mainImage || "/default-avatar.png"}
+                                    alt={teamWithStatus.team.name}
+                                    width={40}
+                                    height={40}
+                                    className={styles.teamImage}
+                                />
+                                <span className={styles.teamName}>{teamWithStatus.team.name}</span>
+                            </div>
+                        ))}
                     </div>
-                    {/* 본인 페이지가 아니고 팀이 3개 미만일 때만 팀 초대 버튼 표시 */}
-                    {!isOwnProfile && userTeams.length < 3 && (
-                        <div className={styles.inviteTeamSection}>
-                            <button className={styles.inviteTeamButton}>Invite to Team</button>
-                        </div>
-                    )}
-                </>
+                </div>
+            )}
+            
+            {/* 본인 페이지가 아니고 팀이 3개 미만일 때만 팀 초대 버튼 표시 */}
+            {!isOwnProfile && userTeams.length < 3 && (
+                <div className={styles.inviteTeamSection}>
+                    <button 
+                        className={styles.inviteTeamButton}
+                        onClick={() => setShowInviteModal(true)}
+                    >
+                        Invite to Team
+                    </button>
+                </div>
+            )}
+            
+            {/* 팀 초대 모달 */}
+            {showInviteModal && (
+                <InviteTeamModal
+                    isOpen={showInviteModal}
+                    targetUserId={user.id}
+                    targetUserNickname={user.nickname}
+                    onClose={() => setShowInviteModal(false)}
+                />
             )}
         </div>
     );
