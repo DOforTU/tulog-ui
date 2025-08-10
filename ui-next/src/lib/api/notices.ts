@@ -21,12 +21,8 @@ export const fetchNotices = async (params?: GetNoticesParams): Promise<NoticesRe
         withCredentials: true,
     });
 
-    console.log("Raw API response:", response.data); // 디버깅용
-    console.log("response.data.data:", response.data.data);
-    console.log("response.data.data.notices:", response.data.data?.notices);
-
-    // API 응답은 { status, message, data } 구조를 가짐
-    return response.data.data;
+    // 서버에서 직접 NoticesResponse를 반환함
+    return response.data;
 };
 
 // 읽지 않은 알림 개수 가져오기
@@ -34,7 +30,7 @@ export const fetchUnreadNoticeCount = async (): Promise<UnreadCountResponse> => 
     const response = await apiClient.get("/api/notices/unread-count", {
         withCredentials: true,
     });
-    return response.data.data;
+    return response.data;
 };
 
 // 특정 알림을 읽음으로 표시
@@ -46,7 +42,7 @@ export const markNoticeAsRead = async (noticeId: number): Promise<Notice> => {
             withCredentials: true,
         }
     );
-    return response.data.data;
+    return response.data;
 };
 
 // 모든 알림을 읽음으로 표시
@@ -58,7 +54,7 @@ export const markAllNoticesAsRead = async (): Promise<{ updatedCount: number }> 
             withCredentials: true,
         }
     );
-    return response.data.data;
+    return response.data;
 };
 
 // 알림 삭제

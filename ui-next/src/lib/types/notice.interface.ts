@@ -19,7 +19,7 @@ export interface Notice {
     createdAt: string;
 }
 
-export interface NoticesResponse {
+export interface NoticesData {
     notices: Notice[];
     total: number;
     page: number;
@@ -27,10 +27,11 @@ export interface NoticesResponse {
     hasNext: boolean;
 }
 
-export interface NoticesApiResponse {
-    status: number;
-    message: string;
-    data: NoticesResponse;
+export interface NoticesResponse {
+    success: boolean;
+    data: NoticesData;
+    timestamp: string;
+    path: string;
 }
 
 export interface UnreadCountResponse {

@@ -246,6 +246,45 @@
     cursor: not-allowed;
 }
 
+/* 팀 액션 버튼 스타일 */
+.teamActionButtons {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.acceptBtn {
+    background: #10B981;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.acceptBtn:hover {
+    background: #059669;
+}
+
+.rejectBtn {
+    background: #EF4444;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.rejectBtn:hover {
+    background: #DC2626;
+}
+
 /* 모바일 반응형 */
 @media (max-width: 768px) {
     .modalOverlay {

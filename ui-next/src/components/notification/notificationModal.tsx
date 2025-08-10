@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import styles from "./notificationModal.module.css";
 import { Notice, NoticeType } from "@/lib/types/notice.interface";
 import { fetchNotices, markNoticeAsRead, markAllNoticesAsRead, deleteNotice } from "@/lib/api/notices";
+import {
+    acceptTeamInvitation,
+    rejectTeamInvitation,
+    acceptTeamJoinRequest,
+    rejectTeamJoinRequest,
+} from "@/lib/api/teams";
 
 interface NotificationModalProps {
     isOpen: boolean;
@@ -31,12 +37,12 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
         setError("");
 
         try {
+            // isRead 파라미터를 제거하여 읽은 알림과 안 읽은 알림 모두 가져오기
             const response = await fetchNotices({ page: pageNum, limit: 20 });
 
-            // fetchNotices는 이미 NoticesResponse 타입을 반환하므로 직접 사용
-            const notices = response.notices || [];
-            const hasNext = response.hasNext || false;
-
+            // 서버 응답 구조: { success: true, data: { notices: [...], hasNext: boolean, ... } }
+            const notices = response.data?.notices || [];
+            const hasNext = response.data?.hasNext || false;
             if (pageNum === 1) {
                 setNotices(notices);
             } else {
@@ -131,6 +137,135 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
         if (hasNext && !loading) {
             loadNotices(page + 1);
         }
+    };
+
+    // 팀 초대 수락
+    const handleAcceptTeamInvitation = async (notice: Notice, event: React.MouseEvent) => {
+        event.stopPropagation();
+
+        if (!notice.relatedEntityId) return;
+
+        try {
+            await acceptTeamInvitation(notice.relatedEntityId);
+
+            // 알림을 읽음으로 표시하고 제거
+            await markNoticeAsRead(notice.id);
+            setNotices((prev) => prev.filter((n) => n.id !== notice.id));
+
+            // 읽지 않은 알림 개수 업데이트
+            const unreadCount = notices.filter((n) => n.id !== notice.id && !n.isRead).length;
+            onUnreadCountChange?.(unreadCount);
+
+            alert("팀 초대를 수락했습니다!");
+        } catch (error: any) {
+            console.error("Failed to accept team invitation:", error);
+            alert("초대 수락 중 오류가 발생했습니다.");
+        }
+    };
+
+    // 팀 초대 거절
+    const handleRejectTeamInvitation = async (notice: Notice, event: React.MouseEvent) => {
+        event.stopPropagation();
+
+        if (!notice.relatedEntityId) return;
+
+        try {
+            await rejectTeamInvitation(notice.relatedEntityId);
+
+            // 알림을 읽음으로 표시하고 제거
+            await markNoticeAsRead(notice.id);
+            setNotices((prev) => prev.filter((n) => n.id !== notice.id));
+
+            // 읽지 않은 알림 개수 업데이트
+            const unreadCount = notices.filter((n) => n.id !== notice.id && !n.isRead).length;
+            onUnreadCountChange?.(unreadCount);
+
+            alert("팀 초대를 거절했습니다.");
+        } catch (error: any) {
+            console.error("Failed to reject team invitation:", error);
+            alert("초대 거절 중 오류가 발생했습니다.");
+        }
+    };
+
+    // 팀 가입 요청 수락 (팀장 전용)
+    const handleAcceptTeamJoinRequest = async (notice: Notice, event: React.MouseEvent) => {
+        event.stopPropagation();
+
+        if (!notice.relatedEntityId || !notice.metadata?.requesterUserId) return;
+
+        try {
+            await acceptTeamJoinRequest(notice.relatedEntityId, notice.metadata.requesterUserId);
+
+            // 알림을 읽음으로 표시하고 제거
+            await markNoticeAsRead(notice.id);
+            setNotices((prev) => prev.filter((n) => n.id !== notice.id));
+
+            // 읽지 않은 알림 개수 업데이트
+            const unreadCount = notices.filter((n) => n.id !== notice.id && !n.isRead).length;
+            onUnreadCountChange?.(unreadCount);
+
+            alert("가입 요청을 수락했습니다!");
+        } catch (error: any) {
+            console.error("Failed to accept join request:", error);
+            alert("가입 요청 수락 중 오류가 발생했습니다.");
+        }
+    };
+
+    // 팀 가입 요청 거절 (팀장 전용)
+    const handleRejectTeamJoinRequest = async (notice: Notice, event: React.MouseEvent) => {
+        event.stopPropagation();
+
+        if (!notice.relatedEntityId || !notice.metadata?.requesterUserId) return;
+
+        try {
+            await rejectTeamJoinRequest(notice.relatedEntityId, notice.metadata.requesterUserId);
+
+            // 알림을 읽음으로 표시하고 제거
+            await markNoticeAsRead(notice.id);
+            setNotices((prev) => prev.filter((n) => n.id !== notice.id));
+
+            // 읽지 않은 알림 개수 업데이트
+            const unreadCount = notices.filter((n) => n.id !== notice.id && !n.isRead).length;
+            onUnreadCountChange?.(unreadCount);
+
+            alert("가입 요청을 거절했습니다.");
+        } catch (error: any) {
+            console.error("Failed to reject join request:", error);
+            alert("가입 요청 거절 중 오류가 발생했습니다.");
+        }
+    };
+
+    // 팀 관련 액션 버튼을 렌더링하는 함수
+    const renderTeamActionButtons = (notice: Notice) => {
+        if (notice.type === NoticeType.TEAM_INVITE) {
+            // 팀 초대 알림 - 초대받은 사람이 수락/거절
+            return (
+                <div className={styles.teamActionButtons}>
+                    <button className={styles.acceptBtn} onClick={(e) => handleAcceptTeamInvitation(notice, e)}>
+                        수락
+                    </button>
+                    <button className={styles.rejectBtn} onClick={(e) => handleRejectTeamInvitation(notice, e)}>
+                        거절
+                    </button>
+                </div>
+            );
+        }
+
+        if (notice.type === NoticeType.TEAM_JOIN && notice.metadata?.isJoinRequest) {
+            // 팀 가입 요청 알림 - 팀장이 수락/거절 (가입 요청인 경우에만)
+            return (
+                <div className={styles.teamActionButtons}>
+                    <button className={styles.acceptBtn} onClick={(e) => handleAcceptTeamJoinRequest(notice, e)}>
+                        수락
+                    </button>
+                    <button className={styles.rejectBtn} onClick={(e) => handleRejectTeamJoinRequest(notice, e)}>
+                        거절
+                    </button>
+                </div>
+            );
+        }
+
+        return null;
     };
 
     const getNoticeIcon = (type: NoticeType) => {
@@ -293,6 +428,7 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
                                             <h4 className={styles.noticeTitle}>{notice.title}</h4>
                                             <p className={styles.noticeText}>{notice.content}</p>
                                             <span className={styles.noticeTime}>{formatDate(notice.createdAt)}</span>
+                                            {renderTeamActionButtons(notice)}
                                         </div>
                                         <div className={styles.noticeActions}>
                                             {!notice.isRead && <div className={styles.unreadDot}></div>}
