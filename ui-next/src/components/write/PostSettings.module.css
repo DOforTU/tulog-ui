@@ -331,64 +331,6 @@
     box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.4);
 }
 
-/* Collaborative Editors */
-.editorList {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.editorItem {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.editorItem:hover {
-    background: var(--hover-color);
-    border-color: var(--accent-color);
-}
-
-.editorItem input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--accent-color);
-    cursor: pointer;
-}
-
-.editorInfo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-}
-
-.editorAvatar {
-    border-radius: 50%;
-    border: 2px solid var(--border-color);
-}
-
-.editorName {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.editorNote {
-    font-size: 12px;
-    color: var(--text-secondary);
-    font-style: italic;
-    padding: 8px 12px;
-    background: rgba(var(--accent-rgb), 0.05);
-    border-radius: 6px;
-    border-left: 3px solid var(--accent-color);
-}
 
 /* Responsive */
 @media (max-width: 768px) {

@@ -14,7 +14,6 @@ import { saveDraft, publishPost } from "@/lib/api/posts";
 
 export interface PostData extends Omit<CreatePostDto, "editorIds"> {
     tags: string[];
-    category: string;
     visibility: "public" | "private" | "team";
     editorIds: number[];
 }
@@ -28,7 +27,6 @@ export default function WritePage() {
         title: "",
         content: "",
         tags: [],
-        category: "general",
         visibility: "public",
         status: "DRAFT",
         editorIds: [],

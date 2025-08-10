@@ -2,7 +2,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: var(--background-color);
+    /* background: var(--background-color); */
     max-width: 1200px;
     padding: 2rem;
     margin: 0 auto;
@@ -51,7 +51,7 @@
 
 .backButton:hover {
     background: var(--hover-color);
-    border-color: var(--accent-color);
+    border-color: var(--color-border-hover);
 }
 
 .title {
@@ -78,9 +78,9 @@
 }
 
 .modeButton.active {
-    background: var(--accent-color);
-    color: white;
-    border-color: var(--accent-color);
+    background: var(--color-background-mute);
+    color: var(--color-text);
+    border-color: var(--color-border-hover);
 }
 
 .settingsButton {
@@ -96,7 +96,7 @@
 
 .settingsButton:hover {
     background: var(--hover-color);
-    border-color: var(--accent-color);
+    border-color: var(--color-border-hover);
 }
 
 /* Main Content */
@@ -142,58 +142,48 @@
 }
 
 .draftButton {
-    padding: 12px 24px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
     background: var(--card-background);
     color: var(--text-color);
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 14px;
-    font-weight: 600;
-    min-width: 120px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s ease, border-color 0.2s ease;
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 100px;
 }
 
 .draftButton:hover:not(:disabled) {
     background: var(--hover-color);
-    border-color: var(--accent-color);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-color: var(--color-border-hover);
 }
 
 .draftButton:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
 }
 
 .publishButton {
-    padding: 12px 24px;
+    padding: 8px 16px;
     border: none;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+    border-radius: 6px;
+    background: var(--accent-color);
     color: white;
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 14px;
-    font-weight: 600;
-    min-width: 120px;
-    box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.4);
+    transition: background 0.2s ease;
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 100px;
 }
 
 .publishButton:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(var(--accent-rgb), 0.5);
-    background: linear-gradient(135deg, var(--accent-hover), var(--accent-color));
+    background: var(--accent-hover);
 }
 
 .publishButton:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    transform: none;
-    box-shadow: 0 2px 4px rgba(var(--accent-rgb), 0.2);
 }
 
 /* Loading */

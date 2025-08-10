@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import styles from "./PostSettings.module.css";
 import { PostData } from "@/app/write/page";
 
@@ -22,15 +21,6 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
         { id: 3, name: "Marketing Team", memberCount: 4 },
     ]);
 
-    // Mock user data for editors - 실제 구현시 API에서 가져와야 함
-    const [availableEditors] = useState([
-        { id: 1, nickname: "김개발", profilePicture: "/default-avatar.png" },
-        { id: 2, nickname: "박디자인", profilePicture: "/default-avatar.png" },
-        { id: 3, nickname: "이기획", profilePicture: "/default-avatar.png" },
-        { id: 4, nickname: "최테스트", profilePicture: "/default-avatar.png" },
-    ]);
-
-    const categories = ["general", "technology", "design", "development", "tutorial", "review", "news", "personal"];
 
     useEffect(() => {
         setLocalData(postData);
@@ -76,19 +66,6 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
         }
     };
 
-    const handleToggleEditor = (editorId: number) => {
-        const currentEditors = localData.editorIds || [];
-        const isSelected = currentEditors.includes(editorId);
-
-        if (isSelected) {
-            handleLocalChange(
-                "editorIds",
-                currentEditors.filter((id) => id !== editorId)
-            );
-        } else {
-            handleLocalChange("editorIds", [...currentEditors, editorId]);
-        }
-    };
 
     return (
         <div className={styles.modalOverlay} onClick={onClose}>
@@ -103,21 +80,6 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
 
                 {/* Content */}
                 <div className={styles.modalBody}>
-                    {/* Category */}
-                    <div className={styles.settingGroup}>
-                        <label className={styles.label}>Category</label>
-                        <select
-                            className={styles.select}
-                            value={localData.category}
-                            onChange={(e) => handleLocalChange("category", e.target.value)}
-                        >
-                            {categories.map((category) => (
-                                <option key={category} value={category}>
-                                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
 
                     {/* Visibility */}
                     <div className={styles.settingGroup}>
@@ -217,36 +179,6 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
                         )}
                     </div>
 
-                    {/* Collaborative Editors */}
-                    <div className={styles.settingGroup}>
-                        <label className={styles.label}>Collaborative Editors</label>
-                        <div className={styles.editorList}>
-                            {availableEditors.map((editor) => (
-                                <label key={editor.id} className={styles.editorItem}>
-                                    <input
-                                        type="checkbox"
-                                        checked={(localData.editorIds || []).includes(editor.id)}
-                                        onChange={() => handleToggleEditor(editor.id)}
-                                    />
-                                    <div className={styles.editorInfo}>
-                                        <Image
-                                            src={editor.profilePicture}
-                                            alt={editor.nickname}
-                                            width={32}
-                                            height={32}
-                                            className={styles.editorAvatar}
-                                        />
-                                        <span className={styles.editorName}>{editor.nickname}</span>
-                                    </div>
-                                </label>
-                            ))}
-                        </div>
-                        {(localData.editorIds || []).length > 0 && (
-                            <div className={styles.editorNote}>
-                                Selected editors will be able to edit this post with you.
-                            </div>
-                        )}
-                    </div>
 
                     {/* Thumbnail (placeholder for future implementation) */}
                     <div className={styles.settingGroup}>
