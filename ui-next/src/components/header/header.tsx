@@ -213,6 +213,12 @@ export default function Header() {
                                             </span>
                                         )}
                                     </button>
+                                    {/* Notification modal positioned relative to this container */}
+                                    <NotificationModal 
+                                        isOpen={isNotificationOpen} 
+                                        onClose={() => setIsNotificationOpen(false)}
+                                        onUnreadCountChange={handleUnreadCountChange}
+                                    />
                                 </div>
                             </>
                         )}
@@ -323,13 +329,6 @@ export default function Header() {
 
             {/* Hamburger menu component */}
             {isSmallMobile && isMenuOpen && <HamburgerMenu onClose={() => setIsMenuOpen(false)} />}
-            
-            {/* Notification modal */}
-            <NotificationModal 
-                isOpen={isNotificationOpen} 
-                onClose={() => setIsNotificationOpen(false)}
-                onUnreadCountChange={handleUnreadCountChange}
-            />
         </>
     );
 }

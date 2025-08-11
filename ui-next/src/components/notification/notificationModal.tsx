@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./notificationModal.module.css";
 import { Notice, NoticeType } from "@/lib/types/notice.interface";
@@ -25,12 +25,41 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
     const [page, setPage] = useState(1);
     const [hasNext, setHasNext] = useState(false);
     const router = useRouter();
+    const modalRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (isOpen) {
             loadNotices();
         }
     }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as Node;
+            
+            // 알림 모달 내부 클릭이면 무시
+            if (modalRef.current && modalRef.current.contains(target)) {
+                return;
+            }
+            
+            // 알림 버튼 클릭이면 무시 (부모 컴포넌트에서 토글 처리)
+            const notificationBtn = document.querySelector('[aria-label="Notifications"]');
+            if (notificationBtn && notificationBtn.contains(target)) {
+                return;
+            }
+            
+            // 그 외의 경우에만 모달 닫기
+            onClose();
+        };
+
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen, onClose]);
 
     const loadNotices = async (pageNum = 1) => {
         setLoading(true);
@@ -391,8 +420,7 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
     if (!isOpen) return null;
 
     return (
-        <div className={styles.modalOverlay} onClick={onClose}>
-            <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalContent} ref={modalRef}>
                 <div className={styles.modalHeader}>
                     <h2 className={styles.modalTitle}>알림</h2>
                     <div className={styles.headerActions}>
@@ -467,7 +495,6 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
                         </>
                     )}
                 </div>
-            </div>
         </div>
     );
 }
