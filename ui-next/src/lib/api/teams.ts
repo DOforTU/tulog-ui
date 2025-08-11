@@ -47,7 +47,7 @@ export const rejectTeamInvitation = async (teamId: number) => {
 // 팀 가입 요청 수락 (팀장 전용)
 export const acceptTeamJoinRequest = async (teamId: number, memberId: number) => {
     const response = await apiClient.post(
-        `/api/teams/${teamId}/join-request/${memberId}/accept`,
+        `/api/teams/${teamId}/join-request/members/${memberId}/accept`,
         {},
         {
             withCredentials: true,
@@ -58,7 +58,15 @@ export const acceptTeamJoinRequest = async (teamId: number, memberId: number) =>
 
 // 팀 가입 요청 거절 (팀장 전용)
 export const rejectTeamJoinRequest = async (teamId: number, memberId: number) => {
-    const response = await apiClient.delete(`/api/teams/${teamId}/join-request/${memberId}/reject`, {
+    const response = await apiClient.delete(`/api/teams/${teamId}/join-request/members/${memberId}/reject`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// 팀 탈퇴
+export const leaveTeam = async (teamId: number) => {
+    const response = await apiClient.delete(`/api/teams/${teamId}/leave`, {
         withCredentials: true,
     });
     return response.data;

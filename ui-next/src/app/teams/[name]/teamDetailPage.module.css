@@ -8,8 +8,13 @@
 .header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 1.5rem;
     margin-bottom: 2rem;
+}
+
+.teamInfo {
+    flex: 1;
 }
 
 .image {
@@ -64,7 +69,14 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.5rem 0;
+    padding: 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.memberItem:hover {
+    background-color: var(--color-background-soft, #f5f5f5);
 }
 
 .memberImage {
@@ -73,4 +85,27 @@
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid #ccc;
+}
+
+.leaveButton {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.leaveButton:hover:not(:disabled) {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+}
+
+.leaveButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
