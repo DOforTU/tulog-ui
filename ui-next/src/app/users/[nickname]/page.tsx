@@ -252,11 +252,45 @@ export default function UserProfilePage() {
     const handleShowFollowers = () => setShowFollowersModal(true);
     const handleShowFollowing = () => setShowFollowingModal(true);
 
+    // 팔로우/언팔로우 후 상태 업데이트
+    const handleFollowToggle = (isFollowing: boolean) => {
+        setAlreadyFollowing(isFollowing);
+
+        // 팔로워 수 업데이트
+        if (userDetails) {
+            const updatedUserDetails = {
+                ...userDetails,
+                followers: isFollowing
+                    ? [
+                          ...userDetails.followers,
+                          {
+                              id: currentUser!.id,
+                              nickname: currentUser!.nickname,
+                              profilePicture: currentUser!.profilePicture,
+                              isActive: currentUser!.isActive,
+                              role: currentUser!.role as UserRole,
+                          },
+                      ]
+                    : userDetails.followers.filter((follower) => follower.id !== currentUser!.id),
+            };
+            setUserDetails(updatedUserDetails);
+        }
+
+        // 내 팔로잉 목록도 업데이트
+        if (user) {
+            setMyFollowings((prev) =>
+                isFollowing
+                    ? [...prev, { id: user.id, nickname: user.nickname, profilePicture: user.profilePicture }]
+                    : prev.filter((following) => following.id !== user.id)
+            );
+        }
+    };
+
     return (
         <div className={styles.container}>
             {/* 왼쪽 사이드바 */}
             <div className={styles.leftSidebar}>
-                {/* 프로필 섹션 */}
+                {/* 프로필 섹션만 */}
                 <Profile
                     user={displayUser}
                     isOwnProfile={isOwnProfile}
@@ -268,21 +302,22 @@ export default function UserProfilePage() {
                     alreadyFollowing={alreadyFollowing}
                     onShowFollowers={handleShowFollowers}
                     onShowFollowing={handleShowFollowing}
+                    onFollowToggle={handleFollowToggle}
                     userTeams={userDetails?.teams || []}
                 />
-
-                {/* 태그 섹션 - 위치 변경 */}
-                <MyTags selectedTag={selectedTag} onTagChange={setSelectedTag} />
             </div>
 
             {/* 오른쪽 컨텐츠 */}
             <div className={styles.rightContent}>
-                {/* 포스트 필터링 섹션 - 위치 변경 */}
+                {/* 포스트 필터링 섹션 */}
                 <PostFilter
                     activeFilter={activeFilter}
                     onFilterChange={setActiveFilter}
                     isOwnProfile={!!isOwnProfile}
                 />
+
+                {/* 태그 섹션 */}
+                <MyTags selectedTag={selectedTag} onTagChange={setSelectedTag} />
 
                 {/* 포스트 섹션 */}
                 <MyPosts activeFilter={activeFilter} selectedTag={selectedTag} />
