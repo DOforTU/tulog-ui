@@ -75,7 +75,7 @@ export default function Header() {
     };
 
     const handleNotificationClick = () => {
-        setIsNotificationOpen(prev => !prev);
+        setIsNotificationOpen((prev) => !prev);
     };
 
     const handleUnreadCountChange = (count: number) => {
@@ -93,7 +93,7 @@ export default function Header() {
                     <div className={styles.brand} onClick={() => router.push("/")}>
                         {isDark ? (
                             <Image
-                                src="/_p_tulog_text_logo_white.png"
+                                src="/TULOG_logo_for_darkmode.png"
                                 alt="TULOG"
                                 width={120}
                                 height={24}
@@ -101,7 +101,7 @@ export default function Header() {
                             />
                         ) : (
                             <Image
-                                src="/_p_tulog_text_logo_black.png"
+                                src="/TULOG_logo_for_lightmode.png"
                                 alt="TULOG"
                                 width={120}
                                 height={24}
@@ -186,8 +186,8 @@ export default function Header() {
                         {currentUser && (
                             <>
                                 <div className={styles.notificationContainer}>
-                                    <button 
-                                        className={styles.notificationBtn} 
+                                    <button
+                                        className={styles.notificationBtn}
                                         aria-label="Notifications"
                                         onClick={handleNotificationClick}
                                     >
@@ -209,13 +209,13 @@ export default function Header() {
                                         </svg>
                                         {unreadCount > 0 && (
                                             <span className={styles.notificationBadge}>
-                                                {unreadCount > 99 ? '99+' : unreadCount}
+                                                {unreadCount > 99 ? "99+" : unreadCount}
                                             </span>
                                         )}
                                     </button>
                                     {/* Notification modal positioned relative to this container */}
-                                    <NotificationModal 
-                                        isOpen={isNotificationOpen} 
+                                    <NotificationModal
+                                        isOpen={isNotificationOpen}
                                         onClose={() => setIsNotificationOpen(false)}
                                         onUnreadCountChange={handleUnreadCountChange}
                                     />
