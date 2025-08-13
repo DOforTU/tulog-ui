@@ -131,6 +131,13 @@
     color: var(--color-text-light);
     font-size: 0.9rem;
 }
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
 .readTime {
     color: var(--color-text-light);
 }

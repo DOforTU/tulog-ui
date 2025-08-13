@@ -177,12 +177,7 @@ export default function PostDetailPage() {
                                             alt={alt || ""}
                                             width={800}
                                             height={400}
-                                            style={{
-                                                width: "100%",
-                                                height: "auto",
-                                                maxWidth: "800px",
-                                                borderRadius: "8px",
-                                            }}
+                                            className={styles.contentImage}
                                             unoptimized={src.startsWith("blob:")}
                                         />
                                     </div>
