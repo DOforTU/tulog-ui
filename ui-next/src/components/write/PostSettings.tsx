@@ -146,20 +146,34 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
                                 <input
                                     type="radio"
                                     name="visibility"
-                                    value="team"
-                                    checked={localData.visibility === "team"}
+                                    value="team-public"
+                                    checked={localData.visibility === "team-public"}
                                     onChange={(e) => handleLocalChange("visibility", e.target.value)}
                                 />
                                 <span className={styles.radioCustom}></span>
                                 <span className={styles.radioText}>
-                                    👥 Team Only - Only team members can see this post
+                                    👥 Team Public - Team members and public can see this post
+                                </span>
+                            </label>
+
+                            <label className={styles.radioLabel}>
+                                <input
+                                    type="radio"
+                                    name="visibility"
+                                    value="team-private"
+                                    checked={localData.visibility === "team-private"}
+                                    onChange={(e) => handleLocalChange("visibility", e.target.value)}
+                                />
+                                <span className={styles.radioCustom}></span>
+                                <span className={styles.radioText}>
+                                    👥 Team Private - Only team members can see this post
                                 </span>
                             </label>
                         </div>
                     </div>
 
                     {/* Team Selection (only when visibility is team) */}
-                    {localData.visibility === "team" && (
+                    {(localData.visibility === "team-public" || localData.visibility === "team-private") && (
                         <div className={styles.settingGroup}>
                             <label className={styles.label}>Select Team</label>
                             <select

@@ -26,10 +26,26 @@ export interface Post {
     teamId: number | null;
     title: string;
     content: string;
+    excerpt?: string;
     thumbnailImage: string;
-    createdAt: string;
     status: PostStatus;
+    viewCount: number;
+    likeCount: number;
+    commentCount: number;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
     editors: PostEditor[];
+    postTags?: PostTag[];
+    team?: any;
+}
+
+// PostTag 관계 인터페이스
+export interface PostTag {
+    postId: number;
+    tagId: number;
+    createdAt: string;
+    tag: Tag;
 }
 
 // Editor 관계 인터페이스 (서버의 Editor entity와 일치)

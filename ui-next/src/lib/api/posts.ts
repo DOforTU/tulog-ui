@@ -4,19 +4,19 @@ import apiClient, { publicApiClient } from "./api-client";
 // 포스트 생성
 export async function createPost(postData: CreatePostDto): Promise<Post> {
     const response = await apiClient.post("/api/posts", postData);
-    return response.data;
+    return response.data.data || response.data;
 }
 
 // 포스트 업데이트
 export async function updatePost(postId: number, postData: UpdatePostDto): Promise<Post> {
     const response = await apiClient.patch(`/api/posts/${postId}`, postData);
-    return response.data;
+    return response.data.data || response.data;
 }
 
 // 포스트 상세 조회
 export async function getPost(postId: number): Promise<Post> {
     const response = await apiClient.get(`/api/posts/${postId}`);
-    return response.data;
+    return response.data.data || response.data;
 }
 
 // 포스트 목록 조회
@@ -27,7 +27,7 @@ export async function getPosts(params?: {
     teamId?: number;
 }): Promise<{ posts: Post[]; total: number; page: number; limit: number }> {
     const response = await apiClient.get("/api/posts", { params });
-    return response.data;
+    return response.data.data || response.data;
 }
 
 // 포스트 삭제
@@ -38,7 +38,7 @@ export async function deletePost(postId: number): Promise<void> {
 // 임시저장
 export async function saveDraft(postData: CreatePostDto): Promise<Post> {
     const response = await apiClient.post("/api/posts/draft", postData);
-    return response.data;
+    return response.data.data || response.data;
 }
 
 // 포스트 발행

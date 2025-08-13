@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
-import styles from "./write.module.css";
+import { useRouter, useParams } from "next/navigation";
+import styles from "../../../write/write.module.css";
 import MarkdownEditor from "@/components/write/MarkdownEditor";
 import PostSettings from "@/components/write/PostSettings";
 import { useHeaderHeight } from "@/hooks/useHeaderHeight";
 
 import { CreatePostDto, PostStatus } from "@/lib/types/post.interface";
-import { saveDraft, publishPost } from "@/lib/api/posts";
+import { getPost, updatePost } from "@/lib/api/posts";
 
 export interface PostData {
     title: string;
@@ -21,10 +21,12 @@ export interface PostData {
     teamId?: number;
 }
 
-export default function WritePage() {
+export default function EditPostPage() {
     const { currentUser, isLoading } = useAuth();
     const router = useRouter();
-    const headerHeight = useHeaderHeight(); // 동적 헤더 높이 계산
+    const params = useParams();
+    const headerHeight = useHeaderHeight();
+    const postId = parseInt(params.id as string);
 
     const [postData, setPostData] = useState<PostData>({
         title: "",
@@ -35,15 +37,68 @@ export default function WritePage() {
         visibility: "private",
     });
 
+    const [isLoading2, setIsLoading2] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
 
-    // 로그인 확인
+    // 포스트 데이터 로드
     useEffect(() => {
-        if (!isLoading && !currentUser) {
+        const loadPost = async () => {
+            if (!postId || isNaN(postId)) {
+                router.push("/");
+                return;
+            }
+
+            try {
+                const post = await getPost(postId);
+
+                // 권한 확인 - 작성자만 수정 가능
+                const isOwner = post.editors.some(
+                    (editor) => editor.userId === currentUser?.id && editor.role === "OWNER"
+                );
+
+                if (!isOwner) {
+                    alert("You don't have permission to edit this post.");
+                    router.push(`/posts/${postId}`);
+                    return;
+                }
+
+                // 포스트 데이터를 폼 형태로 변환
+                const visibility =
+                    post.status === "PUBLIC"
+                        ? post.teamId
+                            ? "team-public"
+                            : "public"
+                        : post.status === "PRIVATE"
+                        ? post.teamId
+                            ? "team-private"
+                            : "private"
+                        : "private";
+
+                setPostData({
+                    title: post.title,
+                    content: post.content,
+                    excerpt: post.excerpt || "",
+                    thumbnailImage: post.thumbnailImage || "",
+                    tags: post.postTags?.map((pt: any) => pt.tag.name) || [],
+                    visibility,
+                    teamId: post.teamId || undefined,
+                });
+            } catch (error) {
+                console.error("Failed to load post:", error);
+                alert("Failed to load post. Please try again.");
+                router.push("/");
+            } finally {
+                setIsLoading2(false);
+            }
+        };
+
+        if (!isLoading && currentUser && postId) {
+            loadPost();
+        } else if (!isLoading && !currentUser) {
             router.push("/auth/signin");
         }
-    }, [currentUser, isLoading, router]);
+    }, [currentUser, isLoading, postId, router]);
 
     const handlePostDataChange = (field: keyof PostData, value: any) => {
         setPostData((prev) => ({
@@ -88,42 +143,7 @@ export default function WritePage() {
         return plainText || undefined;
     };
 
-    const handleSaveDraft = async () => {
-        setIsSaving(true);
-        try {
-            const effectiveThumbnail = getEffectiveThumbnail();
-            const effectiveExcerpt = getEffectiveExcerpt();
-
-            console.log("Save Draft - Data:", {
-                title: postData.title,
-                content: postData.content,
-                excerpt: effectiveExcerpt,
-                thumbnailImage: effectiveThumbnail,
-                originalExcerpt: postData.excerpt,
-                originalThumbnail: postData.thumbnailImage,
-            });
-
-            const draftData: CreatePostDto = {
-                title: postData.title,
-                content: postData.content,
-                excerpt: effectiveExcerpt,
-                thumbnailImage: effectiveThumbnail,
-                status: PostStatus.DRAFT,
-                teamId: postData.teamId,
-                tags: postData.tags,
-            };
-
-            await saveDraft(draftData);
-            alert("Draft saved successfully!");
-        } catch (error) {
-            console.error("Draft save failed:", error);
-            alert("Failed to save draft. Please try again.");
-        } finally {
-            setIsSaving(false);
-        }
-    };
-
-    const handlePublish = async () => {
+    const handleUpdate = async () => {
         if (!postData.title.trim() || !postData.content.trim()) {
             alert("제목과 내용을 입력해주세요.");
             return;
@@ -134,17 +154,8 @@ export default function WritePage() {
             const effectiveThumbnail = getEffectiveThumbnail();
             const effectiveExcerpt = getEffectiveExcerpt();
 
-            console.log("Publish - Data:", {
-                title: postData.title,
-                content: postData.content,
-                excerpt: effectiveExcerpt,
-                thumbnailImage: effectiveThumbnail,
-                originalExcerpt: postData.excerpt,
-                originalThumbnail: postData.thumbnailImage,
-            });
-
             // visibility를 status로 변환
-            const publishData: CreatePostDto = {
+            const updateData: CreatePostDto = {
                 title: postData.title,
                 content: postData.content,
                 excerpt: effectiveExcerpt,
@@ -159,19 +170,18 @@ export default function WritePage() {
                 tags: postData.tags,
             };
 
-            const createdPost = await publishPost(publishData);
-            alert("Post published successfully!");
-            console.log("Created Post:", createdPost);
-            router.push(`/posts/${createdPost.id}`);
+            await updatePost(postId, updateData);
+            alert("Post updated successfully!");
+            router.push(`/posts/${postId}`);
         } catch (error) {
-            console.error("Publish failed:", error);
-            alert("Failed to publish post. Please try again.");
+            console.error("Update failed:", error);
+            alert("Failed to update post. Please try again.");
         } finally {
             setIsSaving(false);
         }
     };
 
-    if (isLoading) {
+    if (isLoading || isLoading2) {
         return <div className={styles.loading}>Loading...</div>;
     }
 
@@ -208,15 +218,12 @@ export default function WritePage() {
                 </div>
 
                 <div className={styles.footerRight}>
-                    <button className={styles.draftButton} onClick={handleSaveDraft} disabled={isSaving}>
-                        {isSaving ? "Saving..." : "Save Draft"}
-                    </button>
                     <button
                         className={styles.publishButton}
-                        onClick={handlePublish}
+                        onClick={handleUpdate}
                         disabled={isSaving || !postData.title.trim() || !postData.content.trim()}
                     >
-                        {isSaving ? "Publishing..." : "Publish"}
+                        {isSaving ? "Updating..." : "Update Post"}
                     </button>
                 </div>
             </div>

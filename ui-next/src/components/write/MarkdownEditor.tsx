@@ -161,11 +161,52 @@ export default function MarkdownEditor({ postData, onPostDataChange }: MarkdownE
                     <button className={styles.toolButton} onClick={() => insertMarkdown("*", "*")} title="Italic">
                         <em>I</em>
                     </button>
-                    <button className={styles.toolButton} onClick={() => insertMarkdown("# ")} title="Heading">
-                        H
+                    <button
+                        className={styles.toolButton}
+                        onClick={() => insertMarkdown("~~", "~~")}
+                        title="Strikethrough"
+                    >
+                        <s>S</s>
                     </button>
-                    <button className={styles.toolButton} onClick={() => insertMarkdown("- ")} title="List">
+                </div>
+
+                <div className={styles.toolbarGroup}>
+                    <button className={styles.toolButton} onClick={() => insertMarkdown("# ")} title="Heading 1">
+                        H1
+                    </button>
+                    <button className={styles.toolButton} onClick={() => insertMarkdown("## ")} title="Heading 2">
+                        H2
+                    </button>
+                    <button className={styles.toolButton} onClick={() => insertMarkdown("### ")} title="Heading 3">
+                        H3
+                    </button>
+                </div>
+
+                <div className={styles.toolbarGroup}>
+                    <button className={styles.toolButton} onClick={() => insertMarkdown("- ")} title="Bullet List">
                         •
+                    </button>
+                    <button className={styles.toolButton} onClick={() => insertMarkdown("1. ")} title="Numbered List">
+                        1.
+                    </button>
+                    <button className={styles.toolButton} onClick={() => insertMarkdown("> ")} title="Quote">
+                        &ldquo;&rdquo;
+                    </button>
+                </div>
+
+                <div className={styles.toolbarGroup}>
+                    <button className={styles.toolButton} onClick={() => insertMarkdown("`", "`")} title="Inline Code">
+                        &lt;/&gt;
+                    </button>
+                    <button
+                        className={styles.toolButton}
+                        onClick={() => insertMarkdown("```\n", "\n```")}
+                        title="Code Block"
+                    >
+                        {}
+                    </button>
+                    <button className={styles.toolButton} onClick={() => insertMarkdown("[", "](url)")} title="Link">
+                        🔗
                     </button>
                     <button className={styles.toolButton} onClick={handleImageButtonClick} title="Upload Image">
                         📷
@@ -178,7 +219,7 @@ export default function MarkdownEditor({ postData, onPostDataChange }: MarkdownE
                         onClick={() => setShowPreview(!showPreview)}
                         title="Toggle Preview"
                     >
-                        {showPreview ? "Edit" : "Preview"}
+                        Preview
                     </button>
                 </div>
 
