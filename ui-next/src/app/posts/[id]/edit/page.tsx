@@ -52,12 +52,12 @@ export default function EditPostPage() {
             try {
                 const post = await getPost(postId);
 
-                // 권한 확인 - 작성자만 수정 가능
-                const isOwner = post.editors.some(
-                    (editor) => editor.userId === currentUser?.id && editor.role === "OWNER"
+                // 권한 확인 - 편집자 이상만 수정 가능
+                const isEditor = post.editors.some(
+                    (editor) => editor.userId === currentUser?.id
                 );
 
-                if (!isOwner) {
+                if (!isEditor) {
                     alert("You don't have permission to edit this post.");
                     router.push(`/posts/${postId}`);
                     return;

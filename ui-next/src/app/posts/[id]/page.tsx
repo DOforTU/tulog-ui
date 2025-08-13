@@ -42,7 +42,7 @@ export default function PostDetailPage() {
         loadPost();
     }, [postId]);
 
-    const isOwner = post?.editors.some((editor) => editor.userId === currentUser?.id && editor.role === "OWNER");
+    // const isOwner = post?.editors.some((editor) => editor.userId === currentUser?.id && editor.role === "OWNER");
     const isEditor = post?.editors.some((editor) => editor.userId === currentUser?.id);
 
     const [showDropdown, setShowDropdown] = useState(false);
@@ -113,7 +113,7 @@ export default function PostDetailPage() {
 
                             {isEditor && (
                                 <div className={styles.actionsContainer}>
-                                    <button 
+                                    <button
                                         className={styles.menuButton}
                                         onClick={() => setShowDropdown(!showDropdown)}
                                     >
@@ -124,7 +124,8 @@ export default function PostDetailPage() {
                                             <button className={styles.dropdownItem} onClick={handleEdit}>
                                                 Edit Post
                                             </button>
-                                            {isOwner && (
+                                            {/* EDITOR여도 삭제 가능, OWNER만 삭제 경우는 조금 더 고려해볼 문제 */}
+                                            {isEditor && (
                                                 <button className={styles.dropdownItem} onClick={handleDelete}>
                                                     Delete Post
                                                 </button>
