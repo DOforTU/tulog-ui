@@ -278,9 +278,11 @@
 }
 
 .imageWrapper {
+    display: inline-block;
     text-align: center;
     padding: 2rem;
     max-width: 100%;
+    width: 100%;
 }
 
 .contentImage {

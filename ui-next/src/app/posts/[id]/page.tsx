@@ -171,7 +171,7 @@ export default function PostDetailPage() {
                             img: ({ src, alt }) => {
                                 if (!src || typeof src !== "string") return null;
                                 return (
-                                    <div className={styles.imageWrapper}>
+                                    <span className={styles.imageWrapper}>
                                         <Image
                                             src={src}
                                             alt={alt || ""}
@@ -180,7 +180,7 @@ export default function PostDetailPage() {
                                             className={styles.contentImage}
                                             unoptimized={src.startsWith("blob:")}
                                         />
-                                    </div>
+                                    </span>
                                 );
                             },
                             h1: ({ children }) => <h1 className={styles.contentH1}>{children}</h1>,
