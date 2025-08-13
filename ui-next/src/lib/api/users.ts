@@ -1,5 +1,5 @@
 import { updateUserDto, UserDetails } from "./../types/user.interface";
-import apiClient, { publicApiClient } from "./api-client";
+import apiClient from "./api-client";
 
 export interface UpdatePasswordDto {
     oldPassword: string;
@@ -64,11 +64,11 @@ export const fetchUserFollowing = async (userId: string) => {
 // 유저 세부 정보 가져오기 (팀, 팔로워, 팔로잉 포함)
 export const fetchUserDetails = async (userId: string): Promise<UserDetails> => {
     const response = await apiClient.get(`/api/users/${userId}/details`);
-    return response.data.data;
+    return response.data;
 };
 
 // 닉네임으로 유저 세부 정보 가져오기 (팀, 팔로워, 팔로잉 포함)
 export const fetchUserDetailsByNickname = async (nickname: string): Promise<UserDetails> => {
     const response = await apiClient.get(`/api/users/nickname/${nickname}/details`);
-    return response.data.data;
+    return response.data;
 };

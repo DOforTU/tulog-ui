@@ -5,6 +5,9 @@ import Image from "next/image";
 import styles from "./PostSettings.module.css";
 import { PostData } from "@/app/write/page";
 import { uploadPostImage } from "@/lib/api/file";
+import { useAuth } from "@/contexts/AuthContext";
+import { fetchUserDetails } from "@/lib/api/users";
+import { TeamWithStatus } from "@/lib/types/team.interface";
 
 interface PostSettingsProps {
     postData: PostData;
@@ -16,18 +19,34 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
     const [localData, setLocalData] = useState(postData);
     const [newTag, setNewTag] = useState("");
     const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
+    const [userTeams, setUserTeams] = useState<TeamWithStatus[]>([]);
+    const [isLoadingTeams, setIsLoadingTeams] = useState(false);
     const thumbnailInputRef = useRef<HTMLInputElement>(null);
-
-    // Mock team data - 실제 구현시 API에서 가져와야 함
-    const [userTeams] = useState([
-        { id: 1, name: "Development Team", memberCount: 5 },
-        { id: 2, name: "Design Team", memberCount: 3 },
-        { id: 3, name: "Marketing Team", memberCount: 4 },
-    ]);
+    const { currentUser } = useAuth();
 
     useEffect(() => {
         setLocalData(postData);
     }, [postData]);
+
+    // 사용자 팀 정보 가져오기
+    useEffect(() => {
+        const loadUserTeams = async () => {
+            if (!currentUser) return;
+
+            setIsLoadingTeams(true);
+            try {
+                const userDetails = await fetchUserDetails(currentUser.id.toString());
+                setUserTeams(userDetails.teams || []);
+            } catch (error) {
+                console.error("Failed to load user teams:", error);
+                setUserTeams([]);
+            } finally {
+                setIsLoadingTeams(false);
+            }
+        };
+
+        loadUserTeams();
+    }, [currentUser]);
 
     const handleLocalChange = (field: keyof PostData, value: any) => {
         setLocalData((prev) => ({
@@ -180,14 +199,22 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
                                 className={styles.select}
                                 value={localData.teamId || ""}
                                 onChange={(e) => handleLocalChange("teamId", parseInt(e.target.value))}
+                                disabled={isLoadingTeams}
                             >
-                                <option value="">Choose a team...</option>
-                                {userTeams.map((team) => (
-                                    <option key={team.id} value={team.id}>
-                                        {team.name} ({team.memberCount} members)
+                                <option value="">
+                                    {isLoadingTeams ? "Loading teams..." : "Choose a team..."}
+                                </option>
+                                {userTeams.map((teamWithStatus) => (
+                                    <option key={teamWithStatus.team.id} value={teamWithStatus.team.id}>
+                                        {teamWithStatus.team.name} ({teamWithStatus.team.memberCount} members)
                                     </option>
                                 ))}
                             </select>
+                            {userTeams.length === 0 && !isLoadingTeams && (
+                                <p className={styles.noTeamsMessage}>
+                                    You are not a member of any teams. Join a team to post as a team member.
+                                </p>
+                            )}
                         </div>
                     )}
 

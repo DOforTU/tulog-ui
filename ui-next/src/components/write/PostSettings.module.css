@@ -331,6 +331,18 @@
     box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.4);
 }
 
+/* No Teams Message */
+.noTeamsMessage {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-style: italic;
+    padding: 8px 12px;
+    background: rgba(var(--accent-rgb), 0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(var(--accent-rgb), 0.1);
+}
+
 
 /* Responsive */
 @media (max-width: 768px) {

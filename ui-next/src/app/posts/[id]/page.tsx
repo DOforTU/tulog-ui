@@ -29,7 +29,8 @@ export default function PostDetailPage() {
             }
 
             try {
-                const postData = await getPost(postId);
+                const response = await getPost(postId);
+                const postData = response.data;
                 setPost(postData);
             } catch (err) {
                 console.error("Failed to load post:", err);
@@ -117,7 +118,7 @@ export default function PostDetailPage() {
                                     </>
                                 )}
                             </div>
-                            
+
                             {/* Team Info */}
                             {post.teamId && post.team && (
                                 <div className={styles.teamInfo}>

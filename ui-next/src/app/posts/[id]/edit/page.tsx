@@ -50,12 +50,11 @@ export default function EditPostPage() {
             }
 
             try {
-                const post = await getPost(postId);
+                const response = (await getPost(postId)) as any;
+                const post = response?.success && response.data ? response.data : response;
 
                 // 권한 확인 - 편집자 이상만 수정 가능
-                const isEditor = post.editors.some(
-                    (editor) => editor.userId === currentUser?.id
-                );
+                const isEditor = post.editors?.some((editor: any) => editor.userId === currentUser?.id);
 
                 if (!isEditor) {
                     alert("You don't have permission to edit this post.");
