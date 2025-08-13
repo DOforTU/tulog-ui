@@ -31,8 +31,9 @@ export async function getPosts(params?: {
 }
 
 // 포스트 삭제
-export async function deletePost(postId: number): Promise<void> {
-    await apiClient.delete(`/api/posts/${postId}`);
+export async function deletePost(postId: number) {
+    const response = await apiClient.delete(`/api/posts/${postId}`);
+    return response.data;
 }
 
 // 임시저장

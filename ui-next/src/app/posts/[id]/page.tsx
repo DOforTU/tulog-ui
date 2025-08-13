@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
-import { getPost } from "@/lib/api/posts";
+import { getPost, deletePost } from "@/lib/api/posts";
 import { Post } from "@/lib/types/post.interface";
 import styles from "./post.module.css";
 
@@ -18,6 +18,7 @@ export default function PostDetailPage() {
 
     const [post, setPost] = useState<Post | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -73,10 +74,34 @@ export default function PostDetailPage() {
         setShowDropdown(false);
     };
 
-    const handleDelete = () => {
-        // TODO: Implement delete functionality
-        console.log("Delete post");
-        setShowDropdown(false);
+    const handleDelete = async () => {
+        if (!post || isDeleting) return;
+
+        const confirmDelete = confirm(`Are you sure you want to delete "${post.title}"? This action cannot be undone.`);
+
+        if (!confirmDelete) {
+            setShowDropdown(false);
+            return;
+        }
+
+        setIsDeleting(true);
+        try {
+            const response = await deletePost(postId);
+
+            // response.data가 true인 경우 성공
+            if (response.data === true) {
+                alert("Post deleted successfully!");
+                router.push("/"); // 홈으로 리다이렉트
+            } else {
+                throw new Error("Delete failed");
+            }
+        } catch (error) {
+            console.error("Failed to delete post:", error);
+            alert("Failed to delete post. Please try again.");
+        } finally {
+            setIsDeleting(false);
+            setShowDropdown(false);
+        }
     };
 
     if (isLoading) {
@@ -175,8 +200,12 @@ export default function PostDetailPage() {
                                             </button>
                                             {/* EDITOR여도 삭제 가능, OWNER만 삭제 경우는 조금 더 고려해볼 문제 */}
                                             {isEditor && (
-                                                <button className={styles.dropdownItem} onClick={handleDelete}>
-                                                    Delete Post
+                                                <button
+                                                    className={styles.dropdownItem}
+                                                    onClick={handleDelete}
+                                                    disabled={isDeleting}
+                                                >
+                                                    {isDeleting ? "Deleting..." : "Delete Post"}
                                                 </button>
                                             )}
                                         </div>
