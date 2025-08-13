@@ -159,8 +159,8 @@ export default function WritePage() {
                 tags: postData.tags,
             };
 
-            const createdPost = await publishPost(publishData);
-            alert("Post published successfully!");
+            const response = await publishPost(publishData);
+            const createdPost = response.data;
             console.log("Created Post:", createdPost);
             router.push(`/posts/${createdPost.id}`);
         } catch (error) {
