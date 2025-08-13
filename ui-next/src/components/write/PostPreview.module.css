@@ -206,7 +206,7 @@
 .codeBlock {
     margin: 20px 0;
     padding: 20px;
-    background: var(--color-background-mute);
+    background: var(--color-background-soft);
     border: 1px solid var(--border-color);
     border-radius: 12px;
     overflow-x: auto;
@@ -360,7 +360,7 @@
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
     .codeBlock {
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.05);
     }
 
     .image {

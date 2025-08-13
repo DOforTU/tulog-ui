@@ -102,7 +102,14 @@ export default function PostDetailPage() {
                                             className={styles.authorAvatar}
                                         />
                                         <div className={styles.authorDetails}>
-                                            <span className={styles.authorName}>{author.nickname}</span>
+                                            <div className={styles.authorNameWithCount}>
+                                                <span className={styles.authorName}>{author.nickname}</span>
+                                                {post.teamId && post.editors && post.editors.length > 1 && (
+                                                    <span className={styles.authorCount}>
+                                                        & {post.editors.length - 1} others
+                                                    </span>
+                                                )}
+                                            </div>
                                             <span className={styles.publishDate}>
                                                 {new Date(post.createdAt).toLocaleDateString()}
                                             </span>
@@ -110,6 +117,27 @@ export default function PostDetailPage() {
                                     </>
                                 )}
                             </div>
+                            
+                            {/* Team Info */}
+                            {post.teamId && post.team && (
+                                <div className={styles.teamInfo}>
+                                    <div className={styles.teamDetails}>
+                                        {post.team.mainImage && (
+                                            <Image
+                                                src={post.team.mainImage}
+                                                alt={post.team.name}
+                                                width={32}
+                                                height={32}
+                                                className={styles.teamImage}
+                                            />
+                                        )}
+                                        <div className={styles.teamTextInfo}>
+                                            <span className={styles.teamLabel}>Team</span>
+                                            <span className={styles.teamName}>{post.team.name}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             {isEditor && (
                                 <div className={styles.actionsContainer}>
