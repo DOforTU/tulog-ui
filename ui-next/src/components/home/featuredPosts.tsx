@@ -63,15 +63,29 @@ export function FeaturedPosts() {
                                                             router.push(`/users/${author.nickname}`);
                                                         }}
                                                     />
-                                                    <span
-                                                        className={styles.authorName}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            router.push(`/users/${author.nickname}`);
-                                                        }}
-                                                    >
-                                                        {author.nickname}
-                                                    </span>
+                                                    <div className={styles.authorNameContainer}>
+                                                        <div className={styles.authorNameWithCount}>
+                                                            <span
+                                                                className={styles.authorName}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    router.push(`/users/${author.nickname}`);
+                                                                }}
+                                                            >
+                                                                {author.nickname}
+                                                            </span>
+                                                            {post.teamId && post.authors && post.authors.length > 1 && (
+                                                                <span className={styles.authorCount}>
+                                                                    & {post.authors.length - 1} others
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        {post.teamId && post.teamName && (
+                                                            <span className={styles.teamName}>
+                                                                {post.teamName}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </>
                                             )}
                                         </div>

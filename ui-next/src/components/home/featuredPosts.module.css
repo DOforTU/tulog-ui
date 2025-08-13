@@ -95,11 +95,31 @@
     object-fit: cover;
     cursor: pointer;
 }
+.authorNameContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+.authorNameWithCount {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
 .authorName {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--color-text);
     cursor: pointer;
+}
+.authorCount {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--color-text-light);
+}
+.teamName {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--color-text-light);
 }
 .publishDate {
     font-size: 0.875rem;

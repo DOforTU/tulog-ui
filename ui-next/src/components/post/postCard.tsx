@@ -18,8 +18,17 @@ export function PostCard({ post }: { post: PublicPost }) {
             >
                 <div className={styles.leftContent}>
                     <div className={styles.authorRow}>
-                        <div className={styles.authorName}>알 수 없는 작성자</div>
-                        {post.teamName && <div className={styles.teamName}>{post.teamName}</div>}
+                        <div className={styles.authorInfo}>
+                            <div className={styles.authorNameWithCount}>
+                                <div className={styles.authorName}>알 수 없는 작성자</div>
+                                {post.teamId && post.authors && post.authors.length > 1 && (
+                                    <span className={styles.authorCount}>
+                                        & {post.authors.length - 1} others
+                                    </span>
+                                )}
+                            </div>
+                            {post.teamName && <div className={styles.teamName}>{post.teamName}</div>}
+                        </div>
                     </div>
                     <div className={styles.titleRow}>
                         <span className={styles.postTitle}>{post.title || "제목 없음"}</span>
@@ -48,15 +57,22 @@ export function PostCard({ post }: { post: PublicPost }) {
                             router.push(`/users/${author.nickname}`);
                         }}
                     />
-                    <div>
-                        <div 
-                            className={styles.authorName}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                router.push(`/users/${author.nickname}`);
-                            }}
-                        >
-                            {author.nickname}
+                    <div className={styles.authorInfo}>
+                        <div className={styles.authorNameWithCount}>
+                            <div 
+                                className={styles.authorName}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    router.push(`/users/${author.nickname}`);
+                                }}
+                            >
+                                {author.nickname}
+                            </div>
+                            {post.teamId && post.authors && post.authors.length > 1 && (
+                                <span className={styles.authorCount}>
+                                    & {post.authors.length - 1} others
+                                </span>
+                            )}
                         </div>
                         {post.teamName && <div className={styles.teamName}>{post.teamName}</div>}
                     </div>
