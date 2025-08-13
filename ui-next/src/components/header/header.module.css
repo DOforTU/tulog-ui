@@ -103,6 +103,10 @@
     gap: 1rem;
 }
 
+.notificationContainer {
+    position: relative;
+}
+
 .notificationBtn {
     background: transparent;
     border: none;
@@ -114,11 +118,30 @@
     transition: color 0.2s;
     padding: 0.5rem;
     border-radius: 10px;
+    position: relative;
 }
 
 .notificationBtn:hover {
     color: var(--color-primary);
     background-color: var(--color-background-soft);
+}
+
+.notificationBadge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #ff4757;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--color-background);
 }
 
 .themeIconBtn {

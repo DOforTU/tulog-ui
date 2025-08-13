@@ -26,15 +26,36 @@
     height: 32px;
     object-fit: cover;
     margin-right: 0.75rem;
+    cursor: pointer;
 }
 .authorDetails {
     display: flex;
     flex-direction: column;
 }
+.authorInfo {
+    display: flex;
+    flex-direction: column;
+}
+.authorNameWithCount {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
 .authorName {
     font-weight: 600;
     color: var(--color-heading);
     font-size: 1rem;
+    cursor: pointer;
+}
+.authorCount {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-text-light);
+}
+.teamName {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    margin-top: 0.2rem;
 }
 .authorJob {
     font-size: 0.75rem;
@@ -83,6 +104,12 @@
     font-size: 0.875rem;
     color: var(--color-text-light);
     margin-top: 0.5rem;
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 .rightImage {
     width: 160px;

@@ -4,18 +4,47 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import styles from "./hamburgerMenu.module.css";
 import ProfileMenuContents from "./profileMenuContents";
+import NotificationModal from "../notification/notificationModal";
+import { fetchUnreadNoticeCount } from "@/lib/api/notices";
 
 export default function HamburgerMenu({ onClose }: { onClose: () => void }) {
     const { currentUser, isLoading } = useAuth();
     const { isDark, toggleTheme } = useTheme();
     const router = useRouter();
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    // 로그인된 사용자의 읽지 않은 알림 개수 가져오기
+    useEffect(() => {
+        if (currentUser) {
+            loadUnreadCount();
+        }
+    }, [currentUser]);
+
+    const loadUnreadCount = async () => {
+        try {
+            const response = await fetchUnreadNoticeCount();
+            setUnreadCount(response.count);
+        } catch (error) {
+            console.error("Failed to load unread count:", error);
+        }
+    };
 
     // 공통 이동 함수
     const handleMove = (path: string) => {
         router.push(path);
         if (onClose) onClose();
+    };
+
+    const handleNotificationClick = () => {
+        setIsNotificationOpen(true);
+    };
+
+    const handleUnreadCountChange = (count: number) => {
+        setUnreadCount(count);
     };
 
     return (
@@ -177,28 +206,45 @@ export default function HamburgerMenu({ onClose }: { onClose: () => void }) {
 
                 {currentUser && (
                     <>
-                        <button className={styles.hamburgerMenuItem}>
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                                <path
-                                    d="M18 16V11C18 7.68629 15.3137 5 12 5C8.68629 5 6 7.68629 6 11V16L4 18V19H20V18L18 16Z"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                                <path
-                                    d="M9 21C9.55228 21.5978 10.3261 22 11.1667 22C12.0072 22 12.781 21.5978 13.3333 21"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                            Notifications
+                        <button 
+                            className={styles.hamburgerMenuItem} 
+                            onClick={handleNotificationClick}
+                        >
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, position: "relative" }}>
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M18 16V11C18 7.68629 15.3137 5 12 5C8.68629 5 6 7.68629 6 11V16L4 18V19H20V18L18 16Z"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                    <path
+                                        d="M9 21C9.55228 21.5978 10.3261 22 11.1667 22C12.0072 22 12.781 21.5978 13.3333 21"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                                Notifications
+                                {unreadCount > 0 && (
+                                    <span className={styles.notificationBadge}>
+                                        {unreadCount > 99 ? '99+' : unreadCount}
+                                    </span>
+                                )}
+                            </span>
                         </button>
                     </>
                 )}
             </div>
+            
+            {/* Notification modal */}
+            <NotificationModal 
+                isOpen={isNotificationOpen} 
+                onClose={() => setIsNotificationOpen(false)}
+                onUnreadCountChange={handleUnreadCountChange}
+            />
         </div>
     );
 }

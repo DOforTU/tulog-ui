@@ -1,0 +1,362 @@
+.editorContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--card-background);
+}
+
+/* Title Section */
+.titleSection {
+    padding: 32px 32px 24px;
+}
+
+.titleInput {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-color);
+    background: transparent;
+    padding: 0;
+    line-height: 1.2;
+}
+
+.titleInput::placeholder {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* Toolbar */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 32px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--background-color);
+    flex-wrap: wrap;
+}
+
+.toolbarGroup {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 6px;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+}
+
+.toolButton {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toolButton:hover {
+    background: var(--hover-color);
+    color: var(--accent-color);
+}
+
+.toolButton:active {
+    transform: scale(0.95);
+}
+
+.toolButton.active {
+    background: var(--accent-color);
+    color: white;
+}
+
+/* Editor Main Layout */
+.editorMain {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+/* Editor Wrapper */
+.editorWrapper {
+    flex: 1;
+    position: relative;
+    padding: 24px 32px 32px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.editorWrapper.splitView {
+    flex: 1;
+    border-right: 1px solid var(--border-color);
+}
+
+.editorWrapper.fullView {
+    flex: 1;
+}
+
+.editorWrapper.dragActive {
+    background: rgba(var(--accent-rgb), 0.02);
+    border: 2px dashed var(--accent-color);
+    border-radius: 8px;
+}
+
+.contentTextarea {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-color);
+    background: transparent;
+    padding: 0;
+}
+
+.contentTextarea::placeholder {
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* Drag Overlay */
+.dragOverlay {
+    position: absolute;
+    top: 24px;
+    left: 32px;
+    right: 32px;
+    bottom: 32px;
+    background: rgba(var(--accent-rgb), 0.05);
+    border: 2px dashed var(--accent-color);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.dragMessage {
+    padding: 16px 24px;
+    background: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent-color);
+    text-align: center;
+}
+
+/* Help Text */
+.helpText {
+    padding: 16px 32px;
+    background: var(--background-color);
+    border-top: 1px solid var(--border-color);
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* Preview Panel */
+.previewWrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--card-background);
+    overflow: hidden;
+}
+
+.previewHeader {
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--background-color);
+}
+
+.previewHeader h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.previewContent {
+    flex: 1;
+    padding: 32px;
+    overflow-y: auto;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+.previewTitle {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0 0 24px 0;
+    line-height: 1.2;
+}
+
+.imageWrapper {
+    margin: 16px 0;
+    text-align: center;
+}
+
+/* Preview Markdown Styles */
+.previewContent h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 32px 0 16px 0;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.previewContent h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 24px 0 12px 0;
+    color: var(--text-color);
+}
+
+.previewContent h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 20px 0 10px 0;
+    color: var(--text-color);
+}
+
+.previewContent p {
+    margin: 12px 0;
+    line-height: 1.6;
+}
+
+.previewContent ul,
+.previewContent ol {
+    margin: 12px 0;
+    padding-left: 24px;
+}
+
+.previewContent li {
+    margin: 4px 0;
+}
+
+.previewContent blockquote {
+    margin: 16px 0;
+    padding: 12px 16px;
+    border-left: 4px solid var(--accent-color);
+    background: rgba(var(--accent-rgb), 0.05);
+    border-radius: 0 4px 4px 0;
+}
+
+.previewContent code {
+    background: rgba(var(--accent-rgb), 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+    font-size: 14px;
+}
+
+.previewContent pre {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    margin: 16px 0;
+}
+
+.previewContent pre code {
+    background: none;
+    padding: 0;
+    font-size: 14px;
+}
+
+.previewContent a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.previewContent a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .editorMain {
+        flex-direction: column;
+    }
+
+    .editorWrapper.splitView {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        flex: none;
+        height: 300px;
+    }
+
+    .titleSection {
+        padding: 20px;
+    }
+
+    .titleInput {
+        font-size: 28px;
+    }
+
+    .toolbar {
+        padding: 8px 20px;
+        gap: 12px;
+    }
+
+    .toolbarGroup {
+        gap: 2px;
+    }
+
+    .toolButton {
+        padding: 6px 8px;
+        font-size: 12px;
+        min-width: 28px;
+    }
+
+    .editorWrapper {
+        padding: 16px 20px 20px;
+    }
+
+    .contentTextarea {
+        font-size: 15px;
+        min-height: 300px;
+        line-height: 1.6;
+    }
+
+    .previewHeader {
+        padding: 12px 20px;
+    }
+
+    .previewContent {
+        padding: 20px;
+        font-size: 14px;
+    }
+
+    .dragMessage {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    .contentTextarea {
+        caret-color: var(--accent-color);
+    }
+
+    .toolButton:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}

@@ -1,0 +1,330 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import styles from "./PostSettings.module.css";
+import { PostData } from "@/app/write/page";
+import { uploadPostImage } from "@/lib/api/file";
+import { useAuth } from "@/contexts/AuthContext";
+import { fetchUserDetails } from "@/lib/api/users";
+import { TeamWithStatus } from "@/lib/types/team.interface";
+
+interface PostSettingsProps {
+    postData: PostData;
+    onPostDataChange: (field: keyof PostData, value: any) => void;
+    onClose: () => void;
+    isEditMode?: boolean;
+}
+
+export default function PostSettings({ postData, onPostDataChange, onClose, isEditMode = false }: PostSettingsProps) {
+    const [localData, setLocalData] = useState(postData);
+    const [newTag, setNewTag] = useState("");
+    const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
+    const [userTeams, setUserTeams] = useState<TeamWithStatus[]>([]);
+    const [isLoadingTeams, setIsLoadingTeams] = useState(false);
+    const thumbnailInputRef = useRef<HTMLInputElement>(null);
+    const { currentUser } = useAuth();
+
+    // 원본 포스트가 팀 블로그인지 확인
+    const isOriginallyTeamPost = isEditMode && postData.teamId;
+    // 현재 팀 옵션을 선택했는지 확인 (개인 블로그에서 팀으로 변경하려는 경우)
+    const isChangingToTeam = !isOriginallyTeamPost && 
+        (localData.visibility === "team-public" || localData.visibility === "team-private");
+
+    useEffect(() => {
+        setLocalData(postData);
+    }, [postData]);
+
+    // 사용자 팀 정보 가져오기
+    useEffect(() => {
+        const loadUserTeams = async () => {
+            if (!currentUser) return;
+
+            setIsLoadingTeams(true);
+            try {
+                const userDetails = await fetchUserDetails(currentUser.id.toString());
+                setUserTeams(userDetails.data.teams || []);
+            } catch (error) {
+                console.error("Failed to load user teams:", error);
+                setUserTeams([]);
+            } finally {
+                setIsLoadingTeams(false);
+            }
+        };
+
+        loadUserTeams();
+    }, [currentUser]);
+
+    const handleLocalChange = (field: keyof PostData, value: any) => {
+        setLocalData((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
+
+    const handleSave = () => {
+        if (isEditMode) {
+            // Edit 모드에서는 변경된 필드만 전달
+            Object.entries(localData).forEach(([key, value]) => {
+                if (JSON.stringify(postData[key as keyof PostData]) !== JSON.stringify(value)) {
+                    onPostDataChange(key as keyof PostData, value);
+                }
+            });
+        } else {
+            // 새 포스트 작성 시에는 모든 데이터 전달
+            Object.entries(localData).forEach(([key, value]) => {
+                onPostDataChange(key as keyof PostData, value);
+            });
+        }
+        onClose();
+    };
+
+    const handleCancel = () => {
+        setLocalData(postData); // 원래 데이터로 복원
+        onClose();
+    };
+
+    const handleAddTag = () => {
+        if (newTag.trim() && !localData.tags.includes(newTag.trim())) {
+            handleLocalChange("tags", [...localData.tags, newTag.trim()]);
+            setNewTag("");
+        }
+    };
+
+    const handleRemoveTag = (tagToRemove: string) => {
+        handleLocalChange(
+            "tags",
+            localData.tags.filter((tag) => tag !== tagToRemove)
+        );
+    };
+
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleAddTag();
+        }
+    };
+
+    const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !file.type.startsWith("image/")) return;
+
+        // 즉시 미리보기를 위한 Blob URL 생성
+        const previewUrl = URL.createObjectURL(file);
+        handleLocalChange("thumbnailImage", previewUrl);
+
+        setIsUploadingThumbnail(true);
+        try {
+            // 백그라운드에서 실제 업로드 진행
+            const imageUrl = await uploadPostImage(file);
+            handleLocalChange("thumbnailImage", imageUrl);
+
+            // Blob URL 정리
+            URL.revokeObjectURL(previewUrl);
+        } catch (error) {
+            console.error("Thumbnail upload failed:", error);
+            alert("Failed to upload thumbnail image. Please try again.");
+
+            // 실패시 원래 이미지로 복원
+            handleLocalChange("thumbnailImage", postData.thumbnailImage);
+            URL.revokeObjectURL(previewUrl);
+        } finally {
+            setIsUploadingThumbnail(false);
+        }
+    };
+
+    const handleThumbnailClick = () => {
+        thumbnailInputRef.current?.click();
+    };
+
+    return (
+        <div className={styles.modalOverlay} onClick={onClose}>
+            <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                {/* Header */}
+                <div className={styles.modalHeader}>
+                    <h2 className={styles.modalTitle}>Post Settings</h2>
+                    <button className={styles.closeButton} onClick={onClose}>
+                        ✕
+                    </button>
+                </div>
+
+                {/* Content */}
+                <div className={styles.modalBody}>
+                    {/* Visibility */}
+                    <div className={styles.settingGroup}>
+                        <label className={styles.label}>Visibility</label>
+                        <div className={styles.radioGroup}>
+                            {/* 개인 옵션들 - 원래 팀 포스트가 아닌 경우에만 표시 */}
+                            {!isOriginallyTeamPost && (
+                                <>
+                                    <label className={styles.radioLabel}>
+                                        <input
+                                            type="radio"
+                                            name="visibility"
+                                            value="private"
+                                            checked={localData.visibility === "private"}
+                                            onChange={(e) => handleLocalChange("visibility", e.target.value)}
+                                        />
+                                        <span className={styles.radioCustom}></span>
+                                        <span className={styles.radioText}>🔒 Private - Only you can see this post</span>
+                                    </label>
+
+                                    <label className={styles.radioLabel}>
+                                        <input
+                                            type="radio"
+                                            name="visibility"
+                                            value="public"
+                                            checked={localData.visibility === "public"}
+                                            onChange={(e) => handleLocalChange("visibility", e.target.value)}
+                                        />
+                                        <span className={styles.radioCustom}></span>
+                                        <span className={styles.radioText}>🌍 Public - Anyone can see this post</span>
+                                    </label>
+                                </>
+                            )}
+
+                            <label className={styles.radioLabel}>
+                                <input
+                                    type="radio"
+                                    name="visibility"
+                                    value="team-public"
+                                    checked={localData.visibility === "team-public"}
+                                    onChange={(e) => handleLocalChange("visibility", e.target.value)}
+                                />
+                                <span className={styles.radioCustom}></span>
+                                <span className={styles.radioText}>
+                                    👥 Team Public - Team members and public can see this post
+                                </span>
+                            </label>
+
+                            <label className={styles.radioLabel}>
+                                <input
+                                    type="radio"
+                                    name="visibility"
+                                    value="team-private"
+                                    checked={localData.visibility === "team-private"}
+                                    onChange={(e) => handleLocalChange("visibility", e.target.value)}
+                                />
+                                <span className={styles.radioCustom}></span>
+                                <span className={styles.radioText}>
+                                    👥 Team Private - Only team members can see this post
+                                </span>
+                            </label>
+                        </div>
+                        
+                        {/* 팀 블로그 변경 경고 메시지 */}
+                        {isChangingToTeam && (
+                            <div className={styles.warningMessage}>
+                                ⚠️ Once you convert to a team blog, it cannot be reverted to a personal blog.
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Team Selection (only when visibility is team) */}
+                    {(localData.visibility === "team-public" || localData.visibility === "team-private") && (
+                        <div className={styles.settingGroup}>
+                            <label className={styles.label}>Select Team</label>
+                            <select
+                                className={styles.select}
+                                value={localData.teamId || ""}
+                                onChange={(e) => handleLocalChange("teamId", parseInt(e.target.value))}
+                                disabled={isLoadingTeams}
+                            >
+                                <option value="">{isLoadingTeams ? "Loading teams..." : "Choose a team..."}</option>
+                                {userTeams.map((teamWithStatus) => (
+                                    <option key={teamWithStatus.team.id} value={teamWithStatus.team.id}>
+                                        {teamWithStatus.team.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {userTeams.length === 0 && !isLoadingTeams && (
+                                <p className={styles.noTeamsMessage}>
+                                    You are not a member of any teams. Join a team to post as a team member.
+                                </p>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Tags */}
+                    <div className={styles.settingGroup}>
+                        <label className={styles.label}>Tags</label>
+                        <div className={styles.tagInput}>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="Add a tag..."
+                                value={newTag}
+                                onChange={(e) => setNewTag(e.target.value)}
+                                onKeyDown={handleKeyPress}
+                            />
+                            <button
+                                className={styles.addTagButton}
+                                onClick={handleAddTag}
+                                disabled={!newTag.trim() || localData.tags.includes(newTag.trim())}
+                            >
+                                Add
+                            </button>
+                        </div>
+
+                        {localData.tags.length > 0 && (
+                            <div className={styles.tagList}>
+                                {localData.tags.map((tag, index) => (
+                                    <span key={index} className={styles.tag}>
+                                        #{tag}
+                                        <button className={styles.removeTagButton} onClick={() => handleRemoveTag(tag)}>
+                                            ✕
+                                        </button>
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Thumbnail */}
+                    <div className={styles.settingGroup}>
+                        <label className={styles.label}>Thumbnail Image</label>
+                        <div className={styles.thumbnailUpload}>
+                            <div className={styles.thumbnailPreview} onClick={handleThumbnailClick}>
+                                {localData.thumbnailImage && 
+                                 localData.thumbnailImage !== process.env.NEXT_PUBLIC_DEFAULT_THUMBNAIL_IMAGE_URL ? (
+                                    <Image
+                                        src={localData.thumbnailImage}
+                                        alt="Thumbnail"
+                                        fill
+                                        style={{ objectFit: "cover" }}
+                                    />
+                                ) : (
+                                    <div className={styles.thumbnailPlaceholder}>📸 Click to upload thumbnail</div>
+                                )}
+                            </div>
+                            <input
+                                ref={thumbnailInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleThumbnailUpload}
+                                style={{ display: "none" }}
+                            />
+                            <button
+                                className={styles.uploadButton}
+                                onClick={handleThumbnailClick}
+                                disabled={isUploadingThumbnail}
+                            >
+                                {isUploadingThumbnail ? "Uploading..." : "Upload Image"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Footer */}
+                <div className={styles.modalFooter}>
+                    <button className={styles.cancelButton} onClick={handleCancel}>
+                        Cancel
+                    </button>
+                    <button className={styles.saveButton} onClick={handleSave}>
+                        Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}

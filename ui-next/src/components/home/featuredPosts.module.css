@@ -50,6 +50,7 @@
     overflow: hidden;
     background: #eee;
     position: relative;
+    cursor: pointer;
 }
 .featuredImage img,
 .featuredImage .next-image {
@@ -68,11 +69,13 @@
     line-height: 1.4;
     margin-bottom: 0.5rem;
     color: var(--color-heading);
+    cursor: pointer;
 }
 .cardExcerpt {
     color: var(--color-text-light);
     line-height: 1.6;
     margin-bottom: 1rem;
+    cursor: pointer;
 }
 .cardMeta {
     display: flex;
@@ -90,11 +93,33 @@
     height: 24px;
     border-radius: 50%;
     object-fit: cover;
+    cursor: pointer;
+}
+.authorNameContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+.authorNameWithCount {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 .authorName {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--color-text);
+    cursor: pointer;
+}
+.authorCount {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--color-text-light);
+}
+.teamName {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--color-text-light);
 }
 .publishDate {
     font-size: 0.875rem;
@@ -126,6 +151,13 @@
     color: var(--color-text-light);
     font-size: 0.9rem;
 }
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
 .readTime {
     color: var(--color-text-light);
 }

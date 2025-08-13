@@ -2,17 +2,22 @@ import { PostCard } from "../post/postCard";
 import styles from "./recentPosts.module.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Post } from "@/lib/types/post.interface";
+import { PublicPost } from "@/lib/types/post.interface";
+import { getPublicPosts } from "@/lib/api/posts";
 
 export function RecentPosts() {
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [posts, setPosts] = useState<PublicPost[]>([]);
     const router = useRouter();
 
+    // 홈 페이지에서의 Recent Posts는 5개만 보여줌
     useEffect(() => {
-        fetch("/samplePosts.json")
-            .then((res) => res.json())
-            .then((data: Post[]) => {
-                setPosts(data);
+        getPublicPosts({ limit: 5, offset: 0 })
+            .then((response) => {
+                const data = response?.success && response.data ? response.data : response;
+                setPosts(data || []);
+            })
+            .catch((error) => {
+                console.error("Failed to load recent posts:", error);
             });
     }, []);
 
