@@ -13,29 +13,60 @@ export const fetchTeamWithMembers = async (name: string) => {
     return response.data;
 };
 
-export const fetchUserAllTeams = async (userId: string) => {
-    const response = await apiClient.get(`/api/teams/get/from?userId=${userId}`, {
+export const inviteUserToTeam = async (teamId: number, memberId: number) => {
+    const response = await apiClient.post(
+        `/api/teams/${teamId}/members/${memberId}/invite`,
+        {},
+        {
+            withCredentials: true,
+        }
+    );
+    return response.data;
+};
+
+// 팀 초대 수락
+export const acceptTeamInvitation = async (teamId: number) => {
+    const response = await apiClient.post(
+        `/api/teams/${teamId}/invitation/accept`,
+        {},
+        {
+            withCredentials: true,
+        }
+    );
+    return response.data;
+};
+
+// 팀 초대 거절
+export const rejectTeamInvitation = async (teamId: number) => {
+    const response = await apiClient.delete(`/api/teams/${teamId}/invitation/reject`, {
         withCredentials: true,
     });
     return response.data;
 };
 
-export const fetchUserJoinedTeams = async (userId: string) => {
-    const response = await apiClient.get(`/api/teams/get/from?userId=${userId}&status=joined`, {
+// 팀 가입 요청 수락 (팀장 전용)
+export const acceptTeamJoinRequest = async (teamId: number, memberId: number) => {
+    const response = await apiClient.post(
+        `/api/teams/${teamId}/join-request/members/${memberId}/accept`,
+        {},
+        {
+            withCredentials: true,
+        }
+    );
+    return response.data;
+};
+
+// 팀 가입 요청 거절 (팀장 전용)
+export const rejectTeamJoinRequest = async (teamId: number, memberId: number) => {
+    const response = await apiClient.delete(`/api/teams/${teamId}/join-request/members/${memberId}/reject`, {
         withCredentials: true,
     });
     return response.data;
 };
 
-export const fetchUserInvitedTeams = async (userId: string) => {
-    const response = await apiClient.get(`/api/teams/get/from?userId=${userId}&status=invited`, {
-        withCredentials: true,
-    });
-    return response.data;
-};
-
-export const fetchUserPendingTeams = async (userId: string) => {
-    const response = await apiClient.get(`/api/teams/get/from?userId=${userId}&status=pending`, {
+// 팀 탈퇴
+export const leaveTeam = async (teamId: number) => {
+    const response = await apiClient.delete(`/api/teams/${teamId}/leave`, {
         withCredentials: true,
     });
     return response.data;

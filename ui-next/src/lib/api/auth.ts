@@ -11,6 +11,23 @@ export async function loginWithLocal(email: string, password: string) {
     });
 }
 
+export async function signupWithLocal(signupData: {
+    email: string;
+    password: string;
+    passwordConfirm: string;
+    name: string;
+    nickname: string;
+}) {
+    return await apiClient.post("/api/auth/signup", signupData);
+}
+
+export async function completeSignup(email: string, code: string) {
+    return await apiClient.post("/api/auth/complete-signup", {
+        email,
+        code,
+    });
+}
+
 export async function logout() {
     return await apiClient.post("/api/auth/logout");
 }

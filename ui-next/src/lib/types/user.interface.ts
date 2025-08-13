@@ -35,11 +35,18 @@ export interface updateUserDto {
     profilePicture?: string;
 }
 
+export enum UserRole {
+    USER = "user",
+    ADMIN = "admin",
+    SUPER_ADMIN = "super_admin",
+}
+
 export interface PublicUser {
     id: number;
     nickname: string;
     profilePicture: string;
     isActive: boolean;
+    role: UserRole;
 }
 
 export interface UserDetails {

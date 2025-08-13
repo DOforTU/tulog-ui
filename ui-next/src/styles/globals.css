@@ -15,6 +15,11 @@
     --vt-c-primary-dark: #8f5fe8;
     --vt-c-primary-light: #b39ddb;
 
+    /* Layout Constants */
+    --main-header-height: 64px;
+    --page-header-height: 56px;
+    --total-header-height: calc(var(--main-header-height) + var(--page-header-height));
+
     /* Light mode color references */
     --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
     --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
@@ -50,6 +55,17 @@ body.dark {
     --color-primary: var(--vt-c-primary);
     --color-primary-dark: var(--vt-c-primary-dark);
     --color-primary-light: var(--vt-c-primary-light);
+
+    /* Write page specific variables */
+    --background-color: var(--color-background);
+    --card-background: var(--color-background-soft);
+    --border-color: var(--color-border);
+    --text-color: var(--color-text);
+    --text-secondary: var(--color-text-light);
+    --hover-color: var(--color-background-mute);
+    --accent-color: var(--color-primary);
+    --accent-hover: var(--color-primary-dark);
+    --accent-rgb: 143, 95, 232;
 }
 
 /* === Light Theme === */
@@ -69,6 +85,17 @@ body.light {
     --color-primary: var(--vt-c-primary);
     --color-primary-dark: var(--vt-c-primary-dark);
     --color-primary-light: var(--vt-c-primary-light);
+
+    /* Write page specific variables */
+    --background-color: var(--color-background);
+    --card-background: var(--color-background-soft);
+    --border-color: var(--color-border);
+    --text-color: var(--color-text);
+    --text-secondary: var(--color-text-light);
+    --hover-color: var(--color-background-mute);
+    --accent-color: var(--color-primary);
+    --accent-hover: var(--color-primary-dark);
+    --accent-rgb: 143, 95, 232;
 }
 
 /* === Reset & Global Typography === */

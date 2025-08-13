@@ -2,86 +2,49 @@
 
 import styles from "./posts.module.css";
 import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Post } from "@/lib/types/post.interface";
+import { useSearchParams } from "next/navigation";
+import { usePostList } from "@/hooks/usePostList";
+import { PostList } from "@/components/post/postList";
+import { CategoryTabs } from "@/components/post/categoryTabs";
 
 export default function PostsPage() {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const [category, setCategory] = useState<string>("featured");
-    const [featuredPosts, setFeaturedPosts] = useState<Post[]>([]);
-    const [recentPosts, setRecentPosts] = useState<Post[]>([]);
-    const [loading, setLoading] = useState(true);
+
+    const recentPosts = usePostList();
+    const featuredPosts = usePostList();
 
     useEffect(() => {
         const cat = searchParams.get("category");
         setCategory(cat === "recent" ? "recent" : "featured");
     }, [searchParams]);
 
+    // 카테고리 변경 시 해당 포스트 로드
     useEffect(() => {
-        setLoading(true);
-        fetch("/samplePosts.json")
-            .then((res) => res.json())
-            .then((data: Post[]) => {
-                const half = Math.ceil(data.length / 2);
-                setFeaturedPosts(data.slice(0, half));
-                setRecentPosts(data.slice(half));
-                setLoading(false);
-            });
-    }, []);
+        if (category === "featured") {
+            featuredPosts.reset();
+            featuredPosts.loadPosts(true);
+        } else if (category === "recent") {
+            recentPosts.reset();
+            recentPosts.loadPosts(true);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [category]);
+
+    const currentPostData = category === "recent" ? recentPosts : featuredPosts;
+    const title = category === "recent" ? "Recent Posts" : "Featured Posts";
 
     return (
         <div className={styles.postsView}>
             <div className={styles.container}>
-                <div className={styles.categoryButtons}>
-                    <button
-                        className={
-                            category === "recent" ? `${styles.categoryBtn} ${styles.active}` : styles.categoryBtn
-                        }
-                        onClick={() => router.replace("/posts?category=recent")}
-                        type="button"
-                    >
-                        Recent
-                    </button>
-                    <button
-                        className={
-                            category === "featured" ? `${styles.categoryBtn} ${styles.active}` : styles.categoryBtn
-                        }
-                        onClick={() => router.replace("/posts?category=featured")}
-                        type="button"
-                    >
-                        Featured
-                    </button>
-                </div>
-                {loading ? (
-                    <div className={styles.comingSoon}>
-                        <h2>Loading...</h2>
-                    </div>
-                ) : category === "featured" ? (
-                    <div className={styles.categoryContent}>
-                        <h2>Featured Posts</h2>
-                        <ul className={styles.postList}>
-                            {featuredPosts.map((post) => (
-                                <li key={post.id} className={styles.postItem}>
-                                    <strong>{post.title}</strong>
-                                    <span className={styles.author}>by {post.author.name}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                ) : (
-                    <div className={styles.categoryContent}>
-                        <h2>Recent Posts</h2>
-                        <ul className={styles.postList}>
-                            {recentPosts.map((post) => (
-                                <li key={post.id} className={styles.postItem}>
-                                    <strong>{post.title}</strong>
-                                    <span className={styles.author}>by {post.author.name}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
+                <CategoryTabs activeCategory={category} />
+                <PostList
+                    title={title}
+                    posts={currentPostData.posts}
+                    loading={currentPostData.loading}
+                    hasMore={currentPostData.hasMore}
+                    onLoadMore={() => currentPostData.loadPosts(false)}
+                />
             </div>
         </div>
     );

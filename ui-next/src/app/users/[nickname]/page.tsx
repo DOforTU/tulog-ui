@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import styles from "./user-page.module.css";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { fetchMyFollowing, fetchUserByNickname, fetchUserDetails } from "@/lib/api/users";
+import { fetchMyFollowing, fetchUserDetails, fetchUserDetailsByNickname } from "@/lib/api/users";
 
 // 컴포넌트 imports
 import Profile from "@/components/user-page/profile";
@@ -12,7 +12,7 @@ import PostFilter, { PostFilter as PostFilterType } from "@/components/user-page
 import MyTags from "@/components/user-page/myTags";
 import MyPosts from "@/components/user-page/myPosts";
 import FollowModal from "@/components/user-page/followModal";
-import { FollowUser, User, UserDetails } from "@/lib/types/user.interface";
+import { FollowUser, User, UserDetails, UserRole } from "@/lib/types/user.interface";
 
 export default function UserProfilePage() {
     const { currentUser } = useAuth();
@@ -60,7 +60,7 @@ export default function UserProfilePage() {
         if (!nickname) return;
 
         if (currentUser && currentUser.nickname === nickname) {
-            // 본인 프로필인 경우
+            // 로그인한 사용자가 본인 프로필을 보는 경우
             // isActive가 false면 인증 화면 표시, true면 세부 정보 가져오기
             if (currentUser.isActive) {
                 setFollowLoading(true);
@@ -83,39 +83,48 @@ export default function UserProfilePage() {
             }
             // isActive가 false면 별도 처리 없음 (인증 화면이 렌더링됨)
         } else {
-            // 다른 사용자 프로필인 경우
+            // 다른 사용자 프로필이거나 비로그인 상태인 경우
             setLoading(true);
+            setFollowLoading(true);
             setError("");
 
-            fetchUserByNickname(nickname)
-                .then((res) => {
-                    if (res && res.success && res.data) {
-                        setUser(res.data);
+            // 닉네임으로 직접 사용자 세부정보 가져오기 (한 번의 요청으로)
+            const promises = [fetchUserDetailsByNickname(nickname)];
+            if (currentUser) {
+                promises.push(fetchMyFollowing());
+            }
 
-                        // 해당 유저의 세부 정보 가져오기
-                        setFollowLoading(true);
-                        return Promise.all([
-                            fetchUserDetails(res.data.id.toString()),
-                            fetchMyFollowing(), // 팔로우 버튼 상태를 위해 내 팔로잉 목록 필요
-                        ]);
-                    } else {
-                        setError("유저를 찾을 수 없습니다.");
-                        return null;
-                    }
-                })
+            Promise.all(promises)
                 .then((results) => {
-                    if (results) {
-                        const [detailsRes, followingRes]: [UserDetails, any] = results;
-                        if (detailsRes) {
-                            setUserDetails(detailsRes);
-                        }
-                        if (followingRes?.success) {
-                            setMyFollowings(followingRes.data || []);
-                        }
+                    const userDetails = results[0] as UserDetails;
+                    const followingRes = results[1] as any; // 두 번째 요소는 로그인된 경우에만 존재
+
+                    if (userDetails) {
+                        // UserDetails에서 User 정보 추출
+                        setUser({
+                            id: userDetails.id,
+                            nickname: userDetails.nickname,
+                            profilePicture: userDetails.profilePicture,
+                            isActive: userDetails.isActive,
+                            // 다른 필드들은 실제로 필요하지 않으므로 기본값 설정
+                            email: "",
+                            name: "",
+                            role: UserRole.USER,
+                            createdAt: "",
+                            updatedAt: "",
+                            deletedAt: null,
+                        });
+                        setUserDetails(userDetails);
+                    }
+
+                    // 로그인된 사용자인 경우에만 팔로잉 정보 처리
+                    if (currentUser && followingRes?.success) {
+                        setMyFollowings(followingRes.data || []);
                     }
                 })
-                .catch(() => {
-                    setError("유저를 찾을 수 없습니다.");
+                .catch((error) => {
+                    console.error("User fetch error:", error);
+                    setError(`유저를 찾을 수 없습니다. (${error.message || error})`);
                 })
                 .finally(() => {
                     setLoading(false);
@@ -124,13 +133,16 @@ export default function UserProfilePage() {
         }
     }, [nickname, currentUser]);
 
-    // 팔로우 여부 확인
+    // 팔로우 여부 확인 (로그인된 사용자일 때만)
     useEffect(() => {
-        if (user && myFollowings.length > 0) {
+        if (currentUser && user && myFollowings.length > 0) {
             const isFollowing = myFollowings.some((followUser) => followUser.id === user.id);
             setAlreadyFollowing(isFollowing);
+        } else {
+            // 비로그인 상태거나 팔로잉 정보가 없으면 false로 설정
+            setAlreadyFollowing(false);
         }
-    }, [user, myFollowings]);
+    }, [currentUser, user, myFollowings]);
 
     // 타이머 관련 useEffect
     useEffect(() => {
@@ -177,7 +189,6 @@ export default function UserProfilePage() {
     if (loading) return <div className={styles.center}>로딩 중...</div>;
     if (error) return <div className={styles.center}>{error}</div>;
     if (!isOwnProfile && !user) return null;
-    if (!currentUser && isOwnProfile) return null;
 
     // 본인 프로필이면서 비활성화된 경우 인증 화면 표시
     if (isOwnProfile && currentUser && !currentUser.isActive) {
@@ -241,11 +252,45 @@ export default function UserProfilePage() {
     const handleShowFollowers = () => setShowFollowersModal(true);
     const handleShowFollowing = () => setShowFollowingModal(true);
 
+    // 팔로우/언팔로우 후 상태 업데이트
+    const handleFollowToggle = (isFollowing: boolean) => {
+        setAlreadyFollowing(isFollowing);
+
+        // 팔로워 수 업데이트
+        if (userDetails) {
+            const updatedUserDetails = {
+                ...userDetails,
+                followers: isFollowing
+                    ? [
+                          ...userDetails.followers,
+                          {
+                              id: currentUser!.id,
+                              nickname: currentUser!.nickname,
+                              profilePicture: currentUser!.profilePicture,
+                              isActive: currentUser!.isActive,
+                              role: currentUser!.role as UserRole,
+                          },
+                      ]
+                    : userDetails.followers.filter((follower) => follower.id !== currentUser!.id),
+            };
+            setUserDetails(updatedUserDetails);
+        }
+
+        // 내 팔로잉 목록도 업데이트
+        if (user) {
+            setMyFollowings((prev) =>
+                isFollowing
+                    ? [...prev, { id: user.id, nickname: user.nickname, profilePicture: user.profilePicture }]
+                    : prev.filter((following) => following.id !== user.id)
+            );
+        }
+    };
+
     return (
         <div className={styles.container}>
             {/* 왼쪽 사이드바 */}
             <div className={styles.leftSidebar}>
-                {/* 프로필 섹션 */}
+                {/* 프로필 섹션만 */}
                 <Profile
                     user={displayUser}
                     isOwnProfile={isOwnProfile}
@@ -257,21 +302,22 @@ export default function UserProfilePage() {
                     alreadyFollowing={alreadyFollowing}
                     onShowFollowers={handleShowFollowers}
                     onShowFollowing={handleShowFollowing}
+                    onFollowToggle={handleFollowToggle}
                     userTeams={userDetails?.teams || []}
                 />
-
-                {/* 태그 섹션 - 위치 변경 */}
-                <MyTags selectedTag={selectedTag} onTagChange={setSelectedTag} />
             </div>
 
             {/* 오른쪽 컨텐츠 */}
             <div className={styles.rightContent}>
-                {/* 포스트 필터링 섹션 - 위치 변경 */}
+                {/* 포스트 필터링 섹션 */}
                 <PostFilter
                     activeFilter={activeFilter}
                     onFilterChange={setActiveFilter}
                     isOwnProfile={!!isOwnProfile}
                 />
+
+                {/* 태그 섹션 */}
+                <MyTags selectedTag={selectedTag} onTagChange={setSelectedTag} />
 
                 {/* 포스트 섹션 */}
                 <MyPosts activeFilter={activeFilter} selectedTag={selectedTag} />

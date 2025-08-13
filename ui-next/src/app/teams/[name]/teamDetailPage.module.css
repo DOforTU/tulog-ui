@@ -2,75 +2,317 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
-    font-family: sans-serif;
-}
-
-.header {
     display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    gap: 2rem;
+    min-height: 100vh;
 }
 
-.image {
+/* 왼쪽 사이드바 */
+.leftSidebar {
+    width: 320px;
+    flex-shrink: 0;
+}
+
+.teamProfileCard {
+    background: var(--color-background, #ffffff);
+    border: 1px solid var(--color-border, #e1e5e9);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+}
+
+.teamHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.teamImage {
     width: 100px;
     height: 100px;
     object-fit: cover;
     border-radius: 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border, #e1e5e9);
 }
 
-.name {
-    font-size: 1.8rem;
+.teamBasicInfo {
+    text-align: center;
+}
+
+.teamName {
+    font-size: 1.5rem;
     font-weight: bold;
+    margin: 0 0 0.5rem 0;
+    color: var(--color-heading, #1a1a1a);
+}
+
+.teamVisibility {
     margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text-light, #666);
 }
 
-.visibility {
-    margin-top: 0.5rem;
+.teamIntroduction {
     font-size: 0.95rem;
-    color: #666;
-}
-
-.introduction {
-    font-size: 1.1rem;
     line-height: 1.6;
+    color: var(--color-text, #333);
     margin-bottom: 1.5rem;
+    text-align: center;
 }
 
-.meta {
+.teamStats {
     display: flex;
-    gap: 2rem;
-    font-size: 0.95rem;
-    color: #555;
-    margin-bottom: 2rem;
+    justify-content: space-around;
+    margin-bottom: 1.5rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--color-border, #e1e5e9);
+    border-bottom: 1px solid var(--color-border, #e1e5e9);
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.statNumber {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--color-heading, #1a1a1a);
+}
+
+.statLabel {
+    font-size: 0.8rem;
+    color: var(--color-text-light, #666);
 }
 
 .memberList {
-    margin-top: 2rem;
+    margin-top: 1rem;
 }
 
-.memberList h2 {
-    font-size: 1.2rem;
+.memberListTitle {
+    font-size: 1rem;
     margin-bottom: 1rem;
+    color: var(--color-heading, #1a1a1a);
 }
 
-.memberList ul {
-    list-style: none;
-    padding: 0;
+.memberGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .memberItem {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.memberItem:hover {
+    background-color: var(--color-background-soft, #f5f5f5);
+}
+
+.memberProfile {
+    display: flex;
+    align-items: center;
     gap: 0.75rem;
-    padding: 0.5rem 0;
+    cursor: pointer;
+    flex: 1;
 }
 
 .memberImage {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-border, #e1e5e9);
+}
+
+.memberInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.memberNickname {
+    font-size: 0.9rem;
+    color: var(--color-text, #333);
+}
+
+.leaderBadge {
+    font-size: 0.75rem;
+    color: var(--color-primary, #007bff);
+    font-weight: 500;
+}
+
+/* 오른쪽 콘텐츠 */
+.rightContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* 팀 액션 메뉴 */
+.teamMenuContainer {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 5;
+}
+
+.menuButton {
+    background: none;
+    border: 1px solid var(--color-border, #e1e5e9);
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text, #333);
+    transition: all 0.2s ease;
+}
+
+.menuButton:hover {
+    background-color: var(--color-background-soft, #f5f5f5);
+    border-color: var(--color-border-hover, #d1d5db);
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    background: var(--color-background, #ffffff);
+    border: 1px solid var(--color-border, #e1e5e9);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.menuItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 0.875rem;
+    color: var(--color-text, #333);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.menuItem:hover:not(:disabled) {
+    background-color: var(--color-background-soft, #f5f5f5);
+}
+
+.menuItem:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.dangerItem {
+    color: #ef4444;
+}
+
+.dangerItem:hover:not(:disabled) {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+/* 팀원 메뉴 스타일 */
+.memberMenuContainer {
+    position: relative;
+}
+
+.memberMenuButton {
+    background: none;
+    border: 1px solid var(--color-border, #e1e5e9);
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text, #333);
+    transition: all 0.2s ease;
+    opacity: 0.7;
+}
+
+.memberMenuButton:hover {
+    background-color: var(--color-background-soft, #f5f5f5);
+    border-color: var(--color-border-hover, #d1d5db);
+    opacity: 1;
+}
+
+.memberDropdownMenu {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    background: var(--color-background, #ffffff);
+    border: 1px solid var(--color-border, #e1e5e9);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 120px;
+    z-index: 20;
+    overflow: hidden;
+}
+
+.memberMenuItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 0.75rem;
+    color: var(--color-text, #333);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.memberMenuItem:hover:not(:disabled) {
+    background-color: var(--color-background-soft, #f5f5f5);
+}
+
+.memberDangerItem {
+    color: #ef4444;
+}
+
+.memberDangerItem:hover:not(:disabled) {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    
+    .leftSidebar {
+        width: 100%;
+        position: static;
+    }
+    
+    .teamProfileCard {
+        position: static;
+    }
 }
