@@ -68,9 +68,9 @@ export default function UserProfilePage() {
                     fetchUserDetails(currentUser.id.toString()),
                     fetchMyFollowing(), // 팔로우 버튼 상태를 위해 내 팔로잉 목록도 필요
                 ])
-                    .then(([detailsRes, followingRes]: [UserDetails, any]) => {
-                        if (detailsRes) {
-                            setUserDetails(detailsRes);
+                    .then(([detailsRes, followingRes]: [any, any]) => {
+                        if (detailsRes?.success && detailsRes.data) {
+                            setUserDetails(detailsRes.data);
                         }
                         if (followingRes?.success) {
                             setMyFollowings(followingRes.data || []);
@@ -96,10 +96,11 @@ export default function UserProfilePage() {
 
             Promise.all(promises)
                 .then((results) => {
-                    const userDetails = results[0] as UserDetails;
+                    const userDetailsRes = results[0] as any;
                     const followingRes = results[1] as any; // 두 번째 요소는 로그인된 경우에만 존재
 
-                    if (userDetails) {
+                    if (userDetailsRes?.success && userDetailsRes.data) {
+                        const userDetails = userDetailsRes.data;
                         // UserDetails에서 User 정보 추출
                         setUser({
                             id: userDetails.id,

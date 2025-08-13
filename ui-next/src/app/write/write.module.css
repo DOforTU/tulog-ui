@@ -2,9 +2,8 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    /* background: var(--background-color); */
+    background: var(--background-color);
     max-width: 1200px;
-    padding: 2rem;
     margin: 0 auto;
 }
 
@@ -13,90 +12,57 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 24px;
+    padding: 16px 32px;
     border-bottom: 1px solid var(--border-color);
-    background: rgba(var(--color-background-rgb), 0.9);
+    background: rgba(var(--color-background-rgb), 0.95);
     position: sticky;
     top: var(--main-header-height);
     z-index: 50;
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border-bottom: 1px solid rgba(var(--color-border-rgb, 255, 255, 255), 0.1);
-    box-shadow: 0 1px 0 rgba(var(--color-border-rgb, 255, 255, 255), 0.05);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
 }
 
 .headerLeft {
     display: flex;
     align-items: center;
-    gap: 16px;
 }
 
 .headerRight {
     display: flex;
     align-items: center;
-    gap: 12px;
 }
 
 .backButton {
     padding: 8px 16px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    background: transparent;
+    background: var(--card-background);
     color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 14px;
+    font-weight: 500;
 }
 
 .backButton:hover {
     background: var(--hover-color);
-    border-color: var(--color-border-hover);
-}
-
-.title {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text-color);
-    margin: 0;
-}
-
-.modeButton {
-    padding: 6px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    background: transparent;
-    color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.modeButton:hover {
-    background: var(--hover-color);
-}
-
-.modeButton.active {
-    background: var(--color-background-mute);
-    color: var(--color-text);
-    border-color: var(--color-border-hover);
+    border-color: var(--accent-color);
 }
 
 .settingsButton {
-    padding: 6px 12px;
+    padding: 8px 16px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    background: transparent;
+    background: var(--card-background);
     color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 12px;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .settingsButton:hover {
     background: var(--hover-color);
-    border-color: var(--color-border-hover);
+    border-color: var(--accent-color);
 }
 
 /* Main Content */
@@ -110,11 +76,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px;
-    border-top: 2px solid var(--border-color);
+    padding: 16px 32px;
+    border-top: 1px solid var(--border-color);
     background: var(--card-background);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
     position: sticky;
     bottom: 0;
     z-index: 40;
@@ -132,31 +96,26 @@
 }
 
 .wordCount {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-secondary);
     font-weight: 500;
-    padding: 8px 12px;
-    background: var(--background-color);
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
 }
 
 .draftButton {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
     background: var(--card-background);
     color: var(--text-color);
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
-    font-size: 13px;
+    transition: all 0.2s ease;
+    font-size: 14px;
     font-weight: 500;
-    min-width: 100px;
 }
 
 .draftButton:hover:not(:disabled) {
     background: var(--hover-color);
-    border-color: var(--color-border-hover);
+    border-color: var(--accent-color);
 }
 
 .draftButton:disabled {
@@ -165,20 +124,20 @@
 }
 
 .publishButton {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: none;
     border-radius: 6px;
     background: var(--accent-color);
     color: white;
     cursor: pointer;
-    transition: background 0.2s ease;
-    font-size: 13px;
-    font-weight: 500;
-    min-width: 100px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .publishButton:hover:not(:disabled) {
     background: var(--accent-hover);
+    transform: translateY(-1px);
 }
 
 .publishButton:disabled {
@@ -199,27 +158,11 @@
 /* Responsive */
 @media (max-width: 768px) {
     .header {
-        padding: 12px 16px;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .headerLeft {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .headerRight {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .title {
-        font-size: 18px;
+        padding: 12px 20px;
     }
 
     .footer {
-        padding: 12px 16px;
+        padding: 12px 20px;
         flex-direction: column;
         gap: 12px;
     }
@@ -228,5 +171,11 @@
     .footerRight {
         width: 100%;
         justify-content: center;
+    }
+
+    .draftButton,
+    .publishButton {
+        flex: 1;
+        max-width: 120px;
     }
 }

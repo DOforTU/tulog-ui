@@ -12,8 +12,9 @@ export function RecentPosts() {
     // 홈 페이지에서의 Recent Posts는 5개만 보여줌
     useEffect(() => {
         getPublicPosts({ limit: 5, offset: 0 })
-            .then((data) => {
-                setPosts(data);
+            .then((response) => {
+                const data = response?.success && response.data ? response.data : response;
+                setPosts(data || []);
             })
             .catch((error) => {
                 console.error("Failed to load recent posts:", error);

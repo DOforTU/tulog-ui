@@ -25,3 +25,16 @@ export const uploadTeamImage = async (file: File) => {
 
     return response.data.data.url;
 };
+
+export const uploadPostImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await apiClient.post("/api/files/upload?type=post", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+
+    return response.data.data.url;
+};
