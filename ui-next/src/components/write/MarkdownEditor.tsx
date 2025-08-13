@@ -17,7 +17,7 @@ export default function MarkdownEditor({ postData, onPostDataChange }: MarkdownE
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragActive, setDragActive] = useState(false);
-    const [showPreview, setShowPreview] = useState(true);
+    const [showPreview, setShowPreview] = useState(false);
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onPostDataChange("title", e.target.value);
@@ -161,52 +161,11 @@ export default function MarkdownEditor({ postData, onPostDataChange }: MarkdownE
                     <button className={styles.toolButton} onClick={() => insertMarkdown("*", "*")} title="Italic">
                         <em>I</em>
                     </button>
-                    <button
-                        className={styles.toolButton}
-                        onClick={() => insertMarkdown("~~", "~~")}
-                        title="Strikethrough"
-                    >
-                        <s>S</s>
+                    <button className={styles.toolButton} onClick={() => insertMarkdown("# ")} title="Heading">
+                        H
                     </button>
-                </div>
-
-                <div className={styles.toolbarGroup}>
-                    <button className={styles.toolButton} onClick={() => insertMarkdown("# ")} title="Heading 1">
-                        H1
-                    </button>
-                    <button className={styles.toolButton} onClick={() => insertMarkdown("## ")} title="Heading 2">
-                        H2
-                    </button>
-                    <button className={styles.toolButton} onClick={() => insertMarkdown("### ")} title="Heading 3">
-                        H3
-                    </button>
-                </div>
-
-                <div className={styles.toolbarGroup}>
-                    <button className={styles.toolButton} onClick={() => insertMarkdown("- ")} title="Bullet List">
+                    <button className={styles.toolButton} onClick={() => insertMarkdown("- ")} title="List">
                         •
-                    </button>
-                    <button className={styles.toolButton} onClick={() => insertMarkdown("1. ")} title="Numbered List">
-                        1.
-                    </button>
-                    <button className={styles.toolButton} onClick={() => insertMarkdown("> ")} title="Quote">
-                        &ldquo;&rdquo;
-                    </button>
-                </div>
-
-                <div className={styles.toolbarGroup}>
-                    <button className={styles.toolButton} onClick={() => insertMarkdown("`", "`")} title="Inline Code">
-                        &lt;/&gt;
-                    </button>
-                    <button
-                        className={styles.toolButton}
-                        onClick={() => insertMarkdown("```\n", "\n```")}
-                        title="Code Block"
-                    >
-                        {}
-                    </button>
-                    <button className={styles.toolButton} onClick={() => insertMarkdown("[", "](url)")} title="Link">
-                        🔗
                     </button>
                     <button className={styles.toolButton} onClick={handleImageButtonClick} title="Upload Image">
                         📷
@@ -219,7 +178,7 @@ export default function MarkdownEditor({ postData, onPostDataChange }: MarkdownE
                         onClick={() => setShowPreview(!showPreview)}
                         title="Toggle Preview"
                     >
-                        👁️
+                        {showPreview ? "Edit" : "Preview"}
                     </button>
                 </div>
 
@@ -246,22 +205,7 @@ export default function MarkdownEditor({ postData, onPostDataChange }: MarkdownE
                 >
                     <textarea
                         ref={textareaRef}
-                        placeholder="Write your post content in Markdown...
-
-# Example
-## Subheading
-- Bullet point
-- Another point
-
-**Bold text** and *italic text*
-
-```javascript
-console.log('Code block');
-```
-
-> Quote text
-
-[Link text](https://example.com)"
+                        placeholder="Write your story in Markdown..."
                         value={postData.content}
                         onChange={handleContentChange}
                         onKeyDown={handleKeyDown}
@@ -313,13 +257,6 @@ console.log('Code block');
                         </div>
                     </div>
                 )}
-            </div>
-
-            {/* Help Text */}
-            <div className={styles.helpText}>
-                <span>
-                    💡 Use Markdown syntax to format your content. You can drag & drop images directly into the editor.
-                </span>
             </div>
         </div>
     );

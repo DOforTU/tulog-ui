@@ -122,24 +122,24 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
                                 <input
                                     type="radio"
                                     name="visibility"
-                                    value="public"
-                                    checked={localData.visibility === "public"}
-                                    onChange={(e) => handleLocalChange("visibility", e.target.value)}
-                                />
-                                <span className={styles.radioCustom}></span>
-                                <span className={styles.radioText}>🌍 Public - Anyone can see this post</span>
-                            </label>
-
-                            <label className={styles.radioLabel}>
-                                <input
-                                    type="radio"
-                                    name="visibility"
                                     value="private"
                                     checked={localData.visibility === "private"}
                                     onChange={(e) => handleLocalChange("visibility", e.target.value)}
                                 />
                                 <span className={styles.radioCustom}></span>
                                 <span className={styles.radioText}>🔒 Private - Only you can see this post</span>
+                            </label>
+
+                            <label className={styles.radioLabel}>
+                                <input
+                                    type="radio"
+                                    name="visibility"
+                                    value="public"
+                                    checked={localData.visibility === "public"}
+                                    onChange={(e) => handleLocalChange("visibility", e.target.value)}
+                                />
+                                <span className={styles.radioCustom}></span>
+                                <span className={styles.radioText}>🌍 Public - Anyone can see this post</span>
                             </label>
 
                             <label className={styles.radioLabel}>

@@ -5,7 +5,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import styles from "./write.module.css";
 import MarkdownEditor from "@/components/write/MarkdownEditor";
-import PostPreview from "@/components/write/PostPreview";
 import PostSettings from "@/components/write/PostSettings";
 import { useHeaderHeight } from "@/hooks/useHeaderHeight";
 
@@ -36,7 +35,6 @@ export default function WritePage() {
         visibility: "public",
     });
 
-    const [isPreviewMode, setIsPreviewMode] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
 
@@ -188,35 +186,18 @@ export default function WritePage() {
                     <button className={styles.backButton} onClick={() => router.back()}>
                         ← Back
                     </button>
-                    <h1 className={styles.title}>Write New Post</h1>
                 </div>
 
                 <div className={styles.headerRight}>
-                    <button
-                        className={`${styles.modeButton} ${!isPreviewMode ? styles.active : ""}`}
-                        onClick={() => setIsPreviewMode(false)}
-                    >
-                        Edit
-                    </button>
-                    <button
-                        className={`${styles.modeButton} ${isPreviewMode ? styles.active : ""}`}
-                        onClick={() => setIsPreviewMode(true)}
-                    >
-                        Preview
-                    </button>
                     <button className={styles.settingsButton} onClick={() => setShowSettings(true)}>
-                        ⚙️ Settings
+                        Settings
                     </button>
                 </div>
             </div>
 
             {/* Main Content */}
             <div className={styles.mainContent}>
-                {isPreviewMode ? (
-                    <PostPreview postData={postData} />
-                ) : (
-                    <MarkdownEditor postData={postData} onPostDataChange={handlePostDataChange} />
-                )}
+                <MarkdownEditor postData={postData} onPostDataChange={handlePostDataChange} />
             </div>
 
             {/* Footer Actions */}
