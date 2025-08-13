@@ -1,8 +1,12 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import Image from "next/image";
 import styles from "./MarkdownEditor.module.css";
 import { PostData } from "@/app/write/page";
+import { uploadPostImage } from "@/lib/api/file";
 
 interface MarkdownEditorProps {
     postData: PostData;
@@ -11,7 +15,9 @@ interface MarkdownEditorProps {
 
 export default function MarkdownEditor({ postData, onPostDataChange }: MarkdownEditorProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragActive, setDragActive] = useState(false);
+    const [showPreview, setShowPreview] = useState(true);
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onPostDataChange("title", e.target.value);
@@ -59,6 +65,56 @@ export default function MarkdownEditor({ postData, onPostDataChange }: MarkdownE
         }
     };
 
+    const handleImageUpload = async (file: File) => {
+        // 즉시 미리보기를 위한 Blob URL 생성
+        const previewUrl = URL.createObjectURL(file);
+
+        try {
+            // 먼저 미리보기 이미지로 마크다운 삽입
+            const previewMarkdown = `![${file.name}](${previewUrl})`;
+            insertMarkdown(previewMarkdown);
+
+            // 백그라운드에서 실제 업로드 진행
+            const imageUrl = await uploadPostImage(file);
+            console.log("Uploaded image URL:", imageUrl);
+
+            // 업로드 완료 후 실제 URL로 교체
+            if (textareaRef.current) {
+                const currentContent = textareaRef.current.value;
+                const updatedContent = currentContent.replace(previewMarkdown, `![${file.name}](${imageUrl})`);
+                onPostDataChange("content", updatedContent);
+
+                // 업로드 완료 후에만 Blob URL 정리
+                setTimeout(() => URL.revokeObjectURL(previewUrl), 1000);
+            }
+        } catch (error) {
+            console.error("Image upload failed:", error);
+            // 실패시 에러 메시지로 교체
+            if (textareaRef.current) {
+                const currentContent = textareaRef.current.value;
+                const previewMarkdown = `![${file.name}](${previewUrl})`;
+                const updatedContent = currentContent.replace(previewMarkdown, `![Upload failed: ${file.name}]()`);
+                onPostDataChange("content", updatedContent);
+
+                // 실패시에도 Blob URL 정리
+                URL.revokeObjectURL(previewUrl);
+            }
+        }
+    };
+
+    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file && file.type.startsWith("image/")) {
+            handleImageUpload(file);
+        }
+        // Reset input
+        e.target.value = "";
+    };
+
+    const handleImageButtonClick = () => {
+        fileInputRef.current?.click();
+    };
+
     const handleDrag = (e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -69,19 +125,18 @@ export default function MarkdownEditor({ postData, onPostDataChange }: MarkdownE
         }
     };
 
-    const handleDrop = (e: React.DragEvent) => {
+    const handleDrop = async (e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
         setDragActive(false);
 
         const files = Array.from(e.dataTransfer.files);
-        files.forEach((file) => {
+
+        for (const file of files) {
             if (file.type.startsWith("image/")) {
-                // TODO: 이미지 업로드 구현
-                console.log("Image upload:", file);
-                insertMarkdown(`![${file.name}](uploading...)`);
+                await handleImageUpload(file);
             }
-        });
+        }
     };
 
     return (
@@ -153,20 +208,45 @@ export default function MarkdownEditor({ postData, onPostDataChange }: MarkdownE
                     <button className={styles.toolButton} onClick={() => insertMarkdown("[", "](url)")} title="Link">
                         🔗
                     </button>
+                    <button className={styles.toolButton} onClick={handleImageButtonClick} title="Upload Image">
+                        📷
+                    </button>
                 </div>
+
+                <div className={styles.toolbarGroup}>
+                    <button
+                        className={`${styles.toolButton} ${showPreview ? styles.active : ""}`}
+                        onClick={() => setShowPreview(!showPreview)}
+                        title="Toggle Preview"
+                    >
+                        👁️
+                    </button>
+                </div>
+
+                {/* Hidden File Input */}
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileInputChange}
+                    style={{ display: "none" }}
+                />
             </div>
 
             {/* Content Editor */}
-            <div
-                className={`${styles.editorWrapper} ${dragActive ? styles.dragActive : ""}`}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-            >
-                <textarea
-                    ref={textareaRef}
-                    placeholder="Write your post content in Markdown...
+            <div className={styles.editorMain}>
+                <div
+                    className={`${styles.editorWrapper} ${dragActive ? styles.dragActive : ""} ${
+                        showPreview ? styles.splitView : styles.fullView
+                    }`}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                >
+                    <textarea
+                        ref={textareaRef}
+                        placeholder="Write your post content in Markdown...
 
 # Example
 ## Subheading
@@ -182,15 +262,55 @@ console.log('Code block');
 > Quote text
 
 [Link text](https://example.com)"
-                    value={postData.content}
-                    onChange={handleContentChange}
-                    onKeyDown={handleKeyDown}
-                    className={styles.contentTextarea}
-                />
+                        value={postData.content}
+                        onChange={handleContentChange}
+                        onKeyDown={handleKeyDown}
+                        className={styles.contentTextarea}
+                    />
 
-                {dragActive && (
-                    <div className={styles.dragOverlay}>
-                        <div className={styles.dragMessage}>📁 Drop images here to upload</div>
+                    {dragActive && (
+                        <div className={styles.dragOverlay}>
+                            <div className={styles.dragMessage}>📁 Drop images here to upload</div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Preview Panel */}
+                {showPreview && (
+                    <div className={styles.previewWrapper}>
+                        <div className={styles.previewHeader}>
+                            <h4>Preview</h4>
+                        </div>
+                        <div className={styles.previewContent}>
+                            {postData.title && <h1 className={styles.previewTitle}>{postData.title}</h1>}
+                            <ReactMarkdown
+                                remarkPlugins={[remarkGfm]}
+                                components={{
+                                    img: ({ src, alt }) => {
+                                        if (!src || typeof src !== "string") return null;
+                                        return (
+                                            <div className={styles.imageWrapper}>
+                                                <Image
+                                                    src={src}
+                                                    alt={alt || ""}
+                                                    width={500}
+                                                    height={300}
+                                                    style={{
+                                                        width: "100%",
+                                                        height: "auto",
+                                                        maxWidth: "500px",
+                                                        borderRadius: "8px",
+                                                    }}
+                                                    unoptimized={src.startsWith("blob:")}
+                                                />
+                                            </div>
+                                        );
+                                    },
+                                }}
+                            >
+                                {postData.content || "*Start typing to see preview...*"}
+                            </ReactMarkdown>
+                        </div>
                     </div>
                 )}
             </div>

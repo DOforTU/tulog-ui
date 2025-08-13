@@ -1,6 +1,7 @@
 import { PublicPost } from "@/lib/types/post.interface";
 import styles from "./postCard.module.css";
 import Image from "next/image";
+import { getUserProfileImageUrl, getPostImageUrl } from "@/lib/utils/image";
 
 export function PostCard({ post }: { post: PublicPost }) {
     const author = post.authors?.[0]; // 첫 번째 작성자(OWNER) 사용
@@ -29,7 +30,7 @@ export function PostCard({ post }: { post: PublicPost }) {
             <div className={styles.leftContent}>
                 <div className={styles.authorRow}>
                     <Image
-                        src={author.profilePicture}
+                        src={getUserProfileImageUrl(author.profilePicture)}
                         alt={author.nickname}
                         width={32}
                         height={32}
@@ -69,7 +70,7 @@ export function PostCard({ post }: { post: PublicPost }) {
             </div>
             <div className={styles.rightImage}>
                 <Image
-                    src={post.thumbnailImage}
+                    src={getPostImageUrl(post.thumbnailImage)}
                     alt={post.title}
                     width={180}
                     height={180}

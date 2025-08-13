@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import styles from "./PostSettings.module.css";
 import { PostData } from "@/app/write/page";
+import { uploadPostImage } from "@/lib/api/file";
 
 interface PostSettingsProps {
     postData: PostData;
@@ -13,6 +15,8 @@ interface PostSettingsProps {
 export default function PostSettings({ postData, onPostDataChange, onClose }: PostSettingsProps) {
     const [localData, setLocalData] = useState(postData);
     const [newTag, setNewTag] = useState("");
+    const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
+    const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
     // Mock team data - 실제 구현시 API에서 가져와야 함
     const [userTeams] = useState([
@@ -20,7 +24,6 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
         { id: 2, name: "Design Team", memberCount: 3 },
         { id: 3, name: "Marketing Team", memberCount: 4 },
     ]);
-
 
     useEffect(() => {
         setLocalData(postData);
@@ -66,6 +69,37 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
         }
     };
 
+    const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !file.type.startsWith("image/")) return;
+
+        // 즉시 미리보기를 위한 Blob URL 생성
+        const previewUrl = URL.createObjectURL(file);
+        handleLocalChange("thumbnailImage", previewUrl);
+
+        setIsUploadingThumbnail(true);
+        try {
+            // 백그라운드에서 실제 업로드 진행
+            const imageUrl = await uploadPostImage(file);
+            handleLocalChange("thumbnailImage", imageUrl);
+
+            // Blob URL 정리
+            URL.revokeObjectURL(previewUrl);
+        } catch (error) {
+            console.error("Thumbnail upload failed:", error);
+            alert("Failed to upload thumbnail image. Please try again.");
+
+            // 실패시 원래 이미지로 복원
+            handleLocalChange("thumbnailImage", postData.thumbnailImage);
+            URL.revokeObjectURL(previewUrl);
+        } finally {
+            setIsUploadingThumbnail(false);
+        }
+    };
+
+    const handleThumbnailClick = () => {
+        thumbnailInputRef.current?.click();
+    };
 
     return (
         <div className={styles.modalOverlay} onClick={onClose}>
@@ -80,7 +114,6 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
 
                 {/* Content */}
                 <div className={styles.modalBody}>
-
                     {/* Visibility */}
                     <div className={styles.settingGroup}>
                         <label className={styles.label}>Visibility</label>
@@ -154,7 +187,7 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
                                 placeholder="Add a tag..."
                                 value={newTag}
                                 onChange={(e) => setNewTag(e.target.value)}
-                                onKeyPress={handleKeyPress}
+                                onKeyDown={handleKeyPress}
                             />
                             <button
                                 className={styles.addTagButton}
@@ -179,12 +212,11 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
                         )}
                     </div>
 
-
-                    {/* Thumbnail (placeholder for future implementation) */}
+                    {/* Thumbnail */}
                     <div className={styles.settingGroup}>
                         <label className={styles.label}>Thumbnail Image</label>
                         <div className={styles.thumbnailUpload}>
-                            <div className={styles.thumbnailPreview}>
+                            <div className={styles.thumbnailPreview} onClick={handleThumbnailClick}>
                                 {localData.thumbnailImage ? (
                                     <Image
                                         src={localData.thumbnailImage}
@@ -196,8 +228,19 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
                                     <div className={styles.thumbnailPlaceholder}>📸 Click to upload thumbnail</div>
                                 )}
                             </div>
-                            <button className={styles.uploadButton} disabled>
-                                Upload Image (Coming Soon)
+                            <input
+                                ref={thumbnailInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleThumbnailUpload}
+                                style={{ display: "none" }}
+                            />
+                            <button
+                                className={styles.uploadButton}
+                                onClick={handleThumbnailClick}
+                                disabled={isUploadingThumbnail}
+                            >
+                                {isUploadingThumbnail ? "Uploading..." : "Upload Image"}
                             </button>
                         </div>
                     </div>

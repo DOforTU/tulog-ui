@@ -54,14 +54,62 @@ export default function WritePage() {
         }));
     };
 
+    // 콘텐츠에서 첫 번째 이미지를 추출하는 함수
+    const extractFirstImageFromContent = (content: string): string | undefined => {
+        const imageRegex = /!\[.*?\]\((https?:\/\/[^\s)]+)\)/;
+        const match = content.match(imageRegex);
+        return match ? match[1] : undefined;
+    };
+
+    // 자동 썸네일 설정
+    const getEffectiveThumbnail = (): string | undefined => {
+        if (postData.thumbnailImage) {
+            return postData.thumbnailImage;
+        }
+        return extractFirstImageFromContent(postData.content);
+    };
+
+    // 자동 excerpt 생성
+    const getEffectiveExcerpt = (): string | undefined => {
+        if (postData.excerpt && postData.excerpt.trim()) {
+            return postData.excerpt;
+        }
+
+        // 마크다운 문법 제거하고 첫 150자 추출
+        const plainText = postData.content
+            .replace(/!\[.*?\]\(.*?\)/g, "") // 이미지 제거
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // 링크 텍스트만 남기기
+            .replace(/[#*`~_]/g, "") // 마크다운 문법 제거
+            .replace(/\n+/g, " ") // 줄바꿈을 공백으로
+            .trim();
+
+        if (plainText.length > 150) {
+            return plainText.substring(0, 150) + "...";
+        }
+
+        return plainText || undefined;
+    };
+
     const handleSaveDraft = async () => {
         setIsSaving(true);
         try {
+            const effectiveThumbnail = getEffectiveThumbnail();
+            const effectiveExcerpt = getEffectiveExcerpt();
+
+            console.log("Save Draft - Data:", {
+                title: postData.title,
+                content: postData.content,
+                excerpt: effectiveExcerpt,
+                thumbnailImage: effectiveThumbnail,
+                originalExcerpt: postData.excerpt,
+                originalThumbnail: postData.thumbnailImage,
+            });
+
             const draftData: CreatePostDto = {
                 title: postData.title,
                 content: postData.content,
-                excerpt: postData.excerpt,
-                thumbnailImage: postData.thumbnailImage,
+                excerpt: effectiveExcerpt,
+                thumbnailImage: effectiveThumbnail,
                 status: PostStatus.DRAFT,
                 teamId: postData.teamId,
                 tags: postData.tags,
@@ -85,12 +133,24 @@ export default function WritePage() {
 
         setIsSaving(true);
         try {
+            const effectiveThumbnail = getEffectiveThumbnail();
+            const effectiveExcerpt = getEffectiveExcerpt();
+
+            console.log("Publish - Data:", {
+                title: postData.title,
+                content: postData.content,
+                excerpt: effectiveExcerpt,
+                thumbnailImage: effectiveThumbnail,
+                originalExcerpt: postData.excerpt,
+                originalThumbnail: postData.thumbnailImage,
+            });
+
             // visibility를 status로 변환
             const publishData: CreatePostDto = {
                 title: postData.title,
                 content: postData.content,
-                excerpt: postData.excerpt,
-                thumbnailImage: postData.thumbnailImage,
+                excerpt: effectiveExcerpt,
+                thumbnailImage: effectiveThumbnail,
                 status:
                     postData.visibility === "public"
                         ? PostStatus.PUBLIC

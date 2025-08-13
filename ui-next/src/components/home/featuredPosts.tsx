@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { PublicPost } from "@/lib/types/post.interface";
 import { getPublicPosts } from "@/lib/api/posts";
+import { getUserProfileImageUrl, getPostImageUrl } from "@/lib/utils/image";
 
 export function FeaturedPosts() {
     const [posts, setPosts] = useState<PublicPost[]>([]);
@@ -35,7 +36,7 @@ export function FeaturedPosts() {
                             <div key={post.id} className={styles.featuredCard}>
                                 <div className={styles.featuredImage}>
                                     <Image
-                                        src={post.thumbnailImage}
+                                        src={getPostImageUrl(post.thumbnailImage)}
                                         alt={post.title}
                                         width={320}
                                         height={160}
@@ -48,7 +49,7 @@ export function FeaturedPosts() {
                                             {author && (
                                                 <>
                                                     <Image
-                                                        src={author.profilePicture}
+                                                        src={getUserProfileImageUrl(author.profilePicture)}
                                                         alt={author.nickname}
                                                         width={24}
                                                         height={24}

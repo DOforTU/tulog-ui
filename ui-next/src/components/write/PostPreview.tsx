@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
+import Image from "next/image";
 import styles from "./PostPreview.module.css";
 import { PostData } from "@/app/write/page";
 
@@ -18,6 +19,21 @@ export default function PostPreview({ postData }: PostPreviewProps) {
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#39;");
     }, []);
+
+    // 콘텐츠에서 첫 번째 이미지를 추출하는 함수
+    const extractFirstImageFromContent = useCallback((content: string): string | undefined => {
+        const imageRegex = /!\[.*?\]\((https?:\/\/[^\s)]+)\)/;
+        const match = content.match(imageRegex);
+        return match ? match[1] : undefined;
+    }, []);
+
+    // 효과적인 썸네일 가져오기
+    const effectiveThumbnail = useMemo(() => {
+        if (postData.thumbnailImage) {
+            return postData.thumbnailImage;
+        }
+        return extractFirstImageFromContent(postData.content);
+    }, [postData.thumbnailImage, postData.content, extractFirstImageFromContent]);
 
     // 간단한 마크다운 렌더링 함수
     const renderMarkdown = useMemo(() => {
@@ -98,13 +114,25 @@ export default function PostPreview({ postData }: PostPreviewProps) {
         <div className={styles.previewContainer}>
             {/* Preview Header */}
             <div className={styles.previewHeader}>
+                {/* Thumbnail Preview */}
+                {effectiveThumbnail && (
+                    <div className={styles.thumbnailContainer}>
+                        <Image
+                            src={effectiveThumbnail}
+                            alt="Post thumbnail"
+                            width={600}
+                            height={300}
+                            style={{ objectFit: "cover" }}
+                            className={styles.thumbnailImage}
+                        />
+                    </div>
+                )}
+
                 <div className={styles.headerInfo}>
                     <h1 className={styles.previewTitle}>{postData.title || "Untitled Post"}</h1>
 
                     <div className={styles.metadata}>
                         <span className={styles.date}>{formatDate(new Date())}</span>
-                        <span className={styles.separator}>•</span>
-                        <span className={styles.category}>{postData.category}</span>
                         <span className={styles.separator}>•</span>
                         <span className={styles.visibility}>
                             {postData.visibility === "public"
