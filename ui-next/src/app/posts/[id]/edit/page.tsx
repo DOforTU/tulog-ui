@@ -170,7 +170,6 @@ export default function EditPostPage() {
             };
 
             await updatePost(postId, updateData);
-            alert("Post updated successfully!");
             router.push(`/posts/${postId}`);
         } catch (error) {
             console.error("Update failed:", error);
