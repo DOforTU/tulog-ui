@@ -61,7 +61,7 @@
 .meta {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 1rem;
     gap: 1rem;
 }
@@ -101,50 +101,30 @@
     color: var(--text-secondary);
 }
 
+.separator {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0 0.5rem;
+}
+
+.teamNameInline {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--accent-color);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.teamNameInline:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
 .publishDate {
     font-size: 0.8rem;
     color: var(--text-secondary);
 }
 
-.teamInfo {
-    display: flex;
-    align-items: center;
-}
-
-.teamDetails {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    background: var(--color-background-soft);
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-.teamImage {
-    border-radius: 6px;
-    object-fit: cover;
-}
-
-.teamTextInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-}
-
-.teamLabel {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-}
-
-.teamName {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-color);
-}
 
 .editButton {
     padding: 0.5rem 1rem;
@@ -231,12 +211,21 @@
 }
 
 .tag {
-    background: rgba(var(--accent-rgb), 0.1);
-    color: var(--accent-color);
+    background: var(--color-background-soft);
+    color: var(--text-color);
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+}
+
+.tag:hover {
+    background: var(--color-background-mute);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .thumbnailWrapper {
@@ -390,18 +379,6 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
-    }
-    
-    .teamDetails {
-        padding: 0.4rem 0.6rem;
-    }
-    
-    .teamLabel {
-        font-size: 0.65rem;
-    }
-    
-    .teamName {
-        font-size: 0.8rem;
     }
 
     .content {

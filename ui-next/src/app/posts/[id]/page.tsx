@@ -155,6 +155,20 @@ export default function PostDetailPage() {
                                                         & {post.editors.length - 1} others
                                                     </span>
                                                 )}
+                                                {post.teamId && post.team && (
+                                                    <>
+                                                        <span className={styles.separator}>/</span>
+                                                        <span 
+                                                            className={styles.teamNameInline}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                router.push(`/teams/${post.team.name}`);
+                                                            }}
+                                                        >
+                                                            {post.team.name}
+                                                        </span>
+                                                    </>
+                                                )}
                                             </div>
                                             <span className={styles.publishDate}>
                                                 {new Date(post.createdAt).toLocaleDateString()}
@@ -164,26 +178,6 @@ export default function PostDetailPage() {
                                 )}
                             </div>
 
-                            {/* Team Info */}
-                            {post.teamId && post.team && (
-                                <div className={styles.teamInfo}>
-                                    <div className={styles.teamDetails}>
-                                        {post.team.mainImage && (
-                                            <Image
-                                                src={post.team.mainImage}
-                                                alt={post.team.name}
-                                                width={32}
-                                                height={32}
-                                                className={styles.teamImage}
-                                            />
-                                        )}
-                                        <div className={styles.teamTextInfo}>
-                                            <span className={styles.teamLabel}>Team</span>
-                                            <span className={styles.teamName}>{post.team.name}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
 
                             {isEditor && (
                                 <div className={styles.actionsContainer}>
@@ -218,7 +212,11 @@ export default function PostDetailPage() {
                         {post.postTags && post.postTags.length > 0 && (
                             <div className={styles.tags}>
                                 {post.postTags.map((postTag: any) => (
-                                    <span key={postTag.tagId} className={styles.tag}>
+                                    <span 
+                                        key={postTag.tagId} 
+                                        className={styles.tag}
+                                        onClick={() => router.push(`/posts/search?s=${encodeURIComponent(postTag.tag.name)}`)}
+                                    >
                                         #{postTag.tag.name}
                                     </span>
                                 ))}
