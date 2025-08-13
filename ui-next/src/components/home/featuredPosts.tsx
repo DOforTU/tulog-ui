@@ -33,7 +33,11 @@ export function FeaturedPosts() {
                     {posts.map((post) => {
                         const author = post.authors?.[0]; // 첫 번째 작성자 사용
                         return (
-                            <div key={post.id} className={styles.featuredCard}>
+                            <div
+                                key={post.id}
+                                className={styles.featuredCard}
+                                onClick={() => router.push(`/posts/${post.id}`)}
+                            >
                                 <div className={styles.featuredImage}>
                                     <Image
                                         src={getPostImageUrl(post.thumbnailImage)}
@@ -54,8 +58,20 @@ export function FeaturedPosts() {
                                                         width={24}
                                                         height={24}
                                                         className={styles.authorAvatar}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            router.push(`/users/${author.nickname}`);
+                                                        }}
                                                     />
-                                                    <span className={styles.authorName}>{author.nickname}</span>
+                                                    <span
+                                                        className={styles.authorName}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            router.push(`/users/${author.nickname}`);
+                                                        }}
+                                                    >
+                                                        {author.nickname}
+                                                    </span>
                                                 </>
                                             )}
                                         </div>
@@ -66,8 +82,12 @@ export function FeaturedPosts() {
                                             })}
                                         </span>
                                     </div>
-                                    <h3 className={styles.cardTitle}>{post.title}</h3>
-                                    <p className={styles.cardExcerpt}>{post.excerpt}</p>
+                                    <h3 className={styles.cardTitle} onClick={() => router.push(`/posts/${post.id}`)}>
+                                        {post.title}
+                                    </h3>
+                                    <p className={styles.cardExcerpt} onClick={() => router.push(`/posts/${post.id}`)}>
+                                        {post.excerpt}
+                                    </p>
 
                                     <div className={styles.cardFooter}>
                                         <div className={styles.tags}>

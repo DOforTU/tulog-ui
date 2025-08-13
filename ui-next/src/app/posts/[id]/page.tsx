@@ -43,9 +43,19 @@ export default function PostDetailPage() {
     }, [postId]);
 
     const isOwner = post?.editors.some((editor) => editor.userId === currentUser?.id && editor.role === "OWNER");
+    const isEditor = post?.editors.some((editor) => editor.userId === currentUser?.id);
+
+    const [showDropdown, setShowDropdown] = useState(false);
 
     const handleEdit = () => {
         router.push(`/posts/${postId}/edit`);
+        setShowDropdown(false);
+    };
+
+    const handleDelete = () => {
+        // TODO: Implement delete functionality
+        console.log("Delete post");
+        setShowDropdown(false);
     };
 
     if (isLoading) {
@@ -101,10 +111,27 @@ export default function PostDetailPage() {
                                 )}
                             </div>
 
-                            {isOwner && (
-                                <button className={styles.editButton} onClick={handleEdit}>
-                                    Edit Post
-                                </button>
+                            {isEditor && (
+                                <div className={styles.actionsContainer}>
+                                    <button 
+                                        className={styles.menuButton}
+                                        onClick={() => setShowDropdown(!showDropdown)}
+                                    >
+                                        ⋮
+                                    </button>
+                                    {showDropdown && (
+                                        <div className={styles.dropdown}>
+                                            <button className={styles.dropdownItem} onClick={handleEdit}>
+                                                Edit Post
+                                            </button>
+                                            {isOwner && (
+                                                <button className={styles.dropdownItem} onClick={handleDelete}>
+                                                    Delete Post
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                             )}
                         </div>
 
@@ -122,7 +149,7 @@ export default function PostDetailPage() {
                 </div>
 
                 {/* Thumbnail */}
-                {post.thumbnailImage && (
+                {post.thumbnailImage && post.thumbnailImage !== process.env.NEXT_PUBLIC_DEFAULT_THUMBNAIL_IMAGE_URL && (
                     <div className={styles.thumbnailWrapper}>
                         <Image
                             src={post.thumbnailImage}

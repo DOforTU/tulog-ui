@@ -26,6 +26,7 @@
     height: 32px;
     object-fit: cover;
     margin-right: 0.75rem;
+    cursor: pointer;
 }
 .authorDetails {
     display: flex;
@@ -35,6 +36,7 @@
     font-weight: 600;
     color: var(--color-heading);
     font-size: 1rem;
+    cursor: pointer;
 }
 .teamName {
     font-size: 0.75rem;
