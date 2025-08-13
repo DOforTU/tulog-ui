@@ -2,19 +2,19 @@ import { CreatePostDto, UpdatePostDto, Post, PostStatus } from "@/lib/types/post
 import apiClient, { publicApiClient } from "./api-client";
 
 // 포스트 생성
-export async function createPost(postData: CreatePostDto): Promise<Post> {
+export async function createPost(postData: CreatePostDto) {
     const response = await apiClient.post("/api/posts", postData);
     return response.data;
 }
 
 // 포스트 업데이트
-export async function updatePost(postId: number, postData: UpdatePostDto): Promise<Post> {
+export async function updatePost(postId: number, postData: UpdatePostDto) {
     const response = await apiClient.patch(`/api/posts/${postId}`, postData);
     return response.data;
 }
 
 // 포스트 상세 조회
-export async function getPost(postId: number): Promise<Post> {
+export async function getPost(postId: number) {
     const response = await apiClient.get(`/api/posts/${postId}`);
     return response.data;
 }
@@ -36,13 +36,13 @@ export async function deletePost(postId: number): Promise<void> {
 }
 
 // 임시저장
-export async function saveDraft(postData: CreatePostDto): Promise<Post> {
+export async function saveDraft(postData: CreatePostDto) {
     const response = await apiClient.post("/api/posts/draft", postData);
     return response.data;
 }
 
 // 포스트 발행
-export async function publishPost(postData: CreatePostDto): Promise<Post> {
+export async function publishPost(postData: CreatePostDto) {
     return createPost({ ...postData, status: PostStatus.PUBLIC });
 }
 

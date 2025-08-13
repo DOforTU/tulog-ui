@@ -233,6 +233,7 @@ export default function EditPostPage() {
                     postData={postData}
                     onPostDataChange={handlePostDataChange}
                     onClose={() => setShowSettings(false)}
+                    isEditMode={true}
                 />
             )}
         </div>

@@ -13,9 +13,10 @@ interface PostSettingsProps {
     postData: PostData;
     onPostDataChange: (field: keyof PostData, value: any) => void;
     onClose: () => void;
+    isEditMode?: boolean;
 }
 
-export default function PostSettings({ postData, onPostDataChange, onClose }: PostSettingsProps) {
+export default function PostSettings({ postData, onPostDataChange, onClose, isEditMode = false }: PostSettingsProps) {
     const [localData, setLocalData] = useState(postData);
     const [newTag, setNewTag] = useState("");
     const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
@@ -23,6 +24,12 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
     const [isLoadingTeams, setIsLoadingTeams] = useState(false);
     const thumbnailInputRef = useRef<HTMLInputElement>(null);
     const { currentUser } = useAuth();
+
+    // 원본 포스트가 팀 블로그인지 확인
+    const isOriginallyTeamPost = isEditMode && postData.teamId;
+    // 현재 팀 옵션을 선택했는지 확인 (개인 블로그에서 팀으로 변경하려는 경우)
+    const isChangingToTeam = !isOriginallyTeamPost && 
+        (localData.visibility === "team-public" || localData.visibility === "team-private");
 
     useEffect(() => {
         setLocalData(postData);
@@ -36,7 +43,7 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
             setIsLoadingTeams(true);
             try {
                 const userDetails = await fetchUserDetails(currentUser.id.toString());
-                setUserTeams(userDetails.teams || []);
+                setUserTeams(userDetails.data.teams || []);
             } catch (error) {
                 console.error("Failed to load user teams:", error);
                 setUserTeams([]);
@@ -56,9 +63,19 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
     };
 
     const handleSave = () => {
-        Object.entries(localData).forEach(([key, value]) => {
-            onPostDataChange(key as keyof PostData, value);
-        });
+        if (isEditMode) {
+            // Edit 모드에서는 변경된 필드만 전달
+            Object.entries(localData).forEach(([key, value]) => {
+                if (JSON.stringify(postData[key as keyof PostData]) !== JSON.stringify(value)) {
+                    onPostDataChange(key as keyof PostData, value);
+                }
+            });
+        } else {
+            // 새 포스트 작성 시에는 모든 데이터 전달
+            Object.entries(localData).forEach(([key, value]) => {
+                onPostDataChange(key as keyof PostData, value);
+            });
+        }
         onClose();
     };
 
@@ -137,29 +154,34 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
                     <div className={styles.settingGroup}>
                         <label className={styles.label}>Visibility</label>
                         <div className={styles.radioGroup}>
-                            <label className={styles.radioLabel}>
-                                <input
-                                    type="radio"
-                                    name="visibility"
-                                    value="private"
-                                    checked={localData.visibility === "private"}
-                                    onChange={(e) => handleLocalChange("visibility", e.target.value)}
-                                />
-                                <span className={styles.radioCustom}></span>
-                                <span className={styles.radioText}>🔒 Private - Only you can see this post</span>
-                            </label>
+                            {/* 개인 옵션들 - 원래 팀 포스트가 아닌 경우에만 표시 */}
+                            {!isOriginallyTeamPost && (
+                                <>
+                                    <label className={styles.radioLabel}>
+                                        <input
+                                            type="radio"
+                                            name="visibility"
+                                            value="private"
+                                            checked={localData.visibility === "private"}
+                                            onChange={(e) => handleLocalChange("visibility", e.target.value)}
+                                        />
+                                        <span className={styles.radioCustom}></span>
+                                        <span className={styles.radioText}>🔒 Private - Only you can see this post</span>
+                                    </label>
 
-                            <label className={styles.radioLabel}>
-                                <input
-                                    type="radio"
-                                    name="visibility"
-                                    value="public"
-                                    checked={localData.visibility === "public"}
-                                    onChange={(e) => handleLocalChange("visibility", e.target.value)}
-                                />
-                                <span className={styles.radioCustom}></span>
-                                <span className={styles.radioText}>🌍 Public - Anyone can see this post</span>
-                            </label>
+                                    <label className={styles.radioLabel}>
+                                        <input
+                                            type="radio"
+                                            name="visibility"
+                                            value="public"
+                                            checked={localData.visibility === "public"}
+                                            onChange={(e) => handleLocalChange("visibility", e.target.value)}
+                                        />
+                                        <span className={styles.radioCustom}></span>
+                                        <span className={styles.radioText}>🌍 Public - Anyone can see this post</span>
+                                    </label>
+                                </>
+                            )}
 
                             <label className={styles.radioLabel}>
                                 <input
@@ -189,6 +211,13 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
                                 </span>
                             </label>
                         </div>
+                        
+                        {/* 팀 블로그 변경 경고 메시지 */}
+                        {isChangingToTeam && (
+                            <div className={styles.warningMessage}>
+                                ⚠️ Once you convert to a team blog, it cannot be reverted to a personal blog.
+                            </div>
+                        )}
                     </div>
 
                     {/* Team Selection (only when visibility is team) */}
@@ -201,12 +230,10 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
                                 onChange={(e) => handleLocalChange("teamId", parseInt(e.target.value))}
                                 disabled={isLoadingTeams}
                             >
-                                <option value="">
-                                    {isLoadingTeams ? "Loading teams..." : "Choose a team..."}
-                                </option>
+                                <option value="">{isLoadingTeams ? "Loading teams..." : "Choose a team..."}</option>
                                 {userTeams.map((teamWithStatus) => (
                                     <option key={teamWithStatus.team.id} value={teamWithStatus.team.id}>
-                                        {teamWithStatus.team.name} ({teamWithStatus.team.memberCount} members)
+                                        {teamWithStatus.team.name}
                                     </option>
                                 ))}
                             </select>
@@ -258,7 +285,8 @@ export default function PostSettings({ postData, onPostDataChange, onClose }: Po
                         <label className={styles.label}>Thumbnail Image</label>
                         <div className={styles.thumbnailUpload}>
                             <div className={styles.thumbnailPreview} onClick={handleThumbnailClick}>
-                                {localData.thumbnailImage ? (
+                                {localData.thumbnailImage && 
+                                 localData.thumbnailImage !== process.env.NEXT_PUBLIC_DEFAULT_THUMBNAIL_IMAGE_URL ? (
                                     <Image
                                         src={localData.thumbnailImage}
                                         alt="Thumbnail"
