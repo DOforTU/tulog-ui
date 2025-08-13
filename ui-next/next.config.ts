@@ -45,6 +45,12 @@ const nextConfig: NextConfig = {
                 port: "",
                 pathname: "/DOforTU/tulog/blob/main/img/**",
             },
+            {
+                protocol: "https",
+                hostname: "via.placeholder.com",
+                port: "",
+                // pathname: "/DOforTU/tulog/blob/main/img/**",
+            },
         ],
     },
 };

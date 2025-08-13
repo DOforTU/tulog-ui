@@ -2,18 +2,20 @@ import styles from "./featuredPosts.module.css";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Post } from "@/lib/types/post.interface";
+import { PublicPost } from "@/lib/types/post.interface";
+import { getPublicPosts } from "@/lib/api/posts";
 
 export function FeaturedPosts() {
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [posts, setPosts] = useState<PublicPost[]>([]);
     const router = useRouter();
 
     useEffect(() => {
-        fetch("/samplePosts.json")
-            .then((res) => res.json())
-            .then((data: Post[]) => {
-                const featured = data.filter((p) => p.featured).slice(0, 3);
-                setPosts(featured);
+        getPublicPosts({ limit: 3, offset: 0 })
+            .then((data) => {
+                setPosts(data);
+            })
+            .catch((error) => {
+                console.error("Failed to load featured posts:", error);
             });
     }, []);
 
@@ -27,55 +29,62 @@ export function FeaturedPosts() {
                     </button>
                 </div>
                 <div className={styles.featuredGrid}>
-                    {posts.map((post) => (
-                        <div key={post.id} className={styles.featuredCard}>
-                            <div className={styles.featuredImage}>
-                                <Image
-                                    src={post.image}
-                                    alt={post.title}
-                                    width={320}
-                                    height={160}
-                                    style={{ objectFit: "cover" }}
-                                />
-                            </div>
-                            <div className={styles.featuredContent}>
-                                <div className={styles.cardMeta}>
-                                    <div className={styles.authorInfo}>
-                                        <Image
-                                            src={post.author.avatar}
-                                            alt={post.author.name}
-                                            width={24}
-                                            height={24}
-                                            className={styles.authorAvatar}
-                                        />
-                                        <span className={styles.authorName}>{post.author.name}</span>
-                                    </div>
-                                    <span className={styles.publishDate}>
-                                        {new Date(post.publishedAt).toLocaleDateString(undefined, {
-                                            month: "long",
-                                            day: "numeric",
-                                        })}
-                                    </span>
+                    {posts.map((post) => {
+                        const author = post.authors?.[0]; // 첫 번째 작성자 사용
+                        return (
+                            <div key={post.id} className={styles.featuredCard}>
+                                <div className={styles.featuredImage}>
+                                    <Image
+                                        src={post.thumbnailImage}
+                                        alt={post.title}
+                                        width={320}
+                                        height={160}
+                                        style={{ objectFit: "cover" }}
+                                    />
                                 </div>
-                                <h3 className={styles.cardTitle}>{post.title}</h3>
-                                <p className={styles.cardExcerpt}>{post.excerpt}</p>
+                                <div className={styles.featuredContent}>
+                                    <div className={styles.cardMeta}>
+                                        <div className={styles.authorInfo}>
+                                            {author && (
+                                                <>
+                                                    <Image
+                                                        src={author.profilePicture}
+                                                        alt={author.nickname}
+                                                        width={24}
+                                                        height={24}
+                                                        className={styles.authorAvatar}
+                                                    />
+                                                    <span className={styles.authorName}>{author.nickname}</span>
+                                                </>
+                                            )}
+                                        </div>
+                                        <span className={styles.publishDate}>
+                                            {new Date(post.createdAt).toLocaleDateString(undefined, {
+                                                month: "long",
+                                                day: "numeric",
+                                            })}
+                                        </span>
+                                    </div>
+                                    <h3 className={styles.cardTitle}>{post.title}</h3>
+                                    <p className={styles.cardExcerpt}>{post.excerpt}</p>
 
-                                <div className={styles.cardFooter}>
-                                    <div className={styles.tags}>
-                                        {post.tags.slice(0, 2).map((tag) => (
-                                            <span key={tag.id} className={styles.tag}>
-                                                {tag.name}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <div className={styles.engagement}>
-                                        <span className={styles.readTime}>{post.readTime} min read</span>
-                                        <span className={styles.claps}>{post.claps}</span>
+                                    <div className={styles.cardFooter}>
+                                        <div className={styles.tags}>
+                                            {post.tags?.slice(0, 2).map((tag, index) => (
+                                                <span key={index} className={styles.tag}>
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <div className={styles.engagement}>
+                                            <span className={styles.readTime}>조회 {post.viewCount}</span>
+                                            <span className={styles.claps}>좋아요 {post.likeCount}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </section>

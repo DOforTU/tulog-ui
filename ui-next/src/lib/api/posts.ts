@@ -1,59 +1,22 @@
-import { CreatePostDto, UpdatePostDto, Post } from "@/lib/types/post.interface";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+import { CreatePostDto, UpdatePostDto, Post, PublicPost, PostStatus } from "@/lib/types/post.interface";
+import apiClient, { publicApiClient } from "./api-client";
 
 // 포스트 생성
 export async function createPost(postData: CreatePostDto): Promise<Post> {
-    const response = await fetch(`${API_BASE_URL}/posts`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(postData),
-    });
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to create post");
-    }
-
-    return response.json();
+    const response = await apiClient.post("/api/posts", postData);
+    return response.data;
 }
 
 // 포스트 업데이트
 export async function updatePost(postId: number, postData: UpdatePostDto): Promise<Post> {
-    const response = await fetch(`${API_BASE_URL}/posts/${postId}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(postData),
-    });
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to update post");
-    }
-
-    return response.json();
+    const response = await apiClient.patch(`/api/posts/${postId}`, postData);
+    return response.data;
 }
 
 // 포스트 상세 조회
 export async function getPost(postId: number): Promise<Post> {
-    const response = await fetch(`${API_BASE_URL}/posts/${postId}`, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-    });
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to fetch post");
-    }
-
-    return response.json();
+    const response = await apiClient.get(`/api/posts/${postId}`);
+    return response.data;
 }
 
 // 포스트 목록 조회
@@ -63,84 +26,34 @@ export async function getPosts(params?: {
     status?: "PUBLIC" | "PRIVATE" | "DRAFT";
     teamId?: number;
 }): Promise<{ posts: Post[]; total: number; page: number; limit: number }> {
-    const searchParams = new URLSearchParams();
-
-    if (params?.page) searchParams.append("page", params.page.toString());
-    if (params?.limit) searchParams.append("limit", params.limit.toString());
-    if (params?.status) searchParams.append("status", params.status);
-    if (params?.teamId) searchParams.append("teamId", params.teamId.toString());
-
-    const response = await fetch(`${API_BASE_URL}/posts?${searchParams}`, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-    });
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to fetch posts");
-    }
-
-    return response.json();
+    const response = await apiClient.get("/api/posts", { params });
+    return response.data;
 }
 
 // 포스트 삭제
 export async function deletePost(postId: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/posts/${postId}`, {
-        method: "DELETE",
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-    });
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to delete post");
-    }
+    await apiClient.delete(`/api/posts/${postId}`);
 }
 
 // 임시저장
 export async function saveDraft(postData: CreatePostDto): Promise<Post> {
-    return createPost({ ...postData, status: "DRAFT" });
+    const response = await apiClient.post("/api/posts/draft", postData);
+    return response.data;
 }
 
 // 포스트 발행
 export async function publishPost(postData: CreatePostDto): Promise<Post> {
-    return createPost({ ...postData, status: "PUBLIC" });
+    return createPost({ ...postData, status: PostStatus.PUBLIC });
 }
 
-// 편집자 추가
-export async function addEditor(
-    postId: number,
-    editorId: number,
-    permission: "POSSIBLE" | "READ_ONLY" | "EDIT" = "EDIT"
-): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/posts/${postId}/editors`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ editorId, permission }),
-    });
+// 공개 포스트 목록 조회 (최신순)
+export async function getPublicPosts(params?: { limit?: number; offset?: number }): Promise<PublicPost[]> {
+    const response = await publicApiClient.get("/api/posts", { params });
 
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to add editor");
+    // 서버의 ResponseInterceptor가 감싸서 보내는 경우 처리
+    if (response.data.success && response.data.data) {
+        return response.data.data;
     }
-}
 
-// 편집자 제거
-export async function removeEditor(postId: number, editorId: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/posts/${postId}/editors/${editorId}`, {
-        method: "DELETE",
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-    });
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to remove editor");
-    }
+    return response.data;
 }

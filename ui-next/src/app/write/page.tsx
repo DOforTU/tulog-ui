@@ -9,13 +9,17 @@ import PostPreview from "@/components/write/PostPreview";
 import PostSettings from "@/components/write/PostSettings";
 import { useHeaderHeight } from "@/hooks/useHeaderHeight";
 
-import { CreatePostDto } from "@/lib/types/post.interface";
+import { CreatePostDto, PostStatus } from "@/lib/types/post.interface";
 import { saveDraft, publishPost } from "@/lib/api/posts";
 
-export interface PostData extends Omit<CreatePostDto, "editorIds"> {
+export interface PostData {
+    title: string;
+    content: string;
+    excerpt?: string;
+    thumbnailImage?: string;
     tags: string[];
     visibility: "public" | "private" | "team";
-    editorIds: number[];
+    teamId?: number;
 }
 
 export default function WritePage() {
@@ -26,10 +30,10 @@ export default function WritePage() {
     const [postData, setPostData] = useState<PostData>({
         title: "",
         content: "",
+        excerpt: "",
+        thumbnailImage: "",
         tags: [],
         visibility: "public",
-        status: "DRAFT",
-        editorIds: [],
     });
 
     const [isPreviewMode, setIsPreviewMode] = useState(false);
@@ -56,10 +60,11 @@ export default function WritePage() {
             const draftData: CreatePostDto = {
                 title: postData.title,
                 content: postData.content,
+                excerpt: postData.excerpt,
                 thumbnailImage: postData.thumbnailImage,
-                status: "DRAFT",
+                status: PostStatus.DRAFT,
                 teamId: postData.teamId,
-                editorIds: postData.editorIds,
+                tags: postData.tags,
             };
 
             await saveDraft(draftData);
@@ -84,15 +89,16 @@ export default function WritePage() {
             const publishData: CreatePostDto = {
                 title: postData.title,
                 content: postData.content,
+                excerpt: postData.excerpt,
                 thumbnailImage: postData.thumbnailImage,
                 status:
                     postData.visibility === "public"
-                        ? "PUBLIC"
+                        ? PostStatus.PUBLIC
                         : postData.visibility === "private"
-                        ? "PRIVATE"
-                        : "DRAFT",
+                        ? PostStatus.PRIVATE
+                        : PostStatus.DRAFT,
                 teamId: postData.teamId,
-                editorIds: postData.editorIds,
+                tags: postData.tags,
             };
 
             const createdPost = await publishPost(publishData);

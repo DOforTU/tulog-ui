@@ -36,6 +36,11 @@
     color: var(--color-heading);
     font-size: 1rem;
 }
+.teamName {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    margin-top: 0.2rem;
+}
 .authorJob {
     font-size: 0.75rem;
     color: var(--color-text-light);

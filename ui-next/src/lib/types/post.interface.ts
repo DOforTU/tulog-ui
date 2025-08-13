@@ -6,6 +6,20 @@ export interface Author {
     bio: string;
 }
 
+// 서버와 동일한 EditorRole enum
+export enum EditorRole {
+    OWNER = "OWNER",
+    EDITOR = "EDITOR",
+    VIEWER = "VIEWER",
+}
+
+// 서버와 동일한 PostStatus enum
+export enum PostStatus {
+    DRAFT = "DRAFT",
+    PUBLIC = "PUBLIC",
+    PRIVATE = "PRIVATE",
+}
+
 // ERD 기반 Post 인터페이스
 export interface Post {
     id: number;
@@ -14,18 +28,17 @@ export interface Post {
     content: string;
     thumbnailImage: string;
     createdAt: string;
-    status: "PRIVATE" | "PUBLIC" | "DRAFT";
+    status: PostStatus;
     editors: PostEditor[];
 }
 
-// Editor 관계 인터페이스
+// Editor 관계 인터페이스 (서버의 Editor entity와 일치)
 export interface PostEditor {
     postId: number;
-    editorId: number;
+    userId: number;
     createdAt: string;
-    isCreator: boolean;
-    permission: "POSSIBLE" | "READ_ONLY" | "EDIT";
-    user: PublicUser; // PublicUser 타입 활용
+    role: EditorRole;
+    user: PublicUser;
 }
 
 // 기존 호환성을 위한 레거시 Post 인터페이스
@@ -52,16 +65,36 @@ export interface Tag {
 export interface CreatePostDto {
     title: string;
     content: string;
+    excerpt?: string;
     thumbnailImage?: string;
-    status: "PRIVATE" | "PUBLIC" | "DRAFT";
+    status?: PostStatus;
     teamId?: number;
-    editorIds?: number[]; // 공동 편집자 ID 목록
+    tags?: string[]; // 서버와 일치
 }
 
 export interface UpdatePostDto {
     title?: string;
     content?: string;
+    excerpt?: string;
     thumbnailImage?: string;
-    status?: "PRIVATE" | "PUBLIC" | "DRAFT";
+    status?: PostStatus;
     teamId?: number;
+    tags?: string[]; // 서버와 일치
+}
+
+// 서버 API 응답과 일치하는 PublicPost 인터페이스
+export interface PublicPost {
+    id: number;
+    title: string;
+    excerpt: string;
+    thumbnailImage: string;
+    viewCount: number;
+    likeCount: number;
+    commentCount: number;
+    teamId?: number;
+    teamName?: string;
+    createdAt: string;
+    updatedAt: string;
+    tags: string[];
+    authors: PublicUser[];
 }
