@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { fetchTeamWithMembers, leaveTeam } from "@/lib/api/teams";
 import { TeamDetail } from "@/lib/types/team.interface";
@@ -11,11 +11,12 @@ import styles from "./teamDetailPage.module.css";
 // 컴포넌트 imports
 import TeamPostFilter, { TeamPostFilter as TeamPostFilterType } from "@/components/team-page/postFilter";
 import MyTags from "@/components/user-page/myTags";
-import MyPosts from "@/components/user-page/myPosts";
+import TeamPosts from "@/components/team-page/teamPosts";
 
 export default function TeamDetailPage() {
     const params = useParams();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { currentUser } = useAuth();
 
     let name = "";
@@ -34,9 +35,67 @@ export default function TeamDetailPage() {
     const [error, setError] = useState<string | null>(null);
     const [isLeaving, setIsLeaving] = useState(false);
 
+    // URL 쿼리에서 초기값 읽어오기
+    const initialFilter = (searchParams.get("category") as TeamPostFilterType) || "public";
+    const initialTag = searchParams.get("tag") || "전체";
+
     // 블로그 관련 상태
-    const [activeFilter, setActiveFilter] = useState<TeamPostFilterType>("public");
-    const [selectedTag, setSelectedTag] = useState<string>("전체");
+    const [activeFilter, setActiveFilter] = useState<TeamPostFilterType>(initialFilter);
+    const [selectedTag, setSelectedTag] = useState<string>(initialTag);
+    const [availableTags, setAvailableTags] = useState<string[]>([]);
+
+    // URL 업데이트 함수
+    const updateURL = useCallback(
+        (filter: TeamPostFilterType, tag: string) => {
+            const params = new URLSearchParams();
+            if (filter !== "public") {
+                params.set("category", filter);
+            }
+            if (tag !== "전체") {
+                params.set("tag", tag);
+            }
+
+            const queryString = params.toString();
+            const newUrl = queryString
+                ? `/teams/@${encodeURIComponent(name)}?${queryString}`
+                : `/teams/@${encodeURIComponent(name)}`;
+
+            router.replace(newUrl, { scroll: false });
+        },
+        [router, name]
+    );
+
+    // 카테고리 변경 핸들러
+    const handleFilterChange = useCallback(
+        (filter: TeamPostFilterType) => {
+            setActiveFilter(filter);
+            updateURL(filter, selectedTag);
+        },
+        [selectedTag, updateURL]
+    );
+
+    // 태그 변경 핸들러
+    const handleTagChange = useCallback(
+        (tag: string) => {
+            setSelectedTag(tag);
+            updateURL(activeFilter, tag);
+        },
+        [activeFilter, updateURL]
+    );
+
+    // 태그 업데이트 핸들러
+    const handleTagsUpdate = useCallback(
+        (tags: string[]) => {
+            setAvailableTags(tags);
+            // 현재 선택된 태그가 더 이상 없으면 "전체"로 리셋
+            if (selectedTag !== "전체" && !tags.includes(selectedTag)) {
+                const newTag = "전체";
+                setSelectedTag(newTag);
+                updateURL(activeFilter, newTag);
+            }
+        },
+        [selectedTag, activeFilter, updateURL]
+    );
 
     // 드롭다운 메뉴 상태
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -53,7 +112,17 @@ export default function TeamDetailPage() {
                 console.error("Failed to fetch team:", err);
                 setError("존재하지 않는 팀입니다.");
             });
-    }, []);
+    }, [name]);
+
+    // URL 쿼리 파라미터 변경 감지 및 상태 동기화 (브라우저 뒤로가기/앞으로가기 대응)
+    useEffect(() => {
+        const category = (searchParams.get("category") as TeamPostFilterType) || "public";
+        const tag = searchParams.get("tag") || "전체";
+
+        // URL과 현재 상태가 다를 때만 업데이트 (무한 루프 방지)
+        setActiveFilter((prev) => (prev !== category ? category : prev));
+        setSelectedTag((prev) => (prev !== tag ? tag : prev));
+    }, [searchParams]);
 
     // 메뉴 외부 클릭 감지
     useEffect(() => {
@@ -484,15 +553,22 @@ export default function TeamDetailPage() {
                 {/* 포스트 필터링 섹션 */}
                 <TeamPostFilter
                     activeFilter={activeFilter}
-                    onFilterChange={setActiveFilter}
+                    onFilterChange={handleFilterChange}
                     isTeamMember={isCurrentUserMember()}
                 />
 
                 {/* 태그 섹션 */}
-                <MyTags selectedTag={selectedTag} onTagChange={setSelectedTag} />
+                <MyTags selectedTag={selectedTag} onTagChange={handleTagChange} tags={availableTags} />
 
                 {/* 포스트 섹션 */}
-                <MyPosts activeFilter={activeFilter} selectedTag={selectedTag} />
+                {team && (
+                    <TeamPosts
+                        teamId={team.id}
+                        activeFilter={activeFilter}
+                        selectedTag={selectedTag}
+                        onTagsUpdate={handleTagsUpdate}
+                    />
+                )}
             </div>
         </div>
     );

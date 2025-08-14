@@ -57,3 +57,19 @@ export async function checkIsLiked(postId: number) {
     const response = await apiClient.get(`/api/posts/${postId}/likes/me`);
     return response.data;
 }
+
+// 팀별 포스트 조회
+export async function getTeamPublicPosts(teamId: number) {
+    const response = await apiClient.get(`/api/posts/teams/${teamId}/public`);
+    return response.data;
+}
+
+export async function getTeamPrivatePosts(teamId: number) {
+    const response = await apiClient.get(`/api/posts/teams/${teamId}/private`);
+    return response.data;
+}
+
+export async function getTeamDraftPosts(teamId: number) {
+    const response = await apiClient.get(`/api/posts/teams/${teamId}/draft`);
+    return response.data;
+}

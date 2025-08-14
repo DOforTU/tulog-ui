@@ -1,7 +1,8 @@
 import styles from "./postFilter.module.css";
 
 // 팀 포스트 필터 타입 (기본 필터들)
-export type TeamPostFilter = "public" | "private" | "draft";
+// export type TeamPostFilter = "public" | "private" | "draft";
+export type TeamPostFilter = "public" | "private";
 
 interface TeamPostFilterProps {
     activeFilter: TeamPostFilter;
@@ -14,13 +15,11 @@ export default function TeamPostFilter({ activeFilter, onFilterChange, isTeamMem
     const filterButtons = [
         { key: "public" as TeamPostFilter, label: "Public" },
         { key: "private" as TeamPostFilter, label: "Private" },
-        { key: "draft" as TeamPostFilter, label: "Draft" },
+        // { key: "draft" as TeamPostFilter, label: "Draft" },
     ];
 
     // 팀원이 아닌 경우 Public만 표시
-    const visibleFilters = isTeamMember
-        ? filterButtons
-        : filterButtons.filter((f) => f.key === "public");
+    const visibleFilters = isTeamMember ? filterButtons : filterButtons.filter((f) => f.key === "public");
 
     return (
         <div className={styles.filterSection}>
