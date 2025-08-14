@@ -2,8 +2,8 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import styles from "./user-page.module.css";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, useCallback } from "react";
 import { fetchMyFollowing, fetchUserDetails, fetchUserDetailsByNickname } from "@/lib/api/users";
 
 // 컴포넌트 imports
@@ -17,6 +17,9 @@ import { FollowUser, User, UserDetails, UserRole } from "@/lib/types/user.interf
 export default function UserProfilePage() {
     const { currentUser } = useAuth();
     const params = useParams();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
     let nickname = "";
     if (typeof params.nickname === "string") {
         nickname = params.nickname;
@@ -43,9 +46,67 @@ export default function UserProfilePage() {
     const [showFollowersModal, setShowFollowersModal] = useState(false);
     const [showFollowingModal, setShowFollowingModal] = useState(false);
 
-    const [activeFilter, setActiveFilter] = useState<PostFilterType>("public");
-    const [selectedTag, setSelectedTag] = useState<string>("전체");
+    // URL 쿼리에서 초기값 읽어오기
+    const initialFilter = (searchParams.get("category") as PostFilterType) || "public";
+    const initialTag = searchParams.get("tag") || "전체";
+
+    const [activeFilter, setActiveFilter] = useState<PostFilterType>(initialFilter);
+    const [selectedTag, setSelectedTag] = useState<string>(initialTag);
+    const [availableTags, setAvailableTags] = useState<string[]>([]);
     const [followLoading, setFollowLoading] = useState(false);
+
+    // URL 업데이트 함수
+    const updateURL = useCallback(
+        (filter: PostFilterType, tag: string) => {
+            const params = new URLSearchParams();
+            if (filter !== "public") {
+                params.set("category", filter);
+            }
+            if (tag !== "전체") {
+                params.set("tag", tag);
+            }
+
+            const queryString = params.toString();
+            const newUrl = queryString
+                ? `/users/@${encodeURIComponent(nickname)}?${queryString}`
+                : `/users/@${encodeURIComponent(nickname)}`;
+
+            router.replace(newUrl, { scroll: false });
+        },
+        [router, nickname]
+    );
+
+    // 카테고리 변경 핸들러
+    const handleFilterChange = useCallback(
+        (filter: PostFilterType) => {
+            setActiveFilter(filter);
+            updateURL(filter, selectedTag);
+        },
+        [selectedTag, updateURL]
+    );
+
+    // 태그 변경 핸들러
+    const handleTagChange = useCallback(
+        (tag: string) => {
+            setSelectedTag(tag);
+            updateURL(activeFilter, tag);
+        },
+        [activeFilter, updateURL]
+    );
+
+    // 태그 업데이트 핸들러
+    const handleTagsUpdate = useCallback(
+        (tags: string[]) => {
+            setAvailableTags(tags);
+            // 현재 선택된 태그가 더 이상 없으면 "전체"로 리셋
+            if (selectedTag !== "전체" && !tags.includes(selectedTag)) {
+                const newTag = "전체";
+                setSelectedTag(newTag);
+                updateURL(activeFilter, newTag);
+            }
+        },
+        [selectedTag, activeFilter, updateURL]
+    );
 
     // 계정 인증 관련 상태
     const [email, setEmail] = useState("");
@@ -54,6 +115,16 @@ export default function UserProfilePage() {
     const [isCodeSent, setIsCodeSent] = useState(false);
 
     const isOwnProfile = currentUser && currentUser.nickname === nickname;
+
+    // URL 쿼리 파라미터 변경 감지 및 상태 동기화 (브라우저 뒤로가기/앞으로가기 대응)
+    useEffect(() => {
+        const category = (searchParams.get("category") as PostFilterType) || "public";
+        const tag = searchParams.get("tag") || "전체";
+
+        // URL과 현재 상태가 다를 때만 업데이트 (무한 루프 방지)
+        setActiveFilter((prev) => (prev !== category ? category : prev));
+        setSelectedTag((prev) => (prev !== tag ? tag : prev));
+    }, [searchParams]); // activeFilter, selectedTag 제외하여 무한 루프 방지
 
     // 유저 정보 및 팔로우 정보 가져오기
     useEffect(() => {
@@ -313,15 +384,15 @@ export default function UserProfilePage() {
                 {/* 포스트 필터링 섹션 */}
                 <PostFilter
                     activeFilter={activeFilter}
-                    onFilterChange={setActiveFilter}
+                    onFilterChange={handleFilterChange}
                     isOwnProfile={!!isOwnProfile}
                 />
 
                 {/* 태그 섹션 */}
-                <MyTags selectedTag={selectedTag} onTagChange={setSelectedTag} />
+                <MyTags selectedTag={selectedTag} onTagChange={handleTagChange} tags={availableTags} />
 
                 {/* 포스트 섹션 */}
-                <MyPosts activeFilter={activeFilter} selectedTag={selectedTag} />
+                <MyPosts activeFilter={activeFilter} selectedTag={selectedTag} onTagsUpdate={handleTagsUpdate} />
             </div>
 
             {/* 모달들 */}

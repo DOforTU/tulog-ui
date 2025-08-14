@@ -29,6 +29,9 @@
     color: var(--color-text);
     cursor: pointer;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
 }
 
 .tag:hover {
@@ -41,4 +44,20 @@
     background: var(--color-primary);
     border-color: var(--color-primary);
     color: white;
+}
+
+.tagCount {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 0.1rem 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.noTags {
+    text-align: center;
+    padding: 1rem;
+    color: var(--color-text-light);
+    font-style: italic;
+    font-size: 0.9rem;
 }

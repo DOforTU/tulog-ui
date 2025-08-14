@@ -7,11 +7,46 @@
     transition: border-color 0.2s ease;
 }
 
+.postsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
 .postsTitle {
     font-size: 1.1rem;
     font-weight: 600;
-    margin: 0 0 1rem 0;
+    margin: 0;
     color: var(--color-heading);
+}
+
+.postsCount {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: var(--color-text-light);
+}
+
+.error {
+    text-align: center;
+    padding: 2rem;
+    color: var(--color-danger);
+}
+
+.emptyState {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--color-text-light);
+    font-style: italic;
+}
+
+.postsList {
+    gap: 1.5rem;
 }
 
 .postsPlaceholder {

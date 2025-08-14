@@ -7,13 +7,12 @@ interface MyTagsProps {
 }
 
 export default function MyTags({ selectedTag, onTagChange, tags }: MyTagsProps) {
-    // 기본 태그 데이터 (추후 API로 교체)
-    const defaultTags = ["전체", "JavaScript", "React", "TypeScript", "Node.js", "CSS", "HTML"];
-    const displayTags = tags || defaultTags;
+    // API에서 받은 태그가 있으면 사용, 없으면 기본 태그
+    const displayTags = tags && tags.length > 0 ? ["전체", ...tags] : ["전체"];
 
     return (
         <div className={styles.tagsSection}>
-            <h3 className={styles.tagsTitle}>Tags</h3>
+            <h3 className={styles.tagsTitle}>Tags ({displayTags.length - 1})</h3>
             <div className={styles.tags}>
                 {displayTags.map((tag) => (
                     <button
@@ -22,9 +21,13 @@ export default function MyTags({ selectedTag, onTagChange, tags }: MyTagsProps) 
                         onClick={() => onTagChange(tag)}
                     >
                         {tag}
+                        {tag !== "전체" && tags && (
+                            <span className={styles.tagCount}>{tags.filter((t) => t === tag).length}</span>
+                        )}
                     </button>
                 ))}
             </div>
+            {(!tags || tags.length === 0) && <div className={styles.noTags}>아직 사용된 태그가 없습니다.</div>}
         </div>
     );
 }
