@@ -20,26 +20,6 @@ export enum PostStatus {
     PRIVATE = "PRIVATE",
 }
 
-// ERD 기반 Post 인터페이스
-export interface Post {
-    id: number;
-    teamId: number | null;
-    title: string;
-    content: string;
-    excerpt?: string;
-    thumbnailImage: string;
-    status: PostStatus;
-    viewCount: number;
-    likeCount: number;
-    commentCount: number;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string | null;
-    editors: PostEditor[];
-    postTags?: PostTag[];
-    team?: any;
-}
-
 // PostTag 관계 인터페이스
 export interface PostTag {
     postId: number;
@@ -55,21 +35,6 @@ export interface PostEditor {
     createdAt: string;
     role: EditorRole;
     user: PublicUser;
-}
-
-// 기존 호환성을 위한 레거시 Post 인터페이스
-export interface LegacyPost {
-    id: number;
-    title: string;
-    subtitle: string;
-    excerpt: string;
-    author: Author;
-    publishedAt: string;
-    readTime: number;
-    tags: Tag[];
-    featured: boolean;
-    claps: number;
-    image: string;
 }
 
 export interface Tag {
@@ -98,8 +63,8 @@ export interface UpdatePostDto {
     tags?: string[]; // 서버와 일치
 }
 
-// 서버 API 응답과 일치하는 PublicPost 인터페이스
-export interface PublicPost {
+// 간단한 Post 정보
+export interface PostCard {
     id: number;
     title: string;
     excerpt: string;
@@ -113,4 +78,24 @@ export interface PublicPost {
     updatedAt: string;
     tags: string[];
     authors: PublicUser[];
+}
+
+// content 포함
+export interface PostDetail {
+    id: number;
+    teamId: number | null;
+    title: string;
+    content: string;
+    excerpt?: string;
+    thumbnailImage: string;
+    status: PostStatus;
+    viewCount: number;
+    likeCount: number;
+    commentCount: number;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+    editors: PostEditor[];
+    postTags?: PostTag[];
+    team?: any;
 }

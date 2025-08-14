@@ -9,7 +9,7 @@ import PostSettings from "@/components/write/PostSettings";
 import { useHeaderHeight } from "@/hooks/useHeaderHeight";
 
 import { CreatePostDto, PostStatus } from "@/lib/types/post.interface";
-import { saveDraft, publishPost } from "@/lib/api/posts";
+import { saveDraft, createPost } from "@/lib/api/posts";
 
 export interface PostData {
     title: string;
@@ -159,7 +159,7 @@ export default function WritePage() {
                 tags: postData.tags,
             };
 
-            const response = await publishPost(publishData);
+            const response = await createPost(publishData);
             const createdPost = response.data;
             console.log("Created Post:", createdPost);
             router.push(`/posts/${createdPost.id}`);

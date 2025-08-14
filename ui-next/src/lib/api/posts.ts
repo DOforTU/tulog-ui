@@ -1,5 +1,5 @@
-import { CreatePostDto, UpdatePostDto, Post, PostStatus } from "@/lib/types/post.interface";
-import apiClient, { publicApiClient } from "./api-client";
+import { CreatePostDto, UpdatePostDto } from "@/lib/types/post.interface";
+import apiClient from "./api-client";
 
 // 포스트 생성
 export async function createPost(postData: CreatePostDto) {
@@ -20,12 +20,7 @@ export async function getPost(postId: number) {
 }
 
 // 포스트 목록 조회
-export async function getPosts(params?: {
-    page?: number;
-    limit?: number;
-    status?: "PUBLIC" | "PRIVATE" | "DRAFT";
-    teamId?: number;
-}): Promise<{ posts: Post[]; total: number; page: number; limit: number }> {
+export async function getPosts(params?: { page?: number; limit?: number }) {
     const response = await apiClient.get("/api/posts", { params });
     return response.data;
 }
@@ -42,13 +37,23 @@ export async function saveDraft(postData: CreatePostDto) {
     return response.data;
 }
 
-// 포스트 발행
-export async function publishPost(postData: CreatePostDto) {
-    return createPost({ ...postData, status: PostStatus.PUBLIC });
-}
-
 // 공개 포스트 목록 조회 (최신순) - 래퍼 반환
 export async function getPublicPosts(params?: { limit?: number; offset?: number }) {
-    const response = await publicApiClient.get("/api/posts", { params });
+    const response = await apiClient.get("/api/posts", { params });
+    return response.data;
+}
+
+export async function postLike(postId: number) {
+    const response = await apiClient.post(`/api/posts/${postId}/like`);
+    return response.data;
+}
+
+export async function postUnlike(postId: number) {
+    const response = await apiClient.delete(`/api/posts/${postId}/unlike`);
+    return response.data;
+}
+
+export async function checkIsLiked(postId: number) {
+    const response = await apiClient.get(`/api/posts/${postId}/likes/me`);
     return response.data;
 }

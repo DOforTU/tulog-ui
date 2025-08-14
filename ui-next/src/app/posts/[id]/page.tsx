@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
-import { getPost, deletePost } from "@/lib/api/posts";
-import { Post } from "@/lib/types/post.interface";
+import { getPost, deletePost, postLike, postUnlike, checkIsLiked } from "@/lib/api/posts";
+import { PostDetail } from "@/lib/types/post.interface";
 import styles from "./post.module.css";
 
 export default function PostDetailPage() {
@@ -16,11 +16,15 @@ export default function PostDetailPage() {
     const { currentUser } = useAuth();
     const postId = parseInt(params.id as string);
 
-    const [post, setPost] = useState<Post | null>(null);
+    const [post, setPost] = useState<PostDetail | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isDeleting, setIsDeleting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isLiked, setIsLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(0);
+    const [isLikeLoading, setIsLikeLoading] = useState(false);
 
+    // 포스트 로드 (postId가 변경될 때만)
     useEffect(() => {
         const loadPost = async () => {
             if (!postId || isNaN(postId)) {
@@ -33,6 +37,20 @@ export default function PostDetailPage() {
                 const response = await getPost(postId);
                 const postData = response.data;
                 setPost(postData);
+                setLikeCount(postData.likeCount || 0);
+
+                // 로그인한 사용자의 경우 좋아요 상태도 함께 확인
+                if (currentUser) {
+                    try {
+                        const likedResponse = await checkIsLiked(postId);
+                        setIsLiked(likedResponse.data);
+                    } catch (err) {
+                        console.error("Failed to check like status:", err);
+                        setIsLiked(false);
+                    }
+                } else {
+                    setIsLiked(false);
+                }
             } catch (err) {
                 console.error("Failed to load post:", err);
                 setError("Failed to load post");
@@ -42,32 +60,12 @@ export default function PostDetailPage() {
         };
 
         loadPost();
-    }, [postId]);
+    }, [postId, currentUser]);
 
     // const isOwner = post?.editors.some((editor) => editor.userId === currentUser?.id && editor.role === "OWNER");
     const isEditor = post?.editors.some((editor) => editor.userId === currentUser?.id);
 
     const [showDropdown, setShowDropdown] = useState(false);
-
-    // 컨텐츠에서 첫 번째 이미지 URL 추출
-    const extractFirstImageFromContent = (content: string): string | null => {
-        const imageRegex = /!\[.*?\]\((https?:\/\/[^\s)]+)\)/;
-        const match = content.match(imageRegex);
-        return match ? match[1] : null;
-    };
-
-    // 효과적인 썸네일 계산
-    const effectiveThumbnail = useMemo(() => {
-        if (!post) return null;
-
-        // 썸네일이 있고 기본 이미지가 아닌 경우
-        if (post.thumbnailImage && post.thumbnailImage !== process.env.NEXT_PUBLIC_DEFAULT_THUMBNAIL_IMAGE_URL) {
-            return post.thumbnailImage;
-        }
-
-        // 컨텐츠에서 첫 번째 이미지 추출
-        return extractFirstImageFromContent(post.content);
-    }, [post]);
 
     const handleEdit = () => {
         router.push(`/posts/${postId}/edit`);
@@ -101,6 +99,27 @@ export default function PostDetailPage() {
         } finally {
             setIsDeleting(false);
             setShowDropdown(false);
+        }
+    };
+
+    const handleLikeToggle = async () => {
+        if (!currentUser || isLikeLoading) return;
+
+        setIsLikeLoading(true);
+        try {
+            if (isLiked) {
+                await postUnlike(postId);
+                setIsLiked(false);
+                setLikeCount((prev) => prev - 1);
+            } else {
+                await postLike(postId);
+                setIsLiked(true);
+                setLikeCount((prev) => prev + 1);
+            }
+        } catch (error) {
+            console.error("Failed to toggle like:", error);
+        } finally {
+            setIsLikeLoading(false);
         }
     };
 
@@ -158,7 +177,7 @@ export default function PostDetailPage() {
                                                 {post.teamId && post.team && (
                                                     <>
                                                         <span className={styles.separator}>/</span>
-                                                        <span 
+                                                        <span
                                                             className={styles.teamNameInline}
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
@@ -177,7 +196,6 @@ export default function PostDetailPage() {
                                     </>
                                 )}
                             </div>
-
 
                             {isEditor && (
                                 <div className={styles.actionsContainer}>
@@ -212,10 +230,12 @@ export default function PostDetailPage() {
                         {post.postTags && post.postTags.length > 0 && (
                             <div className={styles.tags}>
                                 {post.postTags.map((postTag: any) => (
-                                    <span 
-                                        key={postTag.tagId} 
+                                    <span
+                                        key={postTag.tagId}
                                         className={styles.tag}
-                                        onClick={() => router.push(`/posts/search?s=${encodeURIComponent(postTag.tag.name)}`)}
+                                        onClick={() =>
+                                            router.push(`/posts/search?s=${encodeURIComponent(postTag.tag.name)}`)
+                                        }
                                     >
                                         #{postTag.tag.name}
                                     </span>
@@ -226,18 +246,16 @@ export default function PostDetailPage() {
                 </div>
 
                 {/* Thumbnail */}
-                {effectiveThumbnail && (
-                    <div className={styles.thumbnailWrapper}>
-                        <Image
-                            src={effectiveThumbnail}
-                            alt={post.title}
-                            width={800}
-                            height={400}
-                            className={styles.thumbnail}
-                            priority
-                        />
-                    </div>
-                )}
+                <div className={styles.thumbnailWrapper}>
+                    <Image
+                        src={post.thumbnailImage}
+                        alt={post.title}
+                        width={800}
+                        height={400}
+                        className={styles.thumbnail}
+                        priority
+                    />
+                </div>
 
                 {/* Content */}
                 <div className={styles.content}>
@@ -291,7 +309,15 @@ export default function PostDetailPage() {
                             </svg>
                             {post.viewCount} views
                         </span>
-                        <span className={styles.stat}>
+                        <span
+                            className={`${styles.stat} ${styles.likeButton} ${isLiked ? styles.liked : ""}`}
+                            onClick={handleLikeToggle}
+                            style={{
+                                cursor: currentUser ? "pointer" : "default",
+                                opacity: isLikeLoading ? 0.6 : 1,
+                                color: isLiked ? "#ff6b6b" : "inherit",
+                            }}
+                        >
                             <svg
                                 width="16"
                                 height="16"
@@ -301,10 +327,12 @@ export default function PostDetailPage() {
                             >
                                 <path
                                     d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                                    fill="currentColor"
+                                    fill={isLiked ? "currentColor" : "none"}
+                                    stroke="currentColor"
+                                    strokeWidth={isLiked ? "0" : "2"}
                                 />
                             </svg>
-                            {post.likeCount} likes
+                            {likeCount} likes
                         </span>
                         <span className={styles.stat}>
                             <svg

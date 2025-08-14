@@ -1,11 +1,11 @@
-import { PublicPost } from "@/lib/types/post.interface";
 import { PostCard } from "./postCard";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import styles from "./postList.module.css";
+import { PostCard as PostCardType } from "@/lib/types/post.interface";
 
 interface PostListProps {
     title: string;
-    posts: PublicPost[];
+    posts: PostCardType[];
     loading: boolean;
     hasMore: boolean;
     onLoadMore: () => void;

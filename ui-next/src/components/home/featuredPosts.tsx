@@ -2,12 +2,12 @@ import styles from "./featuredPosts.module.css";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { PublicPost } from "@/lib/types/post.interface";
+import { PostCard } from "@/lib/types/post.interface";
 import { getPublicPosts } from "@/lib/api/posts";
 import { getUserProfileImageUrl, getPostImageUrl } from "@/lib/utils/image";
 
 export function FeaturedPosts() {
-    const [posts, setPosts] = useState<PublicPost[]>([]);
+    const [posts, setPosts] = useState<PostCard[]>([]);
     const router = useRouter();
 
     useEffect(() => {

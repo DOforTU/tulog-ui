@@ -361,6 +361,24 @@
     opacity: 0.8;
 }
 
+.likeButton {
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.likeButton:hover {
+    color: #ff6b6b !important;
+    transform: scale(1.05);
+}
+
+.likeButton.liked {
+    color: #ff6b6b !important;
+}
+
+.likeButton.liked svg {
+    opacity: 1;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .container {
