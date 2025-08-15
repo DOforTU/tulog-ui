@@ -130,8 +130,8 @@ export default function Profile({
                 </div>
             )}
             
-            {/* 본인 페이지가 아니고 팀이 3개 미만일 때만 팀 초대 버튼 표시 */}
-            {!isOwnProfile && userTeams.length < 3 && (
+            {/* 로그인한 사용자이고, 본인 페이지가 아니고, 팀이 3개 미만일 때만 팀 초대 버튼 표시 */}
+            {currentUser && !isOwnProfile && userTeams.length < 3 && (
                 <div className={styles.inviteTeamSection}>
                     <button 
                         className={styles.inviteTeamButton}
