@@ -27,7 +27,7 @@ export async function getPosts(params?: { page?: number; limit?: number }) {
 
 // 포스트 삭제
 export async function deletePost(postId: number) {
-    const response = await apiClient.delete(`/api/posts/${postId}`);
+    const response = await apiClient.patch(`/api/posts/${postId}/delete`);
     return response.data;
 }
 
