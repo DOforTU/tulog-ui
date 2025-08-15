@@ -1,0 +1,71 @@
+.commentList {
+    margin-top: 3rem;
+}
+
+.commentHeader {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.commentHeader h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-heading);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.error {
+    text-align: center;
+    padding: 2rem;
+    color: var(--error-color, #dc2626);
+    background-color: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.retryButton {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.retryButton:hover {
+    background-color: var(--accent-hover);
+}
+
+.noComments {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+    background-color: var(--color-background-soft);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+.noComments p {
+    margin: 0;
+    font-style: italic;
+}
+
+.comments {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--card-background);
+    overflow: hidden;
+}

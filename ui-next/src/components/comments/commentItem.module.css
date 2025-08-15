@@ -1,0 +1,180 @@
+.commentItem {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--background-color);
+}
+
+.commentItem:last-child {
+    border-bottom: none;
+}
+
+.commentHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.authorInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.authorAvatar {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.authorDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.authorName {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-heading);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+.commentDate {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.commentActions {
+    position: relative;
+}
+
+.optionsButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.optionsButton:hover {
+    color: var(--text-color);
+}
+
+.optionsButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.optionsDropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    min-width: 100px;
+}
+
+.deleteButton {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--error-color, #dc2626);
+}
+
+.deleteButton:hover:not(:disabled) {
+    background-color: rgba(220, 38, 38, 0.1);
+}
+
+.deleteButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.commentContent {
+    margin-bottom: 0.75rem;
+}
+
+.commentContent p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-weight: 400;
+}
+
+.commentFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.commentStats {
+    display: flex;
+    gap: 1rem;
+}
+
+.likeCount {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.replies {
+    margin-top: 1rem;
+    margin-left: 2rem;
+    border-left: 2px solid var(--color-background-soft);
+    padding-left: 1rem;
+}
+
+.replies .commentItem {
+    border-bottom: 1px solid var(--color-background-soft);
+    padding: 0.75rem 0;
+}
+
+.replies .commentItem:last-child {
+    border-bottom: none;
+}
+
+.replyButton {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+.replyButton:hover:not(:disabled) {
+    color: var(--accent-color);
+    background-color: rgba(var(--accent-rgb), 0.1);
+}
+
+.replyButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.replyButton svg {
+    flex-shrink: 0;
+}

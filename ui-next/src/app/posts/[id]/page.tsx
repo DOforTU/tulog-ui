@@ -8,6 +8,7 @@ import remarkGfm from "remark-gfm";
 import Image from "next/image";
 import { getPost, deletePost, postLike, postUnlike, checkIsLiked } from "@/lib/api/posts";
 import { PostDetail } from "@/lib/types/post.interface";
+import Comments from "@/components/comments/comments";
 import styles from "./post.module.css";
 
 export default function PostDetailPage() {
@@ -352,6 +353,9 @@ export default function PostDetailPage() {
                     </div>
                 </div>
             </article>
+
+            {/* Comments Section */}
+            <Comments postId={postId} />
         </div>
     );
 }
