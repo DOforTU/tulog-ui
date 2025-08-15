@@ -8,9 +8,10 @@ import styles from "./commentList.module.css";
 interface CommentListProps {
     postId: number;
     refreshTrigger?: number;
+    onRefreshNeeded?: () => void;
 }
 
-export default function CommentList({ postId, refreshTrigger }: CommentListProps) {
+export default function CommentList({ postId, refreshTrigger, onRefreshNeeded }: CommentListProps) {
     const [comments, setComments] = useState<Comment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -91,6 +92,7 @@ export default function CommentList({ postId, refreshTrigger }: CommentListProps
                             comment={comment}
                             postId={postId}
                             onCommentDeleted={handleCommentDeleted}
+                            onRefreshNeeded={onRefreshNeeded}
                         />
                     ))}
                 </div>

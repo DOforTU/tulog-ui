@@ -12,10 +12,11 @@ interface CommentItemProps {
     comment: Comment;
     postId: number;
     onCommentDeleted?: () => void;
+    onRefreshNeeded?: () => void;
     isReply?: boolean;
 }
 
-export default function CommentItem({ comment, postId, onCommentDeleted, isReply = false }: CommentItemProps) {
+export default function CommentItem({ comment, postId, onCommentDeleted, onRefreshNeeded, isReply = false }: CommentItemProps) {
     const { currentUser } = useAuth();
     const [isDeleting, setIsDeleting] = useState(false);
     const [showOptions, setShowOptions] = useState(false);
@@ -47,7 +48,7 @@ export default function CommentItem({ comment, postId, onCommentDeleted, isReply
 
     const handleReplyAdded = () => {
         setShowReplyForm(false);
-        onCommentDeleted?.(); // Refresh comments list
+        onRefreshNeeded?.(); // Use the unified refresh handler
     };
 
     return (
@@ -143,6 +144,7 @@ export default function CommentItem({ comment, postId, onCommentDeleted, isReply
                             comment={reply}
                             postId={postId}
                             onCommentDeleted={onCommentDeleted}
+                            onRefreshNeeded={onRefreshNeeded}
                             isReply={true}
                         />
                     ))}
