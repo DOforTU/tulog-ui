@@ -3,7 +3,7 @@ import styles from "./recentPosts.module.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PostCard as PostCardType } from "@/lib/types/post.interface";
-import { getPublicPosts } from "@/lib/api/posts";
+import { getRecentPosts } from "@/lib/api/posts";
 
 export function RecentPosts() {
     const [posts, setPosts] = useState<PostCardType[]>([]);
@@ -11,7 +11,7 @@ export function RecentPosts() {
 
     // 홈 페이지에서의 Recent Posts는 5개만 보여줌
     useEffect(() => {
-        getPublicPosts({ limit: 5, offset: 0 })
+        getRecentPosts({ limit: 5, offset: 0 })
             .then((response) => {
                 const data = response?.success && response.data ? response.data : response;
                 setPosts(data || []);

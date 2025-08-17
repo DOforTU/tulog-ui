@@ -1,9 +1,11 @@
 import { useState, useCallback } from "react";
-import { PublicPost } from "@/lib/types/post.interface";
-import { getPublicPosts } from "@/lib/api/posts";
+import { PostCard } from "@/lib/types/post.interface";
+import { getRecentPosts, getFeaturedPosts } from "@/lib/api/posts";
 
-export function usePostList() {
-    const [posts, setPosts] = useState<PublicPost[]>([]);
+type PostListType = "recent" | "featured";
+
+export function usePostList(type: PostListType = "recent") {
+    const [posts, setPosts] = useState<PostCard[]>([]);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [offset, setOffset] = useState(0);
@@ -15,7 +17,8 @@ export function usePostList() {
             setLoading(true);
             try {
                 const currentOffset = resetList ? 0 : offset;
-                const response = await getPublicPosts({
+                const apiCall = type === "featured" ? getFeaturedPosts : getRecentPosts;
+                const response = await apiCall({
                     limit: 10,
                     offset: currentOffset,
                 });
@@ -48,7 +51,7 @@ export function usePostList() {
                 setLoading(false);
             }
         },
-        [offset, loading]
+        [offset, loading, type]
     );
 
     const reset = useCallback(() => {

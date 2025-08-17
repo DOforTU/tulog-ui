@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { PostCard } from "@/lib/types/post.interface";
-import { getPublicPosts } from "@/lib/api/posts";
+import { getFeaturedPosts } from "@/lib/api/posts";
 import { getUserProfileImageUrl, getPostImageUrl } from "@/lib/utils/image";
 
 export function FeaturedPosts() {
@@ -11,7 +11,7 @@ export function FeaturedPosts() {
     const router = useRouter();
 
     useEffect(() => {
-        getPublicPosts({ limit: 3, offset: 0 })
+        getFeaturedPosts({ limit: 3, offset: 0 })
             .then((response) => {
                 const data = response?.success && response.data ? response.data : response;
                 setPosts(data || []);

@@ -38,8 +38,14 @@ export async function saveDraft(postData: CreatePostDto) {
 }
 
 // 공개 포스트 목록 조회 (최신순) - 래퍼 반환
-export async function getPublicPosts(params?: { limit?: number; offset?: number }) {
-    const response = await apiClient.get("/api/posts", { params });
+export async function getRecentPosts(params?: { limit?: number; offset?: number }) {
+    const response = await apiClient.get("/api/posts/recent", { params });
+    return response.data;
+}
+
+// 인기 포스트 목록 조회 (인기순) - 래퍼 반환
+export async function getFeaturedPosts(params?: { limit?: number; offset?: number }) {
+    const response = await apiClient.get("/api/posts/featured", { params });
     return response.data;
 }
 
@@ -92,9 +98,13 @@ export async function getBookmarkedPosts() {
 
 // 포스트 북마크 추가
 export async function bookmarkPost(postId: number) {
-    const response = await apiClient.post(`/api/bookmark/${postId}`, {}, {
-        withCredentials: true,
-    });
+    const response = await apiClient.post(
+        `/api/bookmark/${postId}`,
+        {},
+        {
+            withCredentials: true,
+        }
+    );
     return response.data;
 }
 

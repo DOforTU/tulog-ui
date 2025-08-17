@@ -11,8 +11,8 @@ export default function PostsPage() {
     const searchParams = useSearchParams();
     const [category, setCategory] = useState<string>("featured");
 
-    const recentPosts = usePostList();
-    const featuredPosts = usePostList();
+    const recentPosts = usePostList("recent");
+    const featuredPosts = usePostList("featured");
 
     useEffect(() => {
         const cat = searchParams.get("category");
