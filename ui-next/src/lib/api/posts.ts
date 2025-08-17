@@ -73,3 +73,47 @@ export async function getTeamDraftPosts(teamId: number) {
     const response = await apiClient.get(`/api/posts/teams/${teamId}/draft`);
     return response.data;
 }
+
+// 사용자가 좋아요한 포스트 목록 조회
+export async function getLikedPosts() {
+    const response = await apiClient.get("/api/posts/liked/me", {
+        withCredentials: true,
+    });
+    return response.data;
+}
+
+// 사용자가 북마크한 포스트 목록 조회
+export async function getBookmarkedPosts() {
+    const response = await apiClient.get("/api/bookmark", {
+        withCredentials: true,
+    });
+    return response.data;
+}
+
+// 포스트 북마크 추가
+export async function bookmarkPost(postId: number) {
+    const response = await apiClient.post(`/api/bookmark/${postId}`, {}, {
+        withCredentials: true,
+    });
+    return response.data;
+}
+
+// 포스트 북마크 제거
+export async function unbookmarkPost(postId: number) {
+    const response = await apiClient.delete(`/api/bookmark/${postId}`, {
+        withCredentials: true,
+    });
+    return response.data;
+}
+
+// 특정 포스트가 북마크되었는지 확인
+export async function checkIsBookmarked(postId: number) {
+    try {
+        const response = await getBookmarkedPosts();
+        const bookmarkedPosts = response.data || [];
+        return bookmarkedPosts.some((post: any) => post.id === postId);
+    } catch (error) {
+        console.error("Failed to check bookmark status:", error);
+        return false;
+    }
+}

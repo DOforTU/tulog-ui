@@ -1,7 +1,7 @@
 export enum NoticeType {
     FOLLOW = "follow",
     TEAM_INVITE = "team_invite",
-    TEAM_JOIN = "team_join",
+    TEAM_REQUEST = "team_request",
     TEAM_LEAVE = "team_leave",
     TEAM_KICK = "team_kick",
     SYSTEM = "system",

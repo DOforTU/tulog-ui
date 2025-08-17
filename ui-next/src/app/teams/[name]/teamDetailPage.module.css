@@ -89,6 +89,29 @@
     color: var(--color-text-light, #666);
 }
 
+.joinTeamButton {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--color-primary, #007bff);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-bottom: 1.5rem;
+}
+
+.joinTeamButton:hover:not(:disabled) {
+    background: var(--color-primary-dark, #0056b3);
+}
+
+.joinTeamButton:disabled {
+    background: var(--color-muted, #6c757d);
+    cursor: not-allowed;
+}
+
 .memberList {
     margin-top: 1rem;
 }

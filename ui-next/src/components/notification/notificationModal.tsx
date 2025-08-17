@@ -11,6 +11,7 @@ import {
     acceptTeamJoinRequest,
     rejectTeamJoinRequest,
 } from "@/lib/api/teams";
+import { fetchUserByNickname, fetchUserDetailsByNickname } from "@/lib/api/users";
 
 interface NotificationModalProps {
     isOpen: boolean;
@@ -36,28 +37,28 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             const target = event.target as Node;
-            
+
             // 알림 모달 내부 클릭이면 무시
             if (modalRef.current && modalRef.current.contains(target)) {
                 return;
             }
-            
+
             // 알림 버튼 클릭이면 무시 (부모 컴포넌트에서 토글 처리)
             const notificationBtn = document.querySelector('[aria-label="Notifications"]');
             if (notificationBtn && notificationBtn.contains(target)) {
                 return;
             }
-            
+
             // 그 외의 경우에만 모달 닫기
             onClose();
         };
 
         if (isOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener("mousedown", handleClickOutside);
         }
 
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [isOpen, onClose]);
 
@@ -121,7 +122,7 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
                 }
                 break;
             case NoticeType.TEAM_INVITE:
-            case NoticeType.TEAM_JOIN:
+            case NoticeType.TEAM_REQUEST:
             case NoticeType.TEAM_LEAVE:
             case NoticeType.TEAM_KICK:
                 if (notice.metadata?.teamName) {
@@ -175,10 +176,10 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
         if (!notice.relatedEntityId) return;
 
         try {
+            // 팀 초대 수락
             await acceptTeamInvitation(notice.relatedEntityId);
 
-            // 알림을 읽음으로 표시하고 제거
-            await markNoticeAsRead(notice.id);
+            // 알림 상태만 삭제(실제 삭제는 서버에서 실행됨)
             setNotices((prev) => prev.filter((n) => n.id !== notice.id));
 
             // 읽지 않은 알림 개수 업데이트
@@ -199,10 +200,10 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
         if (!notice.relatedEntityId) return;
 
         try {
+            // 팀 초대 거절
             await rejectTeamInvitation(notice.relatedEntityId);
 
-            // 알림을 읽음으로 표시하고 제거
-            await markNoticeAsRead(notice.id);
+            // 알림 상태만 삭제(실제 삭제는 서버에서 실행됨)
             setNotices((prev) => prev.filter((n) => n.id !== notice.id));
 
             // 읽지 않은 알림 개수 업데이트
@@ -220,13 +221,31 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
     const handleAcceptTeamJoinRequest = async (notice: Notice, event: React.MouseEvent) => {
         event.stopPropagation();
 
-        if (!notice.relatedEntityId || !notice.metadata?.requesterUserId) return;
+        // teamId는 metadata.teamId 또는 relatedEntityId 사용
+        const teamId = notice.metadata?.teamId || notice.relatedEntityId;
+        const memberNickname = notice.metadata?.newMemberNickname;
+
+        if (!teamId || !memberNickname) {
+            console.log("Missing required data - teamId or newMemberNickname");
+            alert("필요한 정보가 부족합니다.");
+            return;
+        }
 
         try {
-            await acceptTeamJoinRequest(notice.relatedEntityId, notice.metadata.requesterUserId);
+            const userResponse = await fetchUserByNickname(memberNickname);
 
-            // 알림을 읽음으로 표시하고 제거
-            await markNoticeAsRead(notice.id);
+            if (!userResponse?.success || !userResponse.data?.id) {
+                console.error("Failed to get user ID for nickname:", memberNickname);
+                alert("사용자 정보를 찾을 수 없습니다.");
+                return;
+            }
+
+            const memberId = userResponse.data.id;
+
+            // 팀 가입 요청 수락
+            await acceptTeamJoinRequest(teamId, memberId);
+
+            // 알림 상태만 삭제(실제 삭제는 서버에서 실행됨)
             setNotices((prev) => prev.filter((n) => n.id !== notice.id));
 
             // 읽지 않은 알림 개수 업데이트
@@ -244,13 +263,31 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
     const handleRejectTeamJoinRequest = async (notice: Notice, event: React.MouseEvent) => {
         event.stopPropagation();
 
-        if (!notice.relatedEntityId || !notice.metadata?.requesterUserId) return;
+        // teamId는 metadata.teamId 또는 relatedEntityId 사용
+        const teamId = notice.metadata?.teamId || notice.relatedEntityId;
+        const memberNickname = notice.metadata?.newMemberNickname;
+
+        if (!teamId || !memberNickname) {
+            console.log("Missing required data - teamId or newMemberNickname");
+            alert("필요한 정보가 부족합니다.");
+            return;
+        }
 
         try {
-            await rejectTeamJoinRequest(notice.relatedEntityId, notice.metadata.requesterUserId);
+            const userResponse = await fetchUserDetailsByNickname(memberNickname);
 
-            // 알림을 읽음으로 표시하고 제거
-            await markNoticeAsRead(notice.id);
+            if (!userResponse?.success || !userResponse.data?.id) {
+                console.error("Failed to get user ID for nickname:", memberNickname);
+                alert("사용자 정보를 찾을 수 없습니다.");
+                return;
+            }
+
+            const memberId = userResponse.data.id;
+
+            // 팀 가입 요청 거절
+            await rejectTeamJoinRequest(teamId, memberId);
+
+            // 알림 상태만 삭제(실제 삭제는 서버에서 실행됨)
             setNotices((prev) => prev.filter((n) => n.id !== notice.id));
 
             // 읽지 않은 알림 개수 업데이트
@@ -280,8 +317,8 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
             );
         }
 
-        if (notice.type === NoticeType.TEAM_JOIN && notice.metadata?.isJoinRequest) {
-            // 팀 가입 요청 알림 - 팀장이 수락/거절 (가입 요청인 경우에만)
+        if (notice.type === NoticeType.TEAM_REQUEST) {
+            // 팀 가입 요청 알림 - 팀장이 수락/거절
             return (
                 <div className={styles.teamActionButtons}>
                     <button className={styles.acceptBtn} onClick={(e) => handleAcceptTeamJoinRequest(notice, e)}>
@@ -333,7 +370,7 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
                     </svg>
                 );
             case NoticeType.TEAM_INVITE:
-            case NoticeType.TEAM_JOIN:
+            case NoticeType.TEAM_REQUEST:
             case NoticeType.TEAM_LEAVE:
             case NoticeType.TEAM_KICK:
                 return (
@@ -421,80 +458,80 @@ export default function NotificationModal({ isOpen, onClose, onUnreadCountChange
 
     return (
         <div className={styles.modalContent} ref={modalRef}>
-                <div className={styles.modalHeader}>
-                    <h2 className={styles.modalTitle}>알림</h2>
-                    <div className={styles.headerActions}>
-                        {notices.some((notice) => !notice.isRead) && (
-                            <button className={styles.markAllReadBtn} onClick={handleMarkAllAsRead}>
-                                모두 읽음
+            <div className={styles.modalHeader}>
+                <h2 className={styles.modalTitle}>알림</h2>
+                <div className={styles.headerActions}>
+                    {notices.some((notice) => !notice.isRead) && (
+                        <button className={styles.markAllReadBtn} onClick={handleMarkAllAsRead}>
+                            모두 읽음
+                        </button>
+                    )}
+                    <button className={styles.closeButton} onClick={onClose}>
+                        ×
+                    </button>
+                </div>
+            </div>
+
+            <div className={styles.modalBody}>
+                {error && <div className={styles.errorMessage}>{error}</div>}
+
+                {loading && notices.length === 0 ? (
+                    <div className={styles.loading}>알림을 불러오는 중...</div>
+                ) : notices.length === 0 ? (
+                    <div className={styles.emptyState}>알림이 없습니다.</div>
+                ) : (
+                    <>
+                        <div className={styles.noticesList}>
+                            {notices.map((notice) => (
+                                <div
+                                    key={notice.id}
+                                    className={`${styles.noticeItem} ${!notice.isRead ? styles.unread : ""}`}
+                                    onClick={() => handleNoticeClick(notice)}
+                                >
+                                    <div className={styles.noticeIcon}>{getNoticeIcon(notice.type)}</div>
+                                    <div className={styles.noticeContent}>
+                                        <h4 className={styles.noticeTitle}>{notice.title}</h4>
+                                        <p className={styles.noticeText}>{notice.content}</p>
+                                        <span className={styles.noticeTime}>{formatDate(notice.createdAt)}</span>
+                                        {renderTeamActionButtons(notice)}
+                                    </div>
+                                    <div className={styles.noticeActions}>
+                                        {!notice.isRead && <div className={styles.unreadDot}></div>}
+                                        <button
+                                            className={styles.deleteBtn}
+                                            onClick={(e) => handleDeleteNotice(notice.id, e)}
+                                            aria-label="알림 삭제"
+                                        >
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                                <path
+                                                    d="M18 6L6 18"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                <path
+                                                    d="M6 6L18 18"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {hasNext && (
+                            <button className={styles.loadMoreBtn} onClick={loadMoreNotices} disabled={loading}>
+                                {loading ? "로딩 중..." : "더보기"}
                             </button>
                         )}
-                        <button className={styles.closeButton} onClick={onClose}>
-                            ×
-                        </button>
-                    </div>
-                </div>
-
-                <div className={styles.modalBody}>
-                    {error && <div className={styles.errorMessage}>{error}</div>}
-
-                    {loading && notices.length === 0 ? (
-                        <div className={styles.loading}>알림을 불러오는 중...</div>
-                    ) : notices.length === 0 ? (
-                        <div className={styles.emptyState}>알림이 없습니다.</div>
-                    ) : (
-                        <>
-                            <div className={styles.noticesList}>
-                                {notices.map((notice) => (
-                                    <div
-                                        key={notice.id}
-                                        className={`${styles.noticeItem} ${!notice.isRead ? styles.unread : ""}`}
-                                        onClick={() => handleNoticeClick(notice)}
-                                    >
-                                        <div className={styles.noticeIcon}>{getNoticeIcon(notice.type)}</div>
-                                        <div className={styles.noticeContent}>
-                                            <h4 className={styles.noticeTitle}>{notice.title}</h4>
-                                            <p className={styles.noticeText}>{notice.content}</p>
-                                            <span className={styles.noticeTime}>{formatDate(notice.createdAt)}</span>
-                                            {renderTeamActionButtons(notice)}
-                                        </div>
-                                        <div className={styles.noticeActions}>
-                                            {!notice.isRead && <div className={styles.unreadDot}></div>}
-                                            <button
-                                                className={styles.deleteBtn}
-                                                onClick={(e) => handleDeleteNotice(notice.id, e)}
-                                                aria-label="알림 삭제"
-                                            >
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                                    <path
-                                                        d="M18 6L6 18"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                    />
-                                                    <path
-                                                        d="M6 6L18 18"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {hasNext && (
-                                <button className={styles.loadMoreBtn} onClick={loadMoreNotices} disabled={loading}>
-                                    {loading ? "로딩 중..." : "더보기"}
-                                </button>
-                            )}
-                        </>
-                    )}
-                </div>
+                    </>
+                )}
+            </div>
         </div>
     );
 }

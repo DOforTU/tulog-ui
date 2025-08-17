@@ -9,6 +9,8 @@ import {
     getUserTeamPrivatePosts,
     getUserDraftPosts,
 } from "@/lib/api/editors";
+import { fetchUserDetailsByNickname } from "@/lib/api/users";
+import { getLikedPosts, getBookmarkedPosts } from "@/lib/api/posts";
 import { PostCard } from "@/components/post/postCard";
 import { PostCard as PostCardType } from "@/lib/types/post.interface";
 import styles from "./myPosts.module.css";
@@ -25,6 +27,7 @@ export default function MyPosts({ activeFilter, selectedTag, onTagsUpdate }: MyP
     const [posts, setPosts] = useState<PostCardType[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [targetUserId, setTargetUserId] = useState<number | null>(null);
 
     // 닉네임 추출
     let nickname = "";
@@ -38,11 +41,33 @@ export default function MyPosts({ activeFilter, selectedTag, onTagsUpdate }: MyP
         nickname = nickname.slice(1);
     }
 
-    // 사용자 ID 찾기 (임시로 currentUser 사용, 실제로는 nickname으로 조회해야 함)
-    const userId = currentUser?.id; // 실제 구현에서는 nickname으로 userId를 찾아야 함
+    const isOwnProfile = currentUser && currentUser.nickname === nickname;
+
+    // 닉네임으로 사용자 ID 찾기
+    useEffect(() => {
+        const fetchUserId = async () => {
+            if (isOwnProfile && currentUser) {
+                setTargetUserId(currentUser.id);
+            } else {
+                try {
+                    const response = await fetchUserDetailsByNickname(nickname);
+                    if (response?.success && response.data) {
+                        setTargetUserId(response.data.id);
+                    }
+                } catch (error) {
+                    console.error("사용자 정보를 불러오는데 실패했습니다:", error);
+                    setError("사용자 정보를 불러올 수 없습니다.");
+                }
+            }
+        };
+
+        if (nickname) {
+            fetchUserId();
+        }
+    }, [nickname, isOwnProfile, currentUser]);
 
     useEffect(() => {
-        if (!userId) return;
+        if (!targetUserId) return;
 
         const fetchPosts = async () => {
             setLoading(true);
@@ -52,19 +77,35 @@ export default function MyPosts({ activeFilter, selectedTag, onTagsUpdate }: MyP
                 let response;
                 switch (activeFilter) {
                     case "public":
-                        response = await getUserPublicPosts(userId);
+                        response = await getUserPublicPosts(targetUserId);
                         break;
                     case "team-public":
-                        response = await getUserTeamPublicPosts(userId);
+                        response = await getUserTeamPublicPosts(targetUserId);
                         break;
                     case "private":
-                        response = await getUserPrivatePosts(userId);
+                        response = await getUserPrivatePosts(targetUserId);
                         break;
                     case "team-private":
-                        response = await getUserTeamPrivatePosts(userId);
+                        response = await getUserTeamPrivatePosts(targetUserId);
                         break;
                     case "draft":
-                        response = await getUserDraftPosts(userId);
+                        response = await getUserDraftPosts(targetUserId);
+                        break;
+                    case "liked":
+                        // 좋아요한 포스트는 본인만 볼 수 있음
+                        if (isOwnProfile) {
+                            response = await getLikedPosts();
+                        } else {
+                            response = { data: [] };
+                        }
+                        break;
+                    case "bookmarked":
+                        // 북마크한 포스트는 본인만 볼 수 있음
+                        if (isOwnProfile) {
+                            response = await getBookmarkedPosts();
+                        } else {
+                            response = { data: [] };
+                        }
                         break;
                     default:
                         response = { data: [] };
@@ -97,7 +138,7 @@ export default function MyPosts({ activeFilter, selectedTag, onTagsUpdate }: MyP
 
         fetchPosts();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeFilter, userId]); // onTagsUpdate는 부모에서 useCallback으로 안정화됨
+    }, [activeFilter, targetUserId]); // onTagsUpdate는 부모에서 useCallback으로 안정화됨
 
     // 태그로 필터링된 포스트
     const filteredPosts = selectedTag === "전체" ? posts : posts.filter((post) => post.tags.includes(selectedTag));

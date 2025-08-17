@@ -27,17 +27,23 @@ export default function InviteTeamModal({ isOpen, targetUserId, targetUserNickna
             setLoading(true);
             setError("");
             fetchUserDetails(currentUser.id.toString())
-                .then((userDetails) => {
+                .then((response) => {
+                    console.log("User details response:", response);
+                    const userDetails = response?.data || response;
                     if (userDetails?.teams) {
+                        console.log("User teams:", userDetails.teams);
                         const leaderTeams = userDetails.teams.filter(
                             (teamStatus: TeamWithStatus) => teamStatus.isLeader
                         );
+                        console.log("Leader teams:", leaderTeams);
                         setMyTeams(leaderTeams);
                     } else {
+                        console.log("No teams found in user details");
                         setMyTeams([]);
                     }
                 })
-                .catch(() => {
+                .catch((error) => {
+                    console.error("Failed to fetch user details:", error);
                     setMyTeams([]);
                 })
                 .finally(() => {

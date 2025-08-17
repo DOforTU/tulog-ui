@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { fetchTeamWithMembers, leaveTeam } from "@/lib/api/teams";
+import { fetchTeamWithMembers, leaveTeam, requestToTeam, kickTeamMember } from "@/lib/api/teams";
 import { TeamDetail } from "@/lib/types/team.interface";
 import { useAuth } from "@/contexts/AuthContext";
 import styles from "./teamDetailPage.module.css";
@@ -34,6 +34,7 @@ export default function TeamDetailPage() {
     const [team, setTeam] = useState<TeamDetail | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLeaving, setIsLeaving] = useState(false);
+    const [isJoining, setIsJoining] = useState(false);
 
     // URL 쿼리에서 초기값 읽어오기
     const initialFilter = (searchParams.get("category") as TeamPostFilterType) || "public";
@@ -192,13 +193,34 @@ export default function TeamDetailPage() {
             await leaveTeam(team.id);
             const successMessage = isLeader ? "팀이 삭제되었습니다." : "팀에서 탈퇴했습니다.";
             alert(successMessage);
-            router.push("/teams"); // 팀 목록 페이지로 이동
+
+            // 새로고침
+            window.location.reload();
         } catch (error) {
             console.error("팀 탈퇴/삭제 실패:", error);
             const errorMessage = isLeader ? "팀 삭제 중 오류가 발생했습니다." : "팀 탈퇴 중 오류가 발생했습니다.";
             alert(errorMessage);
         } finally {
             setIsLeaving(false);
+        }
+    };
+
+    // 팀 참여 요청 처리
+    const handleJoinTeam = async () => {
+        if (!team || !currentUser) return;
+
+        const confirmed = window.confirm("팀에 참여 요청을 보내시겠습니까?");
+        if (!confirmed) return;
+
+        setIsJoining(true);
+        try {
+            await requestToTeam(team.id);
+            alert("팀 참여 요청을 보냈습니다. 팀장의 승인을 기다려주세요.");
+        } catch (error) {
+            console.error("팀 참여 요청 실패:", error);
+            alert("팀 참여 요청 중 오류가 발생했습니다.");
+        } finally {
+            setIsJoining(false);
         }
     };
 
@@ -262,8 +284,7 @@ export default function TeamDetailPage() {
         setMemberMenus((prev) => ({ ...prev, [memberId]: false }));
 
         try {
-            // TODO: 팀원 추방 API 호출
-            console.log(`Kicking member ${memberId}`);
+            await kickTeamMember(team.id, memberId);
             alert(`${memberNickname}님을 팀에서 추방했습니다.`);
 
             // 페이지 새로고침하여 최신 상태 반영
@@ -394,6 +415,16 @@ export default function TeamDetailPage() {
                             <span className={styles.statLabel}>현재 인원</span>
                         </div>
                     </div>
+
+                    {/* 팀 참여 요청 버튼 */}
+                    {currentUser &&
+                        !isCurrentUserMember() &&
+                        team.teamMembers.length < team.maxMember &&
+                        team.visibility !== "ONLY_INVITE" && (
+                            <button className={styles.joinTeamButton} onClick={handleJoinTeam} disabled={isJoining}>
+                                {isJoining ? "요청 중..." : "팀 참여 요청"}
+                            </button>
+                        )}
 
                     <div className={styles.memberList}>
                         <h3 className={styles.memberListTitle}>팀원 목록</h3>

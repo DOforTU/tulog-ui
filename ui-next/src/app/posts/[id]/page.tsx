@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
-import { getPost, deletePost, postLike, postUnlike, checkIsLiked } from "@/lib/api/posts";
+import { getPost, deletePost, postLike, postUnlike, checkIsLiked, bookmarkPost, unbookmarkPost, checkIsBookmarked } from "@/lib/api/posts";
 import { PostDetail } from "@/lib/types/post.interface";
 import Comments from "@/components/comments/comments";
 import styles from "./post.module.css";
@@ -24,6 +24,8 @@ export default function PostDetailPage() {
     const [isLiked, setIsLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(0);
     const [isLikeLoading, setIsLikeLoading] = useState(false);
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
 
     // 포스트 로드 (postId가 변경될 때만)
     useEffect(() => {
@@ -40,17 +42,23 @@ export default function PostDetailPage() {
                 setPost(postData);
                 setLikeCount(postData.likeCount || 0);
 
-                // 로그인한 사용자의 경우 좋아요 상태도 함께 확인
+                // 로그인한 사용자의 경우 좋아요 및 북마크 상태도 함께 확인
                 if (currentUser) {
                     try {
-                        const likedResponse = await checkIsLiked(postId);
+                        const [likedResponse, bookmarkedStatus] = await Promise.all([
+                            checkIsLiked(postId),
+                            checkIsBookmarked(postId)
+                        ]);
                         setIsLiked(likedResponse.data);
+                        setIsBookmarked(bookmarkedStatus);
                     } catch (err) {
-                        console.error("Failed to check like status:", err);
+                        console.error("Failed to check like/bookmark status:", err);
                         setIsLiked(false);
+                        setIsBookmarked(false);
                     }
                 } else {
                     setIsLiked(false);
+                    setIsBookmarked(false);
                 }
             } catch (err) {
                 console.error("Failed to load post:", err);
@@ -121,6 +129,25 @@ export default function PostDetailPage() {
             console.error("Failed to toggle like:", error);
         } finally {
             setIsLikeLoading(false);
+        }
+    };
+
+    const handleBookmarkToggle = async () => {
+        if (!currentUser || isBookmarkLoading) return;
+
+        setIsBookmarkLoading(true);
+        try {
+            if (isBookmarked) {
+                await unbookmarkPost(postId);
+                setIsBookmarked(false);
+            } else {
+                await bookmarkPost(postId);
+                setIsBookmarked(true);
+            }
+        } catch (error) {
+            console.error("Failed to toggle bookmark:", error);
+        } finally {
+            setIsBookmarkLoading(false);
         }
     };
 
@@ -349,6 +376,31 @@ export default function PostDetailPage() {
                                 />
                             </svg>
                             {post.commentCount} comments
+                        </span>
+                        <span
+                            className={`${styles.stat} ${styles.bookmarkButton} ${isBookmarked ? styles.bookmarked : ""}`}
+                            onClick={handleBookmarkToggle}
+                            style={{
+                                cursor: currentUser ? "pointer" : "default",
+                                opacity: isBookmarkLoading ? 0.6 : 1,
+                                color: isBookmarked ? "#ffa500" : "inherit",
+                            }}
+                        >
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"
+                                    fill={isBookmarked ? "currentColor" : "none"}
+                                    stroke="currentColor"
+                                    strokeWidth={isBookmarked ? "0" : "2"}
+                                />
+                            </svg>
+                            bookmark
                         </span>
                     </div>
                 </div>
