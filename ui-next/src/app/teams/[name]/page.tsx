@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { fetchTeamWithMembers, leaveTeam, requestToTeam, kickTeamMember } from "@/lib/api/teams";
+import { fetchTeamWithMembers, leaveTeam, requestToTeam, kickTeamMember, delegationTeamMember } from "@/lib/api/teams";
 import { TeamDetail } from "@/lib/types/team.interface";
 import { useAuth } from "@/contexts/AuthContext";
 import styles from "./teamDetailPage.module.css";
@@ -262,8 +262,7 @@ export default function TeamDetailPage() {
         setMemberMenus((prev) => ({ ...prev, [memberId]: false }));
 
         try {
-            // TODO: 권한 위임 API 호출
-            console.log(`Delegating authority to member ${memberId}`);
+            await delegationTeamMember(team.id, memberId);
             alert(`${memberNickname}님에게 팀장 권한을 위임했습니다.`);
 
             // 페이지 새로고침하여 최신 상태 반영
