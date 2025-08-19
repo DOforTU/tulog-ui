@@ -8,9 +8,10 @@ interface FollowModalProps {
     onClose: () => void;
     title: string;
     users: FollowUser[];
+    loading?: boolean;
 }
 
-export default function FollowModal({ isOpen, onClose, title, users }: FollowModalProps) {
+export default function FollowModal({ isOpen, onClose, title, users, loading = false }: FollowModalProps) {
     const router = useRouter();
 
     if (!isOpen) return null;
@@ -30,7 +31,11 @@ export default function FollowModal({ isOpen, onClose, title, users }: FollowMod
                     </button>
                 </div>
                 <div className={styles.modalBody}>
-                    {users.length === 0 ? (
+                    {loading ? (
+                        <div className={styles.loadingState}>
+                            <p>Loading...</p>
+                        </div>
+                    ) : users.length === 0 ? (
                         <div className={styles.emptyState}>
                             <p>There is no {title.includes("Follower") ? "Follower" : "Following"}.</p>
                         </div>

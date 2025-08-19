@@ -9,7 +9,6 @@ import {
     getUserTeamPrivatePosts,
     getUserDraftPosts,
 } from "@/lib/api/editors";
-import { fetchUserDetailsByNickname } from "@/lib/api/users";
 import { getLikedPosts, getBookmarkedPosts } from "@/lib/api/posts";
 import { PostCard } from "@/components/post/postCard";
 import { PostCard as PostCardType } from "@/lib/types/post.interface";
@@ -18,10 +17,11 @@ import styles from "./myPosts.module.css";
 interface MyPostsProps {
     activeFilter: PostFilter;
     selectedTag: string;
+    userId?: number;
     onTagsUpdate?: (tags: string[]) => void;
 }
 
-export default function MyPosts({ activeFilter, selectedTag, onTagsUpdate }: MyPostsProps) {
+export default function MyPosts({ activeFilter, selectedTag, userId, onTagsUpdate }: MyPostsProps) {
     const { currentUser } = useAuth();
     const params = useParams();
     const [posts, setPosts] = useState<PostCardType[]>([]);
@@ -43,28 +43,14 @@ export default function MyPosts({ activeFilter, selectedTag, onTagsUpdate }: MyP
 
     const isOwnProfile = currentUser && currentUser.nickname === nickname;
 
-    // 닉네임으로 사용자 ID 찾기
+    // userId prop을 사용하거나 currentUser에서 가져오기
     useEffect(() => {
-        const fetchUserId = async () => {
-            if (isOwnProfile && currentUser) {
-                setTargetUserId(currentUser.id);
-            } else {
-                try {
-                    const response = await fetchUserDetailsByNickname(nickname);
-                    if (response?.success && response.data) {
-                        setTargetUserId(response.data.id);
-                    }
-                } catch (error) {
-                    console.error("사용자 정보를 불러오는데 실패했습니다:", error);
-                    setError("사용자 정보를 불러올 수 없습니다.");
-                }
-            }
-        };
-
-        if (nickname) {
-            fetchUserId();
+        if (userId) {
+            setTargetUserId(userId);
+        } else if (isOwnProfile && currentUser) {
+            setTargetUserId(currentUser.id);
         }
-    }, [nickname, isOwnProfile, currentUser]);
+    }, [userId, isOwnProfile, currentUser]);
 
     useEffect(() => {
         if (!targetUserId) return;

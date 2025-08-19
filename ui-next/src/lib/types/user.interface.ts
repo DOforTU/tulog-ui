@@ -55,6 +55,16 @@ export interface UserDetails {
     profilePicture: string;
     isActive: boolean;
     teams: TeamWithStatus[];
+    followerCount: number;
+    followingCount: number;
+}
+
+export interface UserDetailsById {
+    id: number;
+    nickname: string;
+    profilePicture: string;
+    isActive: boolean;
+    teams: TeamWithStatus[];
     followers: PublicUser[];
     following: PublicUser[];
 }

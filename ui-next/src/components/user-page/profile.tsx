@@ -14,9 +14,7 @@ interface ProfileProps {
     user: User;
     isOwnProfile: boolean | null;
     followersCount: number;
-    followers: FollowUser[] | [];
     followingCount: number;
-    following: FollowUser[] | [];
     followLoading: boolean;
     alreadyFollowing?: boolean;
     onShowFollowers: () => void;
@@ -77,7 +75,7 @@ export default function Profile({
             <div className={styles.followStats}>
                 <div className={styles.followStat} onClick={onShowFollowers} style={{ cursor: "pointer" }}>
                     <div className={styles.followNumber}>{followLoading ? "..." : followersCount}</div>
-                    <div className={styles.followLabel}>follwer</div>
+                    <div className={styles.followLabel}>follower</div>
                 </div>
                 <div className={styles.followStat} onClick={onShowFollowing} style={{ cursor: "pointer" }}>
                     <div className={styles.followNumber}>{followLoading ? "..." : followingCount}</div>
