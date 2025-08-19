@@ -5,8 +5,8 @@
     background: var(--color-background);
     border: 1px solid var(--color-border);
     border-radius: 8px;
-    width: 360px;
-    max-height: 480px;
+    width: 320px;
+    max-height: 400px;
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     animation: dropdownSlideIn 0.2s ease-out;
@@ -28,14 +28,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--color-border);
     background: var(--color-background-soft);
 }
 
 .modalTitle {
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--color-heading);
 }
@@ -83,7 +83,7 @@
 }
 
 .modalBody {
-    max-height: 400px;
+    max-height: 320px;
     overflow-y: auto;
 }
 
@@ -118,8 +118,8 @@
 .noticeItem {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    padding: 12px 16px;
+    gap: 8px;
+    padding: 10px 14px;
     cursor: pointer;
     transition: background-color 0.2s;
     border-left: 2px solid transparent;
@@ -136,8 +136,8 @@
 
 .noticeIcon {
     flex-shrink: 0;
-    padding: 6px;
-    border-radius: 6px;
+    padding: 4px;
+    border-radius: 4px;
     background: var(--color-background-soft);
     color: var(--color-text);
 }
