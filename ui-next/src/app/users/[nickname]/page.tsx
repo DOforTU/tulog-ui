@@ -367,7 +367,7 @@ export default function UserProfilePage() {
         if (userDetails) {
             const updatedUserDetails = {
                 ...userDetails,
-                followerCount: isFollowing ? userDetails.followerCount + 1 : userDetails.followerCount - 1,
+                followersCount: isFollowing ? userDetails.followersCount + 1 : userDetails.followersCount - 1,
             };
             setUserDetails(updatedUserDetails);
         }
@@ -390,7 +390,7 @@ export default function UserProfilePage() {
                 <Profile
                     user={displayUser}
                     isOwnProfile={isOwnProfile}
-                    followersCount={userDetails?.followerCount || 0}
+                    followersCount={userDetails?.followersCount || 0}
                     followingCount={userDetails?.followingCount || 0}
                     followLoading={followLoading}
                     alreadyFollowing={alreadyFollowing}

@@ -55,7 +55,7 @@ export interface UserDetails {
     profilePicture: string;
     isActive: boolean;
     teams: TeamWithStatus[];
-    followerCount: number;
+    followersCount: number;
     followingCount: number;
 }
 
