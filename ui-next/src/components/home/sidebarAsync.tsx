@@ -1,7 +1,9 @@
 import styles from "./sidebar.module.css";
 import Image from "next/image";
+import Link from "next/link";
+import { getPopularTags } from "@/lib/api/tags";
+import { Tag } from "@/lib/types/post.interface";
 
-const popularTags = ["React", "Vue", "Next.js", "TypeScript", "NestJS", "Node.js", "CSS", "JWT"];
 const recommendedAuthors = [
     { name: "Alice", avatar: "/default-avatar.png", bio: "Frontend Developer" },
     { name: "Bob", avatar: "/default-avatar.png", bio: "Backend Specialist" },
@@ -9,15 +11,27 @@ const recommendedAuthors = [
 ];
 
 export async function SidebarAsync() {
+    let popularTags: Tag[] = [];
+    
+    try {
+        popularTags = await getPopularTags({ limit: 8 });
+    } catch (error) {
+        console.error("Failed to load popular tags:", error);
+    }
+
     return (
         <aside className={styles.sidebar}>
             <div className={styles.sidebarCard}>
                 <h3>Popular Topics</h3>
                 <div className={styles.popularTags}>
                     {popularTags.map((tag) => (
-                        <span key={tag} className={styles.popularTag}>
-                            {tag}
-                        </span>
+                        <Link 
+                            key={tag.id} 
+                            href={`/search?s=${encodeURIComponent(tag.name)}`}
+                            className={styles.popularTag}
+                        >
+                            {tag.name}
+                        </Link>
                     ))}
                 </div>
             </div>
