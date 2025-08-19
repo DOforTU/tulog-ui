@@ -66,6 +66,7 @@
 .authorName {
     font-weight: 600;
     color: var(--color-heading);
+    text-decoration: none;
 }
 .authorBio {
     font-size: 0.75rem;
@@ -84,6 +85,9 @@
 }
 .followBtn:hover {
     background-color: var(--color-primary-dark);
+}
+.followBtn.unfollow {
+    background-color: var(--color-text-light);
 }
 
 .adBanner {

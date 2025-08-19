@@ -1,4 +1,4 @@
-import { updateUserDto } from "./../types/user.interface";
+import { updateUserDto, PublicUser } from "./../types/user.interface";
 import apiClient from "./api-client";
 
 export interface UpdatePasswordDto {
@@ -71,4 +71,10 @@ export const fetchUserDetails = async (userId: string) => {
 export const fetchUserDetailsByNickname = async (nickname: string) => {
     const response = await apiClient.get(`/api/users/nickname/${nickname}/details`);
     return response.data;
+};
+
+// 인기 작가 목록 가져오기
+export const getPopularAuthors = async (params?: { limit?: number }): Promise<PublicUser[]> => {
+    const response = await apiClient.get("/api/users/popular/author", { params });
+    return response.data.data;
 };
