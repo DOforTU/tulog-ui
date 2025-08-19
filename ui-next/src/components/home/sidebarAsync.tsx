@@ -8,7 +8,7 @@ const recommendedAuthors = [
     { name: "Carol", avatar: "/default-avatar.png", bio: "Fullstack Engineer" },
 ];
 
-export function Sidebar() {
+export async function SidebarAsync() {
     return (
         <aside className={styles.sidebar}>
             <div className={styles.sidebarCard}>

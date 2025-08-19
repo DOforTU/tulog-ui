@@ -1,3 +1,5 @@
+"use client";
+
 import { PostCard as PostCardType } from "@/lib/types/post.interface";
 import styles from "./postCard.module.css";
 import Image from "next/image";

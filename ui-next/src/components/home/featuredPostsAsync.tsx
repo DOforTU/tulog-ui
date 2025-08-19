@@ -1,80 +1,68 @@
 import styles from "./featuredPosts.module.css";
-import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { PostCard } from "@/lib/types/post.interface";
 import { getFeaturedPosts } from "@/lib/api/posts";
 import { getUserProfileImageUrl, getPostImageUrl } from "@/lib/utils/image";
+import Link from "next/link";
 
-export function FeaturedPosts() {
-    const [posts, setPosts] = useState<PostCard[]>([]);
-    const router = useRouter();
+export async function FeaturedPostsAsync() {
+    let posts: PostCard[] = [];
 
-    useEffect(() => {
-        getFeaturedPosts({ limit: 3, offset: 0 })
-            .then((response) => {
-                const data = response?.success && response.data ? response.data : response;
-                setPosts(data || []);
-            })
-            .catch((error) => {
-                console.error("Failed to load featured posts:", error);
-            });
-    }, []);
+    try {
+        const response = await getFeaturedPosts({ limit: 3, offset: 0 });
+        const data = response?.success && response.data ? response.data : response;
+        posts = data || [];
+    } catch (error) {
+        console.error("Failed to load featured posts:", error);
+    }
 
     return (
         <section className={styles.featuredSection}>
             <div className={styles.container}>
                 <div className={styles.sectionHeader}>
                     <h2 className={styles.sectionTitle}>Featured Posts</h2>
-                    <button onClick={() => router.push("/posts?category=featured")} className={styles.viewAllButton}>
+                    <Link href="/posts?category=featured" className={styles.viewAllButton}>
                         View All {">"}
-                    </button>
+                    </Link>
                 </div>
                 <div className={styles.featuredGrid}>
                     {posts.map((post) => {
-                        const author = post.authors?.[0]; // 첫 번째 작성자 사용
+                        const author = post.authors?.[0];
                         return (
-                            <div
-                                key={post.id}
-                                className={styles.featuredCard}
-                                onClick={() => router.push(`/posts/${post.id}`)}
-                            >
-                                <div className={styles.featuredImage}>
-                                    <Image
-                                        src={getPostImageUrl(post.thumbnailImage)}
-                                        alt={post.title}
-                                        width={320}
-                                        height={160}
-                                        style={{ objectFit: "cover" }}
-                                    />
-                                </div>
+                            <div key={post.id} className={styles.featuredCard}>
+                                <Link href={`/posts/${post.id}`}>
+                                    <div className={styles.featuredImage}>
+                                        <Image
+                                            src={getPostImageUrl(post.thumbnailImage)}
+                                            alt={post.title}
+                                            width={320}
+                                            height={160}
+                                            style={{ objectFit: "cover" }}
+                                        />
+                                    </div>
+                                </Link>
                                 <div className={styles.featuredContent}>
                                     <div className={styles.cardMeta}>
                                         <div className={styles.authorInfo}>
                                             {author && (
                                                 <>
-                                                    <Image
-                                                        src={getUserProfileImageUrl(author.profilePicture)}
-                                                        alt={author.nickname}
-                                                        width={24}
-                                                        height={24}
-                                                        className={styles.authorAvatar}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            router.push(`/users/${author.nickname}`);
-                                                        }}
-                                                    />
+                                                    <Link href={`/users/${author.nickname}`}>
+                                                        <Image
+                                                            src={getUserProfileImageUrl(author.profilePicture)}
+                                                            alt={author.nickname}
+                                                            width={24}
+                                                            height={24}
+                                                            className={styles.authorAvatar}
+                                                        />
+                                                    </Link>
                                                     <div className={styles.authorNameContainer}>
                                                         <div className={styles.authorNameWithCount}>
-                                                            <span
+                                                            <Link
+                                                                href={`/users/${author.nickname}`}
                                                                 className={styles.authorName}
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    router.push(`/users/${author.nickname}`);
-                                                                }}
                                                             >
                                                                 {author.nickname}
-                                                            </span>
+                                                            </Link>
                                                             {post.teamId && post.authors && post.authors.length > 1 && (
                                                                 <span className={styles.authorCount}>
                                                                     & {post.authors.length - 1} others
@@ -92,12 +80,8 @@ export function FeaturedPosts() {
                                             {new Date(post.createdAt).toISOString().slice(0, 10).replace(/-/g, ".")}
                                         </span>
                                     </div>
-                                    <h3 className={styles.cardTitle} onClick={() => router.push(`/posts/${post.id}`)}>
-                                        {post.title}
-                                    </h3>
-                                    <p className={styles.cardExcerpt} onClick={() => router.push(`/posts/${post.id}`)}>
-                                        {post.excerpt}
-                                    </p>
+                                    <h3 className={styles.cardTitle}>{post.title}</h3>
+                                    <p className={styles.cardExcerpt}>{post.excerpt}</p>
 
                                     <div className={styles.cardFooter}>
                                         <div className={styles.tags}>

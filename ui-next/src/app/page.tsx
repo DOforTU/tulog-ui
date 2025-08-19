@@ -1,11 +1,11 @@
 // app/page.tsx
-"use client";
-
-import { FeaturedPosts } from "@/components/home/featuredPosts";
+import { FeaturedPostsAsync } from "@/components/home/featuredPostsAsync";
 import styles from "./page.module.css";
-import { RecentPosts } from "@/components/home/recentPosts";
-import { Sidebar } from "@/components/home/sidebar";
+import { RecentPostsAsync } from "@/components/home/recentPostsAsync";
+import { SidebarAsync } from "@/components/home/sidebarAsync";
+import { FeaturedPostsSkeleton, RecentPostsSkeleton, SidebarSkeleton } from "@/components/home/loading";
 import Image from "next/image";
+import { Suspense } from "react";
 
 export default function HomePage() {
     return (
@@ -23,7 +23,9 @@ export default function HomePage() {
             </section>
 
             {/* Featured Posts */}
-            <FeaturedPosts />
+            <Suspense fallback={<FeaturedPostsSkeleton />}>
+                <FeaturedPostsAsync />
+            </Suspense>
             <div className={styles.sectionDivider}></div>
 
             {/* 광고 배너 */}
@@ -45,10 +47,14 @@ export default function HomePage() {
                     <div className={styles.contentLayout}>
                         <main className={styles.mainContent}>
                             {/* 최근 게시글 6개를 보여줌, props로 전달 */}
-                            <RecentPosts />
+                            <Suspense fallback={<RecentPostsSkeleton />}>
+                                <RecentPostsAsync />
+                            </Suspense>
                         </main>
                         {/* 인기 태그, 추천 작가, 광고 배너를 props로 전달 */}
-                        <Sidebar />
+                        <Suspense fallback={<SidebarSkeleton />}>
+                            <SidebarAsync />
+                        </Suspense>
                     </div>
                 </div>
             </section>

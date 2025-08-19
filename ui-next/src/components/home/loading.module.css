@@ -1,0 +1,215 @@
+/* Skeleton Animation */
+@keyframes shimmer {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Featured Posts Skeleton */
+.featuredSection {
+    padding: 2rem 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.skeletonTitle {
+    @extend .skeleton;
+    width: 200px;
+    height: 2rem;
+    border-radius: 4px;
+}
+
+.skeletonButton {
+    @extend .skeleton;
+    width: 100px;
+    height: 2rem;
+    border-radius: 4px;
+}
+
+.featuredGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.skeletonCard {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.skeletonImage {
+    @extend .skeleton;
+    width: 100%;
+    height: 160px;
+}
+
+.skeletonContent {
+    padding: 1rem;
+}
+
+.skeletonMeta {
+    @extend .skeleton;
+    width: 60%;
+    height: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.skeletonCardTitle {
+    @extend .skeleton;
+    width: 80%;
+    height: 1.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.skeletonExcerpt {
+    @extend .skeleton;
+    width: 100%;
+    height: 3rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+.skeletonFooter {
+    @extend .skeleton;
+    width: 70%;
+    height: 1rem;
+    border-radius: 4px;
+}
+
+/* Recent Posts Skeleton */
+.skeletonPostCard {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.skeletonPostImage {
+    @extend .skeleton;
+    width: 100px;
+    height: 80px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.skeletonPostContent {
+    flex: 1;
+}
+
+.skeletonPostTitle {
+    @extend .skeleton;
+    width: 70%;
+    height: 1.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.skeletonPostExcerpt {
+    @extend .skeleton;
+    width: 100%;
+    height: 2rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.skeletonPostMeta {
+    @extend .skeleton;
+    width: 50%;
+    height: 1rem;
+    border-radius: 4px;
+}
+
+/* Sidebar Skeleton */
+.sidebar {
+    width: 300px;
+}
+
+.sidebarCard {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.skeletonTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.skeletonTag {
+    @extend .skeleton;
+    width: 60px;
+    height: 1.5rem;
+    border-radius: 12px;
+}
+
+.skeletonAuthors {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.skeletonAuthor {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.skeletonAvatar {
+    @extend .skeleton;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.skeletonAuthorInfo {
+    flex: 1;
+}
+
+.skeletonAuthorName {
+    @extend .skeleton;
+    width: 80px;
+    height: 1rem;
+    margin-bottom: 0.25rem;
+    border-radius: 4px;
+}
+
+.skeletonAuthorBio {
+    @extend .skeleton;
+    width: 100px;
+    height: 0.8rem;
+    border-radius: 4px;
+}
+
+.skeletonFollowBtn {
+    @extend .skeleton;
+    width: 60px;
+    height: 1.5rem;
+    border-radius: 4px;
+}
