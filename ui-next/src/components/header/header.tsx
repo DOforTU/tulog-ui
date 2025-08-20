@@ -11,6 +11,7 @@ import HamburgerMenu from "../toggleMenu/hamburgerMenu";
 import ProfileMenu from "../toggleMenu/profileMenu";
 import NotificationModal from "../notification/notificationModal";
 import { fetchUnreadNoticeCount } from "@/lib/api/notices";
+import { getPostsAndUser } from "@/lib/api/search";
 
 export default function Header() {
     const { currentUser, isLoading } = useAuth();
@@ -25,7 +26,9 @@ export default function Header() {
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
     const searchRef = useRef<HTMLInputElement | null>(null);
+    const mobileSearchRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
         // currentUser가 변경되거나 로딩 상태가 변경될 때 메뉴를 닫음
@@ -53,8 +56,8 @@ export default function Header() {
     }, []);
 
     useEffect(() => {
-        if (isSearchOpen && searchRef.current) {
-            searchRef.current.focus();
+        if (isSearchOpen && mobileSearchRef.current) {
+            mobileSearchRef.current.focus();
         }
     }, [isSearchOpen]);
 
@@ -84,6 +87,21 @@ export default function Header() {
 
     const handleSearchToggle = () => {
         setIsSearchOpen((prev) => !prev);
+    };
+
+    const handleSearch = (e: React.FormEvent | React.KeyboardEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}&category=posts`);
+            setSearchQuery("");
+            setIsSearchOpen(false);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            handleSearch(e);
+        }
     };
 
     return (
@@ -124,7 +142,7 @@ export default function Header() {
                                 </svg>
                             </button>
                         ) : (
-                            <div className={styles.searchBox}>
+                            <form onSubmit={handleSearch} className={styles.searchBox}>
                                 <svg
                                     className={styles.searchIcon}
                                     width="20"
@@ -140,8 +158,16 @@ export default function Header() {
                                         strokeLinejoin="round"
                                     />
                                 </svg>
-                                <input type="text" placeholder="Search..." className={styles.searchInput} />
-                            </div>
+                                <input 
+                                    ref={searchRef}
+                                    type="text" 
+                                    placeholder="Search..." 
+                                    className={styles.searchInput}
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                />
+                            </form>
                         )}
                     </div>
 
@@ -323,7 +349,15 @@ export default function Header() {
                             strokeLinejoin="round"
                         />
                     </svg>
-                    <input ref={searchRef} type="text" placeholder="Search..." className={styles.searchInputMobile} />
+                    <input 
+                        ref={mobileSearchRef} 
+                        type="text" 
+                        placeholder="Search..." 
+                        className={styles.searchInputMobile}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
                 </div>
             )}
 

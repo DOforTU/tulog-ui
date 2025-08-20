@@ -1,13 +1,12 @@
 "use client";
 
 import styles from "./sidebar.module.css";
-import Image from "next/image";
-import Link from "next/link";
 import { PublicUser } from "@/lib/types/user.interface";
 import { useState, useEffect } from "react";
 import { fetchMyFollowing } from "@/lib/api/users";
 import { followUser, unfollowUser } from "@/lib/api/follow";
 import { useAuth } from "@/contexts/AuthContext";
+import { AuthorItem } from "@/components/user/AuthorItem";
 
 interface PopularAuthorsProps {
     authors: PublicUser[];
@@ -68,32 +67,14 @@ export function PopularAuthors({ authors }: PopularAuthorsProps) {
             <h3>Recommended Writers</h3>
             <div className={styles.recommendedAuthors}>
                 {authors.map((author) => (
-                    <div key={author.id} className={styles.authorItem}>
-                        <Link href={`/users/${author.nickname}`}>
-                            <Image
-                                src={author.profilePicture}
-                                alt={author.nickname}
-                                width={32}
-                                height={32}
-                                className={styles.authorAvatar}
-                            />
-                        </Link>
-                        <div className={styles.authorInfo}>
-                            <Link href={`/users/${author.nickname}`} className={styles.authorName}>
-                                {author.nickname}
-                            </Link>
-                            <span className={styles.authorBio}>Popular Author</span>
-                        </div>
-                        {currentUser?.id !== author.id && (
-                            <button
-                                className={`${styles.followBtn} ${isFollowing(author.id) ? styles.unfollow : ""}`}
-                                onClick={() => handleFollowClick(author.id)}
-                                disabled={loadingUserId === author.id}
-                            >
-                                {loadingUserId === author.id ? "..." : isFollowing(author.id) ? "Unfollow" : "Follow"}
-                            </button>
-                        )}
-                    </div>
+                    <AuthorItem
+                        key={author.id}
+                        author={author}
+                        isFollowing={isFollowing(author.id)}
+                        loadingUserId={loadingUserId}
+                        currentUserId={currentUser?.id || null}
+                        onFollowClick={handleFollowClick}
+                    />
                 ))}
             </div>
         </div>
