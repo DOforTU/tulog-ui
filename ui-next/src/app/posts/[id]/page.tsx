@@ -6,7 +6,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
-import { getPost, deletePost, postLike, postUnlike, checkIsLiked, bookmarkPost, unbookmarkPost, checkIsBookmarked } from "@/lib/api/posts";
+import {
+    getPost,
+    deletePost,
+    postLike,
+    postUnlike,
+    checkIsLiked,
+    bookmarkPost,
+    unbookmarkPost,
+    checkIsBookmarked,
+} from "@/lib/api/posts";
 import { PostDetail } from "@/lib/types/post.interface";
 import Comments from "@/components/comments/comments";
 import styles from "./post.module.css";
@@ -47,7 +56,7 @@ export default function PostDetailPage() {
                     try {
                         const [likedResponse, bookmarkedStatus] = await Promise.all([
                             checkIsLiked(postId),
-                            checkIsBookmarked(postId)
+                            checkIsBookmarked(postId),
                         ]);
                         setIsLiked(likedResponse.data);
                         setIsBookmarked(bookmarkedStatus);
@@ -261,9 +270,7 @@ export default function PostDetailPage() {
                                     <span
                                         key={postTag.tagId}
                                         className={styles.tag}
-                                        onClick={() =>
-                                            router.push(`/posts/search?s=${encodeURIComponent(postTag.tag.name)}`)
-                                        }
+                                        onClick={() => router.push(`/search?q=${encodeURIComponent(postTag.tag.name)}`)}
                                     >
                                         #{postTag.tag.name}
                                     </span>
@@ -378,7 +385,9 @@ export default function PostDetailPage() {
                             {post.commentCount} comments
                         </span>
                         <span
-                            className={`${styles.stat} ${styles.bookmarkButton} ${isBookmarked ? styles.bookmarked : ""}`}
+                            className={`${styles.stat} ${styles.bookmarkButton} ${
+                                isBookmarked ? styles.bookmarked : ""
+                            }`}
                             onClick={handleBookmarkToggle}
                             style={{
                                 cursor: currentUser ? "pointer" : "default",

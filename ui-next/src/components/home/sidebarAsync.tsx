@@ -26,7 +26,7 @@ export async function SidebarAsync() {
                     {popularTags.map((tag) => (
                         <Link
                             key={tag.id}
-                            href={`/search?s=${encodeURIComponent(tag.name)}`}
+                            href={`/search?q=${encodeURIComponent(tag.name)}`}
                             className={styles.popularTag}
                         >
                             {tag.name}
